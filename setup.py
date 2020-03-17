@@ -23,5 +23,6 @@ setuptools.setup(
     install_requires=[
         'tqdm',
         'pandas',
+        'pytest',
     ]
 )
