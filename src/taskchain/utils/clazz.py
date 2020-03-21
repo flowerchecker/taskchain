@@ -1,7 +1,26 @@
 import functools
 
 
-class persistent(object):
+class Meta(dict):
+
+    def __init__(self, cls):
+        super().__init__()
+
+        if not hasattr(cls, 'Meta'):
+            return
+
+        for attr in dir(cls.Meta):
+            if attr.startswith('__'):
+                continue
+            self[attr] = getattr(cls.Meta, attr)
+
+    def __getattr__(self, attr):
+        if attr in self:
+            return self[attr]
+        return super().__getattribute__(attr)
+
+
+class persistent:
 
     def __init__(self, method):
         self.method = method
