@@ -1,13 +1,12 @@
 import abc
-import inspect
 import re
+from inspect import isclass
 from pathlib import Path
-from types import GeneratorType
-from typing import Generator, Union, Any, get_type_hints, Dict, List
+from typing import Union, Any, get_type_hints, Type
 
 from taskchain.task.config import Config
-from taskchain.task.data import Data, BasicData, GeneratedData
-from taskchain.utils.clazz import persistent, Meta
+from taskchain.task.data import Data
+from taskchain.utils.clazz import persistent, Meta, inheritors
 
 
 class Task:
@@ -17,10 +16,10 @@ class Task:
         self._data: Union[None, Data] = None
 
         self.meta = Meta(self)
-        _ = self.data_type
+        _ = self.data_class
 
     @abc.abstractmethod
-    def run(self) -> Union[Data, Generator, str, int, float, bool, dict, list]:
+    def run(self):
         pass
 
     @property
@@ -34,16 +33,6 @@ class Task:
     @property
     def value(self) -> Any:
         return self.data.value
-
-    def process_run_result(self, run_result: Any) -> Data:
-        if isinstance(run_result, Data) and isinstance(run_result, self.data_type):
-            return run_result
-        if self.data_type in BasicData.TYPES and type(run_result) is self.data_type:
-            return BasicData(run_result)
-        if isinstance(run_result, GeneratorType) and issubclass(self.data_type, GeneratedData):
-            return GeneratedData(run_result)
-
-        raise ValueError(f'Invalid result data type: {type(run_result)} instead of {self.data_type}')
 
     @property
     @persistent
@@ -62,15 +51,8 @@ class Task:
 
     @property
     @persistent
-    def data_type(self):
+    def data_type(self) -> Type[Union[Data, Any]]:
         return_data_type = get_type_hints(self.run).get('return')
-        if return_data_type == Dict:
-            return_data_type = dict
-        if return_data_type == List:
-            return_data_type = list
-        if return_data_type == Generator:
-            return_data_type = GeneratedData
-
         meta_data_type = Meta(self).get('data_type')
 
         if return_data_type is None and meta_data_type is None:
@@ -85,7 +67,32 @@ class Task:
         else:
             data_type = return_data_type
 
-        if data_type not in BasicData.TYPES and not issubclass(data_type, Data):
-            raise AttributeError(f'Invalid data type {data_type} for task {self.slugname}')
-
         return data_type
+
+    @property
+    @persistent
+    def data_class(self) -> Type[Data]:
+        if isclass(self.data_type) and issubclass(self.data_type, Data):
+            return self.data_type
+
+        cls = None
+        for c in inheritors(Data):
+            if c.is_data_type_accepted(self.data_type):
+                if cls is None:
+                    cls = c
+                else:
+                    raise AttributeError(f'Multiple data handlers for type {self.data_type}: {cls} and {c}')
+
+        if cls is None:
+            raise AttributeError(f'Missing data handler for type {self.data_type}: {cls} and {c}')
+
+        return cls
+
+    def process_run_result(self, run_result: Any) -> Data:
+        if isclass(self.data_type) and issubclass(self.data_type, Data) and isinstance(run_result, self.data_type):
+            return run_result
+
+        if isinstance(run_result, self.data_type):
+            return self.data_class(run_result)
+
+        raise ValueError(f'Invalid result data type: {type(run_result)} instead of {self.data_type}')

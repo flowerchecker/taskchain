@@ -1,9 +1,9 @@
-from typing import Union, Generator, Dict
+from typing import Generator, Dict
 
 import pytest
 
-from taskchain.task import Task, Data
-from taskchain.task.data import JSONData, GeneratedData, BasicData
+from taskchain.task import Task
+from taskchain.task.data import JSONData, GeneratedData
 
 
 class ThisIsSomethingTask(Task):
@@ -41,7 +41,7 @@ class A(Task):
         data_type = JSONData
 
     def run(self):
-        return {}
+        return set()
 
 
 class B(Task):
@@ -62,22 +62,39 @@ class D(Task):
         yield 1
 
 
+class E(Task):
+    class Meta:
+        data_type = JSONData
+
+    def run(self):
+        return JSONData([1, 2, 3])
+
+
 def test_result_type():
     assert ThisIsSomethingTask().data_type == str
+    assert ThisIsSomethingTask().data_class == JSONData
     assert ThisIsSomething().data_type == int
+    assert ThisIsSomething().data_class == JSONData
 
     a = A()
     assert a.data_type == JSONData
     with pytest.raises(ValueError):
-        data = a.data
+        _ = a.data
 
     with pytest.raises(AttributeError):
         B()
 
     c = C()
-    assert c.data_type == dict
-    assert type(c.data) == BasicData
+    assert c.data_type == Dict
+    assert c.data_class == JSONData
+    assert type(c.data) == JSONData
 
     d = D()
-    assert d.data_type == GeneratedData
+    assert d.data_type == Generator
+    assert d.data_class == GeneratedData
     assert type(d.data) == GeneratedData
+
+    e = E()
+    assert e.data_type == JSONData
+    assert e.data_class == JSONData
+    assert type(e.data) == JSONData

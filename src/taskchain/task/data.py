@@ -1,8 +1,12 @@
-from pathlib import Path
-from typing import Any
+from typing import Any, List, Dict, Generator
 
 
 class Data:
+    DATA_TYPES = []
+
+    @classmethod
+    def is_data_type_accepted(cls, data_type):
+        return data_type in cls.DATA_TYPES
 
     def __init__(self, value: Any = None):
         self.path = None
@@ -24,16 +28,9 @@ class FileData(Data):
 
 class JSONData(FileData):
 
-    pass
-
-
-class BasicData(JSONData):
-
-    TYPES = [str, int, float, bool, dict, list]
-
-    pass
+    DATA_TYPES = [str, int, float, bool, Dict, List]
 
 
 class GeneratedData(Data):
 
-    pass
+    DATA_TYPES = [Generator]

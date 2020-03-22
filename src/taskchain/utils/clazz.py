@@ -33,3 +33,14 @@ class persistent:
 
     def __get__(self, instance, instancetype):
         return functools.partial(self.__call__, instance)
+
+
+def inheritors(cls, include_self=True):
+    subclasses = {cls} if include_self else set()
+    work = [cls]
+    while work:
+        parent = work.pop()
+        for child in parent.__subclasses__():
+            subclasses.add(child)
+            work.append(child)
+    return subclasses
