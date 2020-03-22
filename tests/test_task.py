@@ -23,9 +23,20 @@ class ThisIsSomething(Task):
         return 1
 
 
+class X(Task):
+
+    class Meta:
+        task_group = 'a:b'
+        name = 'y'
+
+    def run(self) -> bool:
+        pass
+
+
 def test_slugname():
     assert ThisIsSomethingTask().slugname == 'this_is_something'
     assert ThisIsSomething().slugname == 'this_is_something'
+    assert X().slugname == 'a:b:y'
 
 
 def test_meta():
@@ -67,7 +78,9 @@ class E(Task):
         data_type = JSONData
 
     def run(self):
-        return JSONData([1, 2, 3])
+        data = JSONData()
+        data.set_value([1, 2, 3])
+        return data
 
 
 def test_result_type():

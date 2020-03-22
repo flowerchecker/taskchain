@@ -37,15 +37,25 @@ class Task:
     @property
     @persistent
     def slugname(self) -> str:
-        name = re.sub(r'(?<!^)(?=[A-Z])', '_', self.__class__.__name__).lower()
-        if name.endswith('_task'):
-            return name[:-5]
+        if 'name' in self.meta:
+            name = self.meta.name
+        else:
+            name = re.sub(r'(?<!^)(?=[A-Z])', '_', self.__class__.__name__).lower()
+            if name.endswith('_task'):
+                name = name[:-5]
+        if self.group:
+            return f'{self.group}:{name}'
         return name
 
     @property
     @persistent
+    def group(self) -> str:
+        return self.meta.get('task_group', '')
+
+    @property
+    @persistent
     def path(self) -> Path:
-        path = self.config.base_dir / self.slugname
+        path = self.config.base_dir / self.slugname.replace(':', '/')
         path.mkdir(parents=True, exist_ok=True)
         return path
 
@@ -84,15 +94,26 @@ class Task:
                     raise AttributeError(f'Multiple data handlers for type {self.data_type}: {cls} and {c}')
 
         if cls is None:
-            raise AttributeError(f'Missing data handler for type {self.data_type}: {cls} and {c}')
+            raise AttributeError(f'Missing data handler for type {self.data_type}')
 
         return cls
 
     def process_run_result(self, run_result: Any) -> Data:
         if isclass(self.data_type) and issubclass(self.data_type, Data) and isinstance(run_result, self.data_type):
-            return run_result
+            data = run_result
+        elif isinstance(run_result, self.data_type):
+            data = self.create_data_object()
+            data.set_value(run_result)
+        else:
+            raise ValueError(f'Invalid result data type: {type(run_result)} instead of {self.data_type}')
 
-        if isinstance(run_result, self.data_type):
-            return self.data_class(run_result)
+        if data.is_persisting:
+            data.write()
 
-        raise ValueError(f'Invalid result data type: {type(run_result)} instead of {self.data_type}')
+        return data
+
+    def create_data_object(self) -> Data:
+        data = self.data_class()
+        if self.config is not None:
+            data.init_persistence(self.path, self.config.name)
+        return data

@@ -13,3 +13,7 @@ class Config:
     def base_dir(self) -> Path:
         pass
 
+    @property
+    @persistent
+    def name(self) -> str:
+        pass
