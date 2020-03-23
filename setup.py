@@ -24,5 +24,6 @@ setuptools.setup(
         'tqdm',
         'pandas',
         'pytest',
+        'pyyaml',
     ]
 )

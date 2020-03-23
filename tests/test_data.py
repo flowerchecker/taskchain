@@ -15,8 +15,8 @@ class A(Task):
         return 1
 
 
-def test_data_persistence(tmp_path):
-    config = Config(tmp_path, 'test')
+def test_persistence(tmp_path):
+    config = Config(tmp_path, name='test')
 
     a = A(config)
     assert a.value == 1
@@ -30,7 +30,7 @@ def test_data_persistence(tmp_path):
     assert a2.value == 1
     assert a2.run_called == 0
 
-    config2 = Config(tmp_path, 'test2')
+    config2 = Config(tmp_path, name='test2')
 
     a3 = A(config2)
     assert a3.value == 1

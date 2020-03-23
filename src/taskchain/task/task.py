@@ -28,8 +28,7 @@ class Task:
             return self._data
 
         self._data = self.data_class()
-        if self.config is not None:
-            self._data.init_persistence(self.path, self.config.name)
+        self._init_persistence()
 
         if self._data.is_persisting and self._data.exists():
             self._data.load()
@@ -105,11 +104,10 @@ class Task:
 
         return cls
 
-    def process_run_result(self, run_result: Any) -> Data:
+    def process_run_result(self, run_result: Any):
         if isclass(self.data_type) and issubclass(self.data_type, Data) and isinstance(run_result, self.data_type):
             self._data = run_result
-            if self.config is not None:
-                self._data.init_persistence(self.path, self.config.name)
+            self._init_persistence()
         elif isinstance(run_result, self.data_type):
             self._data.set_value(run_result)
         else:
@@ -117,3 +115,7 @@ class Task:
 
         if self._data.is_persisting:
             self._data.save()
+
+    def _init_persistence(self):
+        if self.config is not None:
+            self._data.init_persistence(self.path, self.config.name)
