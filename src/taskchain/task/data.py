@@ -82,6 +82,7 @@ class JSONData(FileData):
 
     DATA_TYPES = [str, int, float, bool, Dict, List]
 
+    @property
     def extension(self) -> Union[str, None]:
         return 'json'
 
@@ -89,7 +90,7 @@ class JSONData(FileData):
         return self.path.exists()
 
     def save(self):
-        json.dump(self.path.open('w'), self.value, indent=2, sort_keys=True)
+        json.dump(self.value, self.path.open('w'), indent=2, sort_keys=True)
 
     def load(self) -> Any:
         self._value = json.load(self.path.open())

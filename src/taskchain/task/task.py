@@ -27,7 +27,14 @@ class Task:
         if hasattr(self, '_data') and self._data is not None:
             return self._data
 
-        self._data = self.process_run_result(self.run())
+        self._data = self.data_class()
+        if self.config is not None:
+            self._data.init_persistence(self.path, self.config.name)
+
+        if self._data.is_persisting and self._data.exists():
+            self._data.load()
+        else:
+            self.process_run_result(self.run())
         return self._data
 
     @property
@@ -100,20 +107,13 @@ class Task:
 
     def process_run_result(self, run_result: Any) -> Data:
         if isclass(self.data_type) and issubclass(self.data_type, Data) and isinstance(run_result, self.data_type):
-            data = run_result
+            self._data = run_result
+            if self.config is not None:
+                self._data.init_persistence(self.path, self.config.name)
         elif isinstance(run_result, self.data_type):
-            data = self.create_data_object()
-            data.set_value(run_result)
+            self._data.set_value(run_result)
         else:
             raise ValueError(f'Invalid result data type: {type(run_result)} instead of {self.data_type}')
 
-        if data.is_persisting:
-            data.write()
-
-        return data
-
-    def create_data_object(self) -> Data:
-        data = self.data_class()
-        if self.config is not None:
-            data.init_persistence(self.path, self.config.name)
-        return data
+        if self._data.is_persisting:
+            self._data.save()

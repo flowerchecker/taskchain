@@ -1,19 +1,11 @@
 from pathlib import Path
-
-from taskchain.utils.clazz import persistent
+from typing import Union
 
 
 class Config:
 
-    def __init__(self):
-        pass
+    def __init__(self, base_dir: Union[Path, str], name: str):
 
-    @property
-    @persistent
-    def base_dir(self) -> Path:
-        pass
+        self.base_dir = base_dir
+        self.name = name
 
-    @property
-    @persistent
-    def name(self) -> str:
-        pass
