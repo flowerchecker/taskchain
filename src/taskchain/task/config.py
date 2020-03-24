@@ -1,7 +1,7 @@
 import json
 import yaml
 from pathlib import Path
-from typing import Union, Dict
+from typing import Union, Dict, Iterable
 
 
 class Config(dict):
@@ -35,6 +35,8 @@ class Config(dict):
         if self.name is None:
             raise ValueError(f'Missing config name')
 
+        self._validate_data()
+
     def __str__(self):
         return f'{self.name}'
 
@@ -49,3 +51,15 @@ class Config(dict):
 
     def __getattr__(self, item):
         return self.data[item]
+
+    def get(self, item, default=None):
+        return self.data.get(item, default)
+
+    def _validate_data(self):
+        if self._data is None:
+            return
+
+        data = self._data
+        uses = data.get('uses', [])
+        if not isinstance(uses, Iterable) or isinstance(uses, str):
+            raise ValueError(f'`uses` of config `{self}` have to be like')

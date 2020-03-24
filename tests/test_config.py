@@ -64,6 +64,9 @@ def test_data(tmp_path):
         assert c.b == 2
         assert c.c['d'] == 3
 
+        assert c.get('a') == 1
+        assert c.get('x', 9) == 9
+
         with pytest.raises(KeyError):
             _ = c['x']
 
