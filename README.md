@@ -16,3 +16,5 @@ python setup.py develop
  - `data_type`
  - `task_group`
  - `name`
+ - `input_tasks`
+ - `input_params`

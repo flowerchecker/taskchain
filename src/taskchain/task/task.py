@@ -53,6 +53,12 @@ class Task:
             return f'{self.group}:{name}'
         return name
 
+    def __str__(self):
+        return self.slugname
+
+    def __repr__(self):
+        return f'<task: {self}>'
+
     @property
     @persistent
     def group(self) -> str:

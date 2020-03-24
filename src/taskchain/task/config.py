@@ -40,6 +40,9 @@ class Config(dict):
     def __str__(self):
         return f'{self.name}'
 
+    def __repr__(self):
+        return f'<config: {self}>'
+
     @property
     def data(self):
         if self._data is None:
@@ -55,6 +58,9 @@ class Config(dict):
     def get(self, item, default=None):
         return self.data.get(item, default)
 
+    def __contains__(self, item):
+        return item in self.data
+
     def _validate_data(self):
         if self._data is None:
             return
@@ -63,3 +69,7 @@ class Config(dict):
         uses = data.get('uses', [])
         if not isinstance(uses, Iterable) or isinstance(uses, str):
             raise ValueError(f'`uses` of config `{self}` have to be like')
+
+        tasks = data.get('tasks', [])
+        if not isinstance(tasks, Iterable) or isinstance(tasks, str):
+            raise ValueError(f'`tasks` of config `{self}` have to be like')
