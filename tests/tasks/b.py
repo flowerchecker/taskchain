@@ -9,5 +9,17 @@ class CTask(Task):
 
 class DTask(Task):
 
+    class Meta:
+        input_tasks = ['c']
+
+    def run(self) -> bool:
+        return False
+
+
+class ETask(Task):
+
+    class Meta:
+        input_tasks = [CTask]
+
     def run(self) -> bool:
         return False

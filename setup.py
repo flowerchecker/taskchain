@@ -25,5 +25,6 @@ setuptools.setup(
         'pandas',
         'pytest',
         'pyyaml',
+        'networkx',
     ]
 )

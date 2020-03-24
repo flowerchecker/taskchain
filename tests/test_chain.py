@@ -1,6 +1,7 @@
 import pytest
 
-from taskchain.task import Config, Chain
+from taskchain.task import Config, Chain, Task
+from tests.tasks.a import ATask
 
 
 def test_config(tmp_path):
@@ -48,7 +49,7 @@ def test_task_creation_with_uses(tmp_path):
     config2 = Config(tmp_path, name='config2', data=config_data)
     chain2 = Chain(config2)
 
-    assert len(chain2.tasks) == 3
+    assert len(chain2.tasks) == 4
 
 
 def test_missing_param(tmp_path):
@@ -86,3 +87,74 @@ def test_params(tmp_path):
     config = Config(tmp_path, name='config2', data=config_data)
     chain = Chain(config)
     assert chain.tasks['b'].config.a_number == 7
+
+
+class XTask(Task):
+
+    class Meta:
+        input_tasks = [ATask]
+
+    def run(self) -> bool:
+        return False
+
+
+def test_missing_input_task(tmp_path):
+    config_data = {
+        'tasks': [
+            'tests.tasks.b.*',
+            'tests.test_chain.XTask',
+        ]
+    }
+    config = Config(tmp_path, name='config', data=config_data)
+    with pytest.raises(ValueError):
+        _ = Chain(config)
+
+
+class YTask(Task):
+
+    class Meta:
+        input_tasks = ['a']
+
+    def run(self) -> bool:
+        return False
+
+
+def test_missing_input_name_task(tmp_path):
+    config_data = {
+        'tasks': [
+            'tests.tasks.b.*',
+            'tests.test_chain.YTask',
+        ]
+    }
+    config = Config(tmp_path, name='config', data=config_data)
+    with pytest.raises(ValueError):
+        _ = Chain(config)
+
+
+def test_input_name(tmp_path):
+    config_data = {
+        'tasks': [
+            'tests.tasks.b.*',
+        ]
+    }
+    config = Config(tmp_path, name='config', data=config_data)
+    chain = Chain(config)
+
+    assert len(chain.tasks['c'].input_tasks) == 0
+    assert len(chain.tasks['d'].input_tasks) == 1
+    assert len(chain.tasks['e'].input_tasks) == 1
+    assert chain.tasks['d'].input_tasks['c'] == chain.tasks['c']
+    assert chain.tasks['e'].input_tasks['c'] == chain.tasks['c']
+
+
+def test_dependency_graph(tmp_path):
+    config_data = {
+        'tasks': [
+            'tests.tasks.b.*',
+        ]
+    }
+    config = Config(tmp_path, name='config', data=config_data)
+    chain = Chain(config)
+
+    assert len(chain.graph.nodes) == 3
+    assert len(chain.graph.edges) == 2

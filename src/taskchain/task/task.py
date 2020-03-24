@@ -2,7 +2,7 @@ import abc
 import re
 from inspect import isclass
 from pathlib import Path
-from typing import Union, Any, get_type_hints, Type
+from typing import Union, Any, get_type_hints, Type, Dict
 
 from taskchain.task.config import Config
 from taskchain.task.data import Data
@@ -12,8 +12,9 @@ from taskchain.utils.clazz import persistent, Meta, inheritors
 class Task:
 
     def __init__(self, config: Config = None):
-        self.config = config
+        self.config: Config = config
         self._data: Union[None, Data] = None
+        self._input_tasks: Union[None, Dict[str, 'Task']] = None
 
         self.meta = Meta(self)
         _ = self.data_class
@@ -109,6 +110,15 @@ class Task:
             raise AttributeError(f'Missing data handler for type {self.data_type}')
 
         return cls
+
+    @property
+    def input_tasks(self) -> Dict[str, 'Task']:
+        if self._input_tasks is None:
+            raise ValueError(f'Input tasks for task `{self}` not initialized')
+        return self._input_tasks
+
+    def set_input_tasks(self, task_map: Dict[str, 'Task']):
+        self._input_tasks = task_map
 
     def process_run_result(self, run_result: Any):
         if isclass(self.data_type) and issubclass(self.data_type, Data) and isinstance(run_result, self.data_type):

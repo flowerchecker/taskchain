@@ -1,4 +1,6 @@
-from typing import Dict, Type
+from typing import Dict, Type, Union
+
+import networkx as nx
 
 from taskchain.task.config import Config
 from taskchain.task.task import Task
@@ -11,7 +13,15 @@ class Chain:
         self.tasks: Dict[str, Task] = {}
         self.configs: Dict[str, Config] = {}
 
-        self._process_config(config)
+        self._base_config = config
+        self.graph: Union[None, nx.DiGraph] = None
+
+        self._prepare()
+
+    def _prepare(self):
+        self._process_config(self._base_config)
+        self._process_dependencies()
+        self._build_graph()
 
     def _process_config(self, config: Config):
         self.configs[config.name] = config
@@ -42,6 +52,31 @@ class Chain:
                 raise ValueError(f'Input parameter `{input_param}` required by task `{task}` is not in its config `{config}`')
         self.tasks[task.slugname] = task
         return task
+
+    def _process_dependencies(self):
+        for task_name, task in self.tasks.items():
+            input_tasks = {}
+            for input_task in task.meta.get('input_tasks', []):
+                if type(input_task) is not str:
+                    for n, t in self.tasks.items():
+                        if t.__class__ == input_task:
+                            input_task = t.slugname
+                            break
+                if input_task not in self.tasks:
+                    raise ValueError(f'Input task `{input_task}` of task `{task}` not found')
+                input_tasks[input_task] = self.tasks[input_task]
+            task.set_input_tasks(input_tasks)
+
+    def _build_graph(self):
+        self.graph = G = nx.DiGraph()
+        G.add_nodes_from(self.tasks.values())
+
+        for task in self.tasks.values():
+            for input_task in task.input_tasks.values():
+                G.add_edge(input_task, task)
+
+        if not nx.is_directed_acyclic_graph(G):
+            raise ValueError('Chain is not acyclic')
 
 
 class MultiChain:
