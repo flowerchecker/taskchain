@@ -190,3 +190,24 @@ def test_dependency(tmp_path):
     assert len(chain.required_tasks('m')) == 0
     assert len(chain.required_tasks('o')) == 2
     assert len(chain.required_tasks('p')) == 3
+
+
+def test_forcing(tmp_path):
+    config_data = {
+        'tasks': [
+            'tests.tasks.c.*',
+        ]
+    }
+    config = Config(tmp_path, name='config', data=config_data)
+    chain = Chain(config)
+
+    assert not chain.tasks['x'].is_forced
+    chain.force('x')
+    assert chain.tasks['x'].is_forced
+
+    assert not chain.tasks['p'].is_forced
+    chain.force('m')
+    assert chain.tasks['m'].is_forced
+    assert chain.tasks['o'].is_forced
+    assert chain.tasks['p'].is_forced
+    assert not chain.tasks['n'].is_forced

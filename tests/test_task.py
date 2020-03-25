@@ -2,7 +2,7 @@ from typing import Generator, Dict
 
 import pytest
 
-from taskchain.task import Task
+from taskchain.task import Task, Config
 from taskchain.task.data import JSONData, GeneratedData
 
 
@@ -111,3 +111,41 @@ def test_result_type():
     assert e.data_type == JSONData
     assert e.data_class == JSONData
     assert type(e.data) == JSONData
+
+
+def test_forcing(tmp_path):
+
+    class A(Task):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.run_called = 0
+
+        def run(self) -> int:
+            self.run_called += 1
+            return 1
+
+    config = Config(tmp_path, name='config')
+
+    a = A(config)
+    _ = a.value
+    assert a.run_called == 1
+    _ = a.value
+    assert a.run_called == 1
+
+    a = A(config)
+    _ = a.value
+    assert a.run_called == 0
+    a.force()
+    _ = a.value
+    assert a.run_called == 1
+    _ = a.value
+    assert a.run_called == 1
+
+    a = A(config)
+    a.force()
+    _ = a.value
+    assert a.run_called == 1
+    _ = a.value
+    assert a.run_called == 1
+

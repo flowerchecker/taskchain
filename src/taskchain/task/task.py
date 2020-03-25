@@ -15,6 +15,7 @@ class Task:
         self.config: Config = config
         self._data: Union[None, Data] = None
         self._input_tasks: Union[None, Dict[str, 'Task']] = None
+        self._forced = False
 
         self.meta = Meta(self)
         _ = self.data_class
@@ -31,7 +32,7 @@ class Task:
         self._data = self.data_class()
         self._init_persistence()
 
-        if self._data.is_persisting and self._data.exists():
+        if self._data.is_persisting and self._data.exists() and not self._forced:
             self._data.load()
         else:
             self.process_run_result(self.run())
@@ -91,6 +92,17 @@ class Task:
             data_type = return_data_type
 
         return data_type
+
+    def force(self):
+        self._forced = True
+        self._data = None
+
+    def stop_forcing(self):
+        self._forced = False
+
+    @property
+    def is_forced(self):
+        return self._forced
 
     @property
     @persistent

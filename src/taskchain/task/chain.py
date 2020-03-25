@@ -1,4 +1,4 @@
-from typing import Dict, Type, Union, Set
+from typing import Dict, Type, Union, Set, Iterable
 
 import networkx as nx
 
@@ -104,6 +104,14 @@ class Chain:
         if include_self:
             ancestors.add(task)
         return ancestors
+
+    def force(self, tasks: Iterable[Task]):
+        forced_tasks = set()
+        for task in tasks:
+            forced_tasks |= self.dependent_tasks(task, include_self=True)
+
+        for task in forced_tasks:
+            task.force()
 
 
 class MultiChain:
