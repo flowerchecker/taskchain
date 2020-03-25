@@ -158,3 +158,35 @@ def test_dependency_graph(tmp_path):
 
     assert len(chain.graph.nodes) == 3
     assert len(chain.graph.edges) == 2
+
+
+def test_dependency(tmp_path):
+    config_data = {
+        'tasks': [
+            'tests.tasks.c.*',
+        ]
+    }
+    config = Config(tmp_path, name='config', data=config_data)
+    chain = Chain(config)
+
+    assert not chain.is_task_dependent_on('o', 'p')
+    assert chain.is_task_dependent_on('p', 'o')
+    assert chain.is_task_dependent_on('p', 'm')
+    assert chain.is_task_dependent_on('p', 'n')
+
+    assert not chain.is_task_dependent_on('o', 'x')
+    assert not chain.is_task_dependent_on('x', 'o')
+
+    assert chain.is_task_dependent_on(chain.tasks['p'], chain.tasks['o'])
+
+    assert len(chain.dependent_tasks('x')) == 0
+    assert len(chain.dependent_tasks('x', True)) == 1
+    assert len(chain.dependent_tasks('m')) == 2
+    assert len(chain.dependent_tasks('o')) == 1
+    assert len(chain.dependent_tasks('p')) == 0
+
+    assert len(chain.required_tasks('x')) == 0
+    assert len(chain.required_tasks('x', True)) == 1
+    assert len(chain.required_tasks('m')) == 0
+    assert len(chain.required_tasks('o')) == 2
+    assert len(chain.required_tasks('p')) == 3

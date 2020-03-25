@@ -1,4 +1,4 @@
-from typing import Dict, Type, Union
+from typing import Dict, Type, Union, Set
 
 import networkx as nx
 
@@ -77,6 +77,33 @@ class Chain:
 
         if not nx.is_directed_acyclic_graph(G):
             raise ValueError('Chain is not acyclic')
+
+    def get_task(self, task: Union[str, Task]) -> Task:
+        if isinstance(task, Task):
+            return task
+        if task not in self.tasks:
+            raise ValueError(f'Task `{task}` not found')
+        return self.tasks[task]
+
+    def is_task_dependent_on(self, task: Union[str, Task], dependency_task: Union[str, Task]) -> bool:
+        task = self.get_task(task)
+        dependency_task = self.get_task(dependency_task)
+
+        return nx.has_path(self.graph, dependency_task, task)
+
+    def dependent_tasks(self, task: Union[str, Task], include_self: bool = False) -> Set[Task]:
+        task = self.get_task(task)
+        descendants = nx.descendants(self.graph, task)
+        if include_self:
+            descendants.add(task)
+        return descendants
+
+    def required_tasks(self, task: Union[str, Task], include_self: bool = False) -> Set[Task]:
+        task = self.get_task(task)
+        ancestors = nx.ancestors(self.graph, task)
+        if include_self:
+            ancestors.add(task)
+        return ancestors
 
 
 class MultiChain:
