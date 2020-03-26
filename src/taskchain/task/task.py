@@ -9,7 +9,73 @@ from taskchain.task.data import Data
 from taskchain.utils.clazz import persistent, Meta, inheritors
 
 
-class Task:
+class MetaTask(type):
+
+    @property
+    @persistent
+    def meta(cls):
+        return Meta(cls)
+
+    @property
+    @persistent
+    def group(cls) -> str:
+        return cls.meta.get('task_group', '')
+
+    @property
+    @persistent
+    def slugname(cls) -> str:
+        if 'name' in cls.meta:
+            name = cls.meta.name
+        else:
+            name = re.sub(r'(?<!^)(?=[A-Z])', '_', cls.__name__).lower()
+            if name.endswith('_task'):
+                name = name[:-5]
+        if cls.group:
+            return f'{cls.group}:{name}'
+        return name
+
+    @property
+    @persistent
+    def data_type(cls) -> Type[Union[Data, Any]]:
+        return_data_type = get_type_hints(cls.run).get('return')
+        meta_data_type = cls.meta.get('data_type')
+
+        if return_data_type is None and meta_data_type is None:
+            raise AttributeError(f'Missing data_type for task {cls.slugname}')
+
+        if return_data_type is None:
+            data_type = meta_data_type
+        elif meta_data_type is None:
+            data_type = return_data_type
+        elif meta_data_type != return_data_type:
+            raise AttributeError(
+                f'Data type {meta_data_type} and return data type {return_data_type} does not match for task {cls.slugname}')
+        else:
+            data_type = return_data_type
+
+        return data_type
+
+    @property
+    @persistent
+    def data_class(self) -> Type[Data]:
+        if isclass(self.data_type) and issubclass(self.data_type, Data):
+            return self.data_type
+
+        cls = None
+        for c in inheritors(Data):
+            if c.is_data_type_accepted(self.data_type):
+                if cls is None:
+                    cls = c
+                else:
+                    raise AttributeError(f'Multiple data handlers for type {self.data_type}: {cls} and {c}')
+
+        if cls is None:
+            raise AttributeError(f'Missing data handler for type {self.data_type}')
+
+        return cls
+
+
+class Task(object, metaclass=MetaTask):
 
     def __init__(self, config: Config = None):
         self.config: Config = config
@@ -17,8 +83,11 @@ class Task:
         self._input_tasks: Union[None, Dict[str, 'Task']] = None
         self._forced = False
 
-        self.meta = Meta(self)
-        _ = self.data_class
+        self.meta = self.__class__.meta
+        self.group = self.__class__.group
+        self.slugname = self.__class__.slugname
+        self.data_class = self.__class__.data_class
+        self.data_type = self.__class__.data_type
 
     @abc.abstractmethod
     def run(self):
@@ -42,19 +111,6 @@ class Task:
     def value(self) -> Any:
         return self.data.value
 
-    @property
-    @persistent
-    def slugname(self) -> str:
-        if 'name' in self.meta:
-            name = self.meta.name
-        else:
-            name = re.sub(r'(?<!^)(?=[A-Z])', '_', self.__class__.__name__).lower()
-            if name.endswith('_task'):
-                name = name[:-5]
-        if self.group:
-            return f'{self.group}:{name}'
-        return name
-
     def __str__(self):
         return self.slugname
 
@@ -63,35 +119,10 @@ class Task:
 
     @property
     @persistent
-    def group(self) -> str:
-        return self.meta.get('task_group', '')
-
-    @property
-    @persistent
     def path(self) -> Path:
         path = self.config.base_dir / self.slugname.replace(':', '/')
         path.mkdir(parents=True, exist_ok=True)
         return path
-
-    @property
-    @persistent
-    def data_type(self) -> Type[Union[Data, Any]]:
-        return_data_type = get_type_hints(self.run).get('return')
-        meta_data_type = Meta(self).get('data_type')
-
-        if return_data_type is None and meta_data_type is None:
-            raise AttributeError(f'Missing data_type for task {self.slugname}')
-
-        if return_data_type is None:
-            data_type = meta_data_type
-        elif meta_data_type is None:
-            data_type = return_data_type
-        elif meta_data_type != return_data_type:
-            raise AttributeError(f'Data type {meta_data_type} and return data type {return_data_type} does not match for task {self.slugname}')
-        else:
-            data_type = return_data_type
-
-        return data_type
 
     def force(self):
         self._forced = True
@@ -103,25 +134,6 @@ class Task:
     @property
     def is_forced(self):
         return self._forced
-
-    @property
-    @persistent
-    def data_class(self) -> Type[Data]:
-        if isclass(self.data_type) and issubclass(self.data_type, Data):
-            return self.data_type
-
-        cls = None
-        for c in inheritors(Data):
-            if c.is_data_type_accepted(self.data_type):
-                if cls is None:
-                    cls = c
-                else:
-                    raise AttributeError(f'Multiple data handlers for type {self.data_type}: {cls} and {c}')
-
-        if cls is None:
-            raise AttributeError(f'Missing data handler for type {self.data_type}')
-
-        return cls
 
     @property
     def input_tasks(self) -> Dict[str, 'Task']:

@@ -38,15 +38,14 @@ class Chain:
                 self._create_task(task_class, config)
 
     def _create_task(self, task_class: Type[Task], config: Config):
-        task = task_class(config)
-        if task.slugname in self.tasks:
-            existing_task = self.tasks[task.slugname]
-            if existing_task.config.name == task.config.name:
-                del task
+        if task_class.slugname in self.tasks:
+            existing_task = self.tasks[task_class.slugname]
+            if existing_task.config.name == config.name:
                 return existing_task
             else:
-                raise ValueError(f'Multiple tasks of name `{task.slugname}` with different configs `{task.config}` and `{existing_task.config}`')
+                raise ValueError(f'Multiple tasks of name `{task_class.slugname}` with different configs `{config}` and `{existing_task.config}`')
 
+        task = task_class(config)
         for input_param in task.meta.get('input_params', []):
             if input_param not in config:
                 raise ValueError(f'Input parameter `{input_param}` required by task `{task}` is not in its config `{config}`')
