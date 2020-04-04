@@ -16,5 +16,5 @@ test:
     - virtualenv venv
     - source venv/bin/activate
 
-    - python setupy.py install
+    - python setup.py install
     - pytest
