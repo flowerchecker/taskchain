@@ -1,0 +1,20 @@
+image: python:3.7
+
+test:
+  stage: test
+  only:
+    - master
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip-test/
+  cache:
+    paths:
+      - .cache/pip
+      - venv/
+  script:
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+
+    - python setupy.py install
+    - pytest
