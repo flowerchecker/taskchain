@@ -1,4 +1,4 @@
-from typing import Dict, Type, Union, Set, Iterable
+from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
 
 import networkx as nx
 
@@ -9,11 +9,12 @@ from taskchain.utils.clazz import get_classes_by_import_string
 
 class Chain:
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, shared_tasks: Dict[Tuple[str, str], Task] = None):
         self.tasks: Dict[str, Task] = {}
         self.configs: Dict[str, Config] = {}
 
         self._base_config = config
+        self._task_registry = shared_tasks if shared_tasks is not None else {}
         self.graph: Union[None, nx.DiGraph] = None
 
         self._prepare()
@@ -33,23 +34,26 @@ class Chain:
                 used_config = Config(config.base_dir, used)
             self._process_config(used_config)
 
-        for task_string in config.get('tasks', []):
-            for task_class in get_classes_by_import_string(task_string, Task):
-                self._create_task(task_class, config)
+        for task_description in config.get('tasks', []):
+            if type(task_description) is str:
+                for task_class in get_classes_by_import_string(task_description, Task):
+                    self._create_task(task_class, config)
+            elif issubclass(task_description, Task):
+                self._create_task(task_description, config)
+            else:
+                raise ValueError(f'Unknown task description `{task_description}` in config `{config}`')
 
     def _create_task(self, task_class: Type[Task], config: Config):
-        if task_class.slugname in self.tasks:
-            existing_task = self.tasks[task_class.slugname]
-            if existing_task.config.name == config.name:
-                return existing_task
-            else:
-                raise ValueError(f'Multiple tasks of name `{task_class.slugname}` with different configs `{config}` and `{existing_task.config}`')
+        if self._task_registry and (task_class.slugname, config.name) in self._task_registry:
+            self.tasks[task_class.slugname] = self._task_registry[task_class.slugname, config.name]
+            return self._task_registry[task_class.slugname, config.name]
 
         task = task_class(config)
         for input_param in task.meta.get('input_params', []):
             if input_param not in config:
                 raise ValueError(f'Input parameter `{input_param}` required by task `{task}` is not in its config `{config}`')
         self.tasks[task.slugname] = task
+        self._task_registry[task_class.slugname, config.name] = task
         return task
 
     def _process_dependencies(self):
@@ -104,7 +108,9 @@ class Chain:
             ancestors.add(task)
         return ancestors
 
-    def force(self, tasks: Iterable[Task]):
+    def force(self, tasks: Union[str, Task, Iterable[Union[str, Task]]]):
+        if type(tasks) is str or isinstance(tasks, Task):
+            tasks = [tasks]
         forced_tasks = set()
         for task in tasks:
             forced_tasks |= self.dependent_tasks(task, include_self=True)
@@ -115,4 +121,22 @@ class Chain:
 
 class MultiChain:
 
-    pass
+    def __init__(self, configs: Sequence[Config]):
+        self._tasks: Dict[Tuple[str, str], Task] = {}
+        self.chains: Dict[str, Chain] = {}
+        self._base_configs = configs
+
+        self._prepare()
+
+    def _prepare(self):
+        for config in self._base_configs:
+            self.chains[config.name] = Chain(config, self._tasks)
+
+    def __getitem__(self, chain_name: str):
+        if chain_name not in self.chains:
+            raise ValueError(f'Unknown chain name `{chain_name}`')
+        return self.chains[chain_name]
+
+    def force(self, tasks: Union[str, Iterable[Union[str, Task]]]):
+        for chain in self.chains.values():
+            chain.force(tasks)

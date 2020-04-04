@@ -1,6 +1,6 @@
 import pytest
 
-from taskchain.task import Config, Chain, Task
+from taskchain.task import Config, Chain, Task, MultiChain
 from tests.tasks.a import ATask
 
 
@@ -211,3 +211,44 @@ def test_forcing(tmp_path):
     assert chain.tasks['o'].is_forced
     assert chain.tasks['p'].is_forced
     assert not chain.tasks['n'].is_forced
+
+
+def test_multi_chain(tmp_path):
+    from tests.tasks.c import PTask
+
+    class ZTask(Task):
+
+        class Meta:
+            input_tasks = [PTask]
+
+        def run(self) -> bool:
+            return False
+
+    config_data = {
+        'tasks': [
+            'tests.tasks.c.*',
+        ]
+    }
+    common_config = Config(tmp_path, name='common_config', data=config_data)
+    config1 = Config(tmp_path, name='config1', data={'tasks': [ZTask], 'uses': [common_config]})
+    config2 = Config(tmp_path, name='config2', data={'tasks': [ZTask], 'uses': [common_config]})
+
+    mc = MultiChain([config1, config2])
+    assert len(mc.chains) == 2
+    assert len(mc._tasks) == 7
+    assert ('z', 'config1') in mc._tasks
+    assert ('x', 'common_config') in mc._tasks
+    assert ('p', 'common_config') in mc._tasks
+
+    assert len(mc['config1'].tasks) == 6
+    assert len(mc['config2'].tasks) == 6
+
+    assert mc['config1'].tasks['p'] == mc['config2'].tasks['p']
+    assert mc['config1'].tasks['z'] != mc['config2'].tasks['z']
+
+    mc.force(['p'])
+    assert mc['config1'].tasks['z'].is_forced
+    assert mc['config2'].tasks['z'].is_forced
+    assert mc['config1'].tasks['p'].is_forced
+    assert mc['config2'].tasks['p'].is_forced
+    assert not mc['config2'].tasks['o'].is_forced
