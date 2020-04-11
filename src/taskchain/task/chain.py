@@ -7,9 +7,10 @@ from taskchain.task.task import Task
 from taskchain.utils.clazz import get_classes_by_import_string
 
 
-class Chain:
+class Chain(dict):
 
     def __init__(self, config: Config, shared_tasks: Dict[Tuple[str, str], Task] = None):
+        super().__init__()
         self.tasks: Dict[str, Task] = {}
         self.configs: Dict[str, Config] = {}
 
@@ -21,6 +22,18 @@ class Chain:
 
     def __str__(self):
         return f'<chain for config `{self._base_config}`>'
+
+    def __getitem__(self, item):
+        return self.tasks[item]
+
+    def __getattr__(self, item):
+        return self.tasks[item]
+
+    def get(self, item, default=None):
+        return self.tasks.get(item, default)
+
+    def __contains__(self, item):
+        return item in self.tasks
 
     def _prepare(self):
         self._process_config(self._base_config)
