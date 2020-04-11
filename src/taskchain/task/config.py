@@ -26,7 +26,7 @@ class Config(dict):
             if extension == 'json':
                 self._data = json.load(filepath.open())
             elif extension == 'yaml':
-                self._data = yaml.load(filepath.open(), yaml.CLoader)
+                self._data = yaml.load(filepath.open(), Loader=yaml.Loader)
 
         if data is not None:
             self._data = data
