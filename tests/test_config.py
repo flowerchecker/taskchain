@@ -75,3 +75,12 @@ def test_data(tmp_path):
 
         with pytest.raises(KeyError):
             _ = c.x
+
+
+def test_context(tmp_path):
+    with pytest.raises(ValueError):
+        Config(tmp_path, data={'a': '{A}/{B}.{B}', 'b': '{B}'}, context={}, name='config')
+
+    config = Config(tmp_path, data={'a': '{A}/{B}.{B}', 'b': '{B}'}, context={'A': '1', 'B': '2'}, name='config')
+    assert config['a'] == '1/2.2'
+    assert config['b'] == '2'

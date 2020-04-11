@@ -1,7 +1,10 @@
 import json
-import yaml
 from pathlib import Path
-from typing import Union, Dict, Iterable
+from typing import Union, Dict, Iterable, Any
+
+import yaml
+
+from taskchain.utils.data import search_and_replace_placeholders
 
 
 class Config(dict):
@@ -10,13 +13,15 @@ class Config(dict):
                  base_dir: Union[Path, str, None],
                  filepath: Union[Path, str] = None,
                  name: str = None,
-                 data: Dict = None
+                 data: Dict = None,
+                 context: Union[Any, None] = None,
                  ):
         super().__init__()
 
         self.base_dir = base_dir
         self.name = None
         self._data = None
+        self._context = context
 
         if filepath is not None:
             filepath = Path(filepath)
@@ -36,6 +41,8 @@ class Config(dict):
             raise ValueError(f'Missing config name')
 
         self._validate_data()
+        if context is not None:
+            self.apply_context(context)
 
     def __str__(self):
         return f'{self.name}'
@@ -68,11 +75,14 @@ class Config(dict):
         data = self._data
         uses = data.get('uses', [])
         if not isinstance(uses, Iterable) or isinstance(uses, str):
-            raise ValueError(f'`uses` of config `{self}` have to be like')
+            raise ValueError(f'`uses` of config `{self}` have to be list or str')
 
         tasks = data.get('tasks', [])
         if not isinstance(tasks, Iterable) or isinstance(tasks, str):
-            raise ValueError(f'`tasks` of config `{self}` have to be like')
+            raise ValueError(f'`tasks` of config `{self}` have to list or str')
+
+    def apply_context(self, context):
+        search_and_replace_placeholders(self._data, context)
 
     def chain(self):
         from taskchain.task import Chain
