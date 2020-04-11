@@ -19,6 +19,9 @@ class Chain:
 
         self._prepare()
 
+    def __str__(self):
+        return f'<chain for config `{self._base_config}`>'
+
     def _prepare(self):
         self._process_config(self._base_config)
         self._process_dependencies()
