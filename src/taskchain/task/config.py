@@ -73,3 +73,7 @@ class Config(dict):
         tasks = data.get('tasks', [])
         if not isinstance(tasks, Iterable) or isinstance(tasks, str):
             raise ValueError(f'`tasks` of config `{self}` have to be like')
+
+    def chain(self):
+        from taskchain.task import Chain
+        return Chain(self)
