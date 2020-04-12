@@ -1,5 +1,7 @@
 import json
 from pathlib import Path
+from typing import Union
+
 from tqdm import tqdm
 
 
@@ -16,3 +18,9 @@ def iter_json_file(filename, use_tqdm=True, **kwargs):
     with filename.open() as f:
         for row in tqdm(f, disable=not use_tqdm, desc=f'Reading from {f.name}', **kwargs):
             yield json.loads(row.strip())
+
+
+def check_file_exists(path: Union[Path, str]):
+    path = Path(path)
+    if not path.exists():
+        raise ValueError(f'File `{path}` doesn\'t exists')
