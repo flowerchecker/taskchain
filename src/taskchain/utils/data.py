@@ -43,11 +43,11 @@ def search_and_replace_placeholders(obj, replacements):
         placeholder = match.group(1)
         if isinstance(replacements, dict):
             if placeholder not in replacements:
-                raise ValueError(f'No data for placeholder `{placeholder}`')
+                return '{' + placeholder + '}'
             return str(replacements[placeholder])
 
         if not hasattr(replacements, placeholder):
-            raise ValueError(f'No data for placeholder `{placeholder}`')
+            return '{' + placeholder + '}'
         return str(getattr(replacements, placeholder))
 
     def _apply(string):
