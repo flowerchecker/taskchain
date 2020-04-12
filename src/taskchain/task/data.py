@@ -1,5 +1,6 @@
 import abc
 import json
+import shutil
 from pathlib import Path
 from typing import Any, List, Dict, Generator, Union
 
@@ -124,3 +125,44 @@ class JSONData(FileData):
 class GeneratedData(Data, abc.ABC):
 
     DATA_TYPES = [Generator]
+
+
+class DirData(Data):
+
+    def __init__(self):
+        super().__init__()
+        self._dir = None
+
+    def init_persistence(self, base_dir: Path, name: str):
+        if self._persisting:
+            return
+        super().init_persistence(base_dir, name)
+        if self.tmp_path.exists():
+            shutil.rmtree(self.tmp_path)
+        self.tmp_path.mkdir()
+        self._dir = self.tmp_path
+
+    @property
+    def dir(self) -> Path:
+        return self._dir
+
+    @property
+    def _path(self) -> Union[Path, None]:
+        return self._base_dir / self._name
+
+    @property
+    def tmp_path(self) -> Path:
+        return self._base_dir / f'{self._name}_tmp'
+
+    def exists(self) -> bool:
+        return self.path.exists()
+
+    def save(self):
+        if self.path.exists():
+            shutil.rmtree(self.path)
+        shutil.move(str(self.tmp_path), str(self.path))
+        self._value = self._dir = self.path
+
+    def load(self) -> Path:
+        self._dir = self._value = self.path
+        return self._value

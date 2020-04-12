@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Union, Any, get_type_hints, Type, Dict
 
 from taskchain.task.config import Config
-from taskchain.task.data import Data
+from taskchain.task.data import Data, DirData
 from taskchain.utils.clazz import persistent, Meta, inheritors
 
 
@@ -91,7 +91,7 @@ class Task(object, metaclass=MetaTask):
 
     def __init__(self, config: Config = None):
         self.config: Config = config
-        self._data: Union[None, Data] = None
+        self._data: Union[None, Data, DirData] = None
         self._input_tasks: Union[None, Dict[str, 'Task']] = None
         self._forced = False
 

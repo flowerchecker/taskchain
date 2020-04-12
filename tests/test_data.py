@@ -1,4 +1,7 @@
+from pathlib import Path
+
 from taskchain.task import Task, Config, InMemoryData, JSONData
+from taskchain.task.data import DirData
 
 
 def test_persistence(tmp_path):
@@ -129,3 +132,31 @@ def test_returned_in_memory_data(tmp_path):
     a2 = B(config)
     assert a2.value == 1
     assert a2.run_called == 1
+
+
+def test_dir_data(tmp_path):
+    class C(Task):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.run_called = 0
+
+        def run(self) -> DirData:
+            self.run_called += 1
+            data = self._data
+            assert isinstance(data.dir, Path)
+            assert data.dir == tmp_path / 'c' / 'test_tmp'
+            (data.dir / 'c').mkdir()
+            return data
+
+    config = Config(tmp_path, name='test')
+    c = C(config)
+    assert not (tmp_path / 'c' / 'test').exists()
+    _ = c.value
+    assert (tmp_path / 'c' / 'test').exists()
+    assert c.value == tmp_path / 'c' / 'test'
+    assert c.run_called == 1
+    assert (c.value / 'c').exists()
+
+    c2 = C(config)
+    assert c.value == tmp_path / 'c' / 'test'
+    assert c2.run_called == 0
