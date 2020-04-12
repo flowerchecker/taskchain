@@ -59,6 +59,9 @@ class MetaTask(type):
     @property
     @persistent
     def data_class(self) -> Type[Data]:
+        if 'data_class' in self.meta:
+            return self.meta['data_class']
+
         if isclass(self.data_type) and issubclass(self.data_type, Data):
             return self.data_type
 
@@ -107,7 +110,7 @@ class Task(object, metaclass=MetaTask):
         if hasattr(self, '_data') and self._data is not None:
             return self._data
 
-        if issubclass(self.data_class, InMemoryData):
+        if isclass(self.data_type) and issubclass(self.data_type, InMemoryData):
             self._data = self.run()
             self.process_run_result(self._data)
             return self._data

@@ -92,6 +92,20 @@ class E(Task):
         return data
 
 
+class CustomData(JSONData):
+    @classmethod
+    def is_data_type_accepted(cls, data_type):
+        return False
+
+
+class F(Task):
+    class Meta:
+        data_class = CustomData
+
+    def run(self) -> int:
+        return 1
+
+
 def test_result_type():
     assert ThisIsSomethingTask().data_type == str
     assert ThisIsSomethingTask().data_class == JSONData
@@ -120,6 +134,12 @@ def test_result_type():
     assert e.data_type == JSONData
     assert e.data_class == JSONData
     assert type(e.data) == JSONData
+
+    f = F()
+    assert f.data_type == int
+    assert f.data_class == CustomData
+    assert type(f.data) == CustomData
+    assert f.value == 1
 
 
 def test_forcing(tmp_path):
