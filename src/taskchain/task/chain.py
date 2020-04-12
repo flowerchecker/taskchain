@@ -47,7 +47,7 @@ class Chain(dict):
                 assert config.base_dir == used.base_dir, f'Base dirs of configs `{config}` and `{used}` do not match'
                 used_config = used
             else:
-                used_config = Config(config.base_dir, used)
+                used_config = Config(config.base_dir, used, context=config.context)
             self._process_config(used_config)
 
         for task_description in config.get('tasks', []):
