@@ -39,14 +39,14 @@ class Data:
         pass
 
     @property
-    def path(self) -> Path:
+    def path(self) -> Union[Path, None]:
         if not self.is_persisting:
             raise AttributeError(f'Data {self} is not in persisting mode, call `init_persistence` first')
         return self._path
 
     @property
     @abc.abstractmethod
-    def _path(self) -> Path:
+    def _path(self) -> Union[Path, None]:
         pass
 
     def set_value(self, value: Any = None):
@@ -65,10 +65,30 @@ class Data:
         return f'{self.__class__.__name__}'
 
 
+class InMemoryData(Data):
+
+    def __init__(self):
+        super().__init__()
+        self._value = self
+
+    @property
+    def _path(self) -> Union[Path, None]:
+        return None
+
+    def exists(self) -> bool:
+        return False
+
+    def save(self):
+        pass
+
+    def load(self) -> Any:
+        return self
+
+
 class FileData(Data, abc.ABC):
 
     @property
-    def _path(self):
+    def _path(self) -> Path:
         if self.extension is None:
             return self._base_dir / self._name
         return self._base_dir / f'{self._name}.{self.extension}'

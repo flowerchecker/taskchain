@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Union, Any, get_type_hints, Type, Dict
 
 from taskchain.task.config import Config
-from taskchain.task.data import Data
+from taskchain.task.data import Data, InMemoryData
 from taskchain.utils.clazz import persistent, Meta, inheritors
 
 
@@ -107,6 +107,11 @@ class Task(object, metaclass=MetaTask):
         if hasattr(self, '_data') and self._data is not None:
             return self._data
 
+        if issubclass(self.data_class, InMemoryData):
+            self._data = self.run()
+            self.process_run_result(self._data)
+            return self._data
+
         self._data = self.data_class()
         self._init_persistence()
 
@@ -166,6 +171,8 @@ class Task(object, metaclass=MetaTask):
             self._data.save()
 
     def _init_persistence(self):
+        if isinstance(self._data, InMemoryData):
+            return
         if self.config is not None:
             self._data.init_persistence(self.path, self.config.name)
 
