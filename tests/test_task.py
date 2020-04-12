@@ -2,7 +2,7 @@ from typing import Generator, Dict
 
 import pytest
 
-from taskchain.task import Task, Config
+from taskchain.task import Task, Config, ModuleTask
 from taskchain.task.data import JSONData, GeneratedData
 
 
@@ -45,6 +45,15 @@ def test_meta():
     assert task.meta.int_value == 1
     assert task.meta.get('int_value') == 1
     assert task.meta.get('not_defined_value', 123) == 123
+
+
+def test_module_task():
+    class Mt(ModuleTask):
+
+        def run(self) -> bool:
+            pass
+
+    assert Mt().slugname == 'test_task:mt'
 
 
 class A(Task):

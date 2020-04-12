@@ -1,4 +1,5 @@
 import abc
+import inspect
 import re
 from inspect import isclass
 from pathlib import Path
@@ -73,6 +74,14 @@ class MetaTask(type):
             raise AttributeError(f'Missing data handler for type {self.data_type}')
 
         return cls
+
+
+class MetaModuleTask(MetaTask):
+
+    @property
+    @persistent
+    def group(cls) -> str:
+        return inspect.getmodule(cls).__name__.split('.')[-1]
 
 
 class Task(object, metaclass=MetaTask):
@@ -159,3 +168,10 @@ class Task(object, metaclass=MetaTask):
     def _init_persistence(self):
         if self.config is not None:
             self._data.init_persistence(self.path, self.config.name)
+
+
+class ModuleTask(Task, metaclass=MetaModuleTask):
+
+    @abc.abstractmethod
+    def run(self):
+        pass
