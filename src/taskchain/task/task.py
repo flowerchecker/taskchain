@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Union, Any, get_type_hints, Type, Dict
 
 from taskchain.task.config import Config
-from taskchain.task.data import Data, InMemoryData
+from taskchain.task.data import Data
 from taskchain.utils.clazz import persistent, Meta, inheritors
 
 
@@ -110,15 +110,12 @@ class Task(object, metaclass=MetaTask):
         if hasattr(self, '_data') and self._data is not None:
             return self._data
 
-        if isclass(self.data_type) and issubclass(self.data_type, InMemoryData):
-            self._data = self.run()
-            self.process_run_result(self._data)
-            return self._data
+        if len(inspect.signature(self.data_class).parameters) == 0:
+            # data class is not meant to be created out of run method -> data cannot be loaded
+            self._data = self.data_class()
+            self._init_persistence()
 
-        self._data = self.data_class()
-        self._init_persistence()
-
-        if self._data.is_persisting and self._data.exists() and not self._forced:
+        if self._data and self._data.is_persisting and self._data.exists() and not self._forced:
             self._data.load()
         else:
             self.process_run_result(self.run())
@@ -138,7 +135,6 @@ class Task(object, metaclass=MetaTask):
     @persistent
     def path(self) -> Path:
         path = self.config.base_dir / self.slugname.replace(':', '/')
-        path.mkdir(parents=True, exist_ok=True)
         return path
 
     def force(self):
@@ -174,8 +170,6 @@ class Task(object, metaclass=MetaTask):
             self._data.save()
 
     def _init_persistence(self):
-        if isinstance(self._data, InMemoryData):
-            return
         if self.config is not None:
             self._data.init_persistence(self.path, self.config.name)
 

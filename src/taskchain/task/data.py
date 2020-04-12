@@ -21,6 +21,7 @@ class Data:
         self._persisting = True
         self._base_dir = base_dir
         self._name = name
+        base_dir.mkdir(parents=True, exist_ok=True)
 
     @property
     def is_persisting(self):
@@ -70,6 +71,9 @@ class InMemoryData(Data):
     def __init__(self):
         super().__init__()
         self._value = self
+
+    def init_persistence(self, base_dir: Path, name: str):
+        pass
 
     @property
     def _path(self) -> Union[Path, None]:
