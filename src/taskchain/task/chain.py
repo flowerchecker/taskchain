@@ -1,3 +1,4 @@
+import abc
 from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
 
 import networkx as nx
@@ -5,6 +6,13 @@ import networkx as nx
 from taskchain.task.config import Config
 from taskchain.task.task import Task
 from taskchain.utils.clazz import get_classes_by_import_string
+
+
+class ChainObject:
+
+    @abc.abstractmethod
+    def init_chain(self, chain):
+        pass
 
 
 class Chain(dict):
@@ -39,6 +47,7 @@ class Chain(dict):
         self._process_config(self._base_config)
         self._process_dependencies()
         self._build_graph()
+        self._init_objects()
 
     def _process_config(self, config: Config):
         self.configs[config.name] = config
@@ -96,6 +105,12 @@ class Chain(dict):
 
         if not nx.is_directed_acyclic_graph(G):
             raise ValueError('Chain is not acyclic')
+
+    def _init_objects(self):
+        for config in self.configs.values():
+            for obj in config.objects.values():
+                if isinstance(obj, ChainObject):
+                    obj.init_chain(self)
 
     def get_task(self, task: Union[str, Task]) -> Task:
         if isinstance(task, Task):

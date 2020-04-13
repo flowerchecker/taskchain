@@ -85,3 +85,28 @@ def test_context(tmp_path):
     config = Config(tmp_path, data={'a': '{A}/{B}.{B}', 'b': '{B}'}, context={'A': '1', 'B': '2'}, name='config')
     assert config['a'] == '1/2.2'
     assert config['b'] == '2'
+
+
+class MyObject:
+    def __init__(self, a, b=1):
+        self.a = a
+        self.b = b
+
+
+def test_config_objects(tmp_path):
+
+    data = {
+        'my_object': {
+            'class': 'tests.test_config.MyObject',
+            'args': [7],
+            'kwargs': {'b': 13},
+        }
+    }
+
+    config = Config(tmp_path, data=data, name='config')
+    assert 'my_object' in config
+    assert 'my_object' in config.objects
+    assert config['my_object'] == config.objects['my_object']
+    assert type(config['my_object']) == MyObject
+    assert config['my_object'].a == 7
+    assert config['my_object'].b == 13

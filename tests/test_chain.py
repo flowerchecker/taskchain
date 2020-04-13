@@ -1,6 +1,7 @@
 import pytest
 
 from taskchain.task import Config, Chain, Task, MultiChain
+from taskchain.task.chain import ChainObject
 from tests.tasks.a import ATask
 
 
@@ -252,3 +253,31 @@ def test_multi_chain(tmp_path):
     assert mc['config1'].tasks['p'].is_forced
     assert mc['config2'].tasks['p'].is_forced
     assert not mc['config2'].tasks['o'].is_forced
+
+
+class MyObject(ChainObject):
+
+    def __init__(self):
+        self.x = None
+
+    def init_chain(self, chain):
+        self.x = chain._base_config.x
+
+
+def test_chain_objects(tmp_path):
+
+    class ZTask(Task):
+        def run(self) -> bool:
+            return False
+
+    config_data = {
+        'tasks': [],
+        'x': 1,
+        'my_object': {'class': 'tests.test_chain.MyObject'}
+    }
+
+    config = Config(tmp_path, name='config', data=config_data)
+    _ = Chain(config)
+
+    print(config['my_object'])
+    assert config['my_object'].x == 1

@@ -79,3 +79,9 @@ def get_classes_by_import_string(string: str, cls: Type[object] = object):
         if inspect.isclass(members) and issubclass(members, cls):
             classes.append(members)
     return classes
+
+
+def instancelize_clazz(clazz, args, kwargs):
+    cls = import_by_string(clazz)
+    obj = cls(*args, **kwargs)
+    return obj

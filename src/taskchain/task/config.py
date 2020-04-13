@@ -4,6 +4,7 @@ from typing import Union, Dict, Iterable, Any
 
 import yaml
 
+from taskchain.utils.clazz import instancelize_clazz
 from taskchain.utils.data import search_and_replace_placeholders
 
 
@@ -22,6 +23,7 @@ class Config(dict):
         self.name = None
         self._data = None
         self.context = context
+        self.objects = {}
 
         if filepath is not None:
             filepath = Path(filepath)
@@ -43,6 +45,7 @@ class Config(dict):
         self._validate_data()
         if context is not None:
             self.apply_context(context)
+        self.prepare_objects()
 
     def __str__(self):
         return f'{self.name}'
@@ -83,6 +86,19 @@ class Config(dict):
 
     def apply_context(self, context):
         search_and_replace_placeholders(self._data, context)
+
+    def prepare_objects(self):
+        if self._data is None:
+            return
+        for key, value in self._data.items():
+            if isinstance(value, dict) and 'class' in value:
+                obj = instancelize_clazz(
+                    value['class'],
+                    value.get('args', []),
+                    value.get('kwargs', {})
+                )
+                self._data[key] = obj
+                self.objects[key] = obj
 
     def chain(self):
         from taskchain.task import Chain
