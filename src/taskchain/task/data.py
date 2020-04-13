@@ -134,8 +134,6 @@ class DirData(Data):
         self._dir = None
 
     def init_persistence(self, base_dir: Path, name: str):
-        if self._persisting:
-            return
         super().init_persistence(base_dir, name)
         if self.tmp_path.exists():
             shutil.rmtree(self.tmp_path)

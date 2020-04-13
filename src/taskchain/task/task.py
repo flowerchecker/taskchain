@@ -170,7 +170,7 @@ class Task(object, metaclass=MetaTask):
             self._data.save()
 
     def _init_persistence(self):
-        if self.config is not None:
+        if self.config is not None and not self._data.is_persisting:
             self._data.init_persistence(self.path, self.config.name)
 
 
