@@ -178,3 +178,26 @@ def test_forcing(tmp_path):
     _ = a.value
     assert a.run_called == 1
 
+
+def test_run_fail(tmp_path):
+
+    class A(Task):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.run_called = 0
+
+        def run(self) -> int:
+            self.run_called += 1
+            raise ValueError()
+
+    config = Config(tmp_path, name='config')
+    a = A(config)
+
+    with pytest.raises(ValueError):
+        _ = a.value
+    assert a.run_called == 1
+
+    with pytest.raises(ValueError):
+        _ = a.value
+    assert a.run_called == 2

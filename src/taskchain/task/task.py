@@ -118,7 +118,14 @@ class Task(object, metaclass=MetaTask):
         if self._data and self._data.is_persisting and self._data.exists() and not self._forced:
             self._data.load()
         else:
-            self.process_run_result(self.run())
+            try:
+                run_result = self.run()
+            except Exception as error:
+                if self._data:
+                    self._data.on_run_error()
+                    self._data = None
+                raise error
+            self.process_run_result(run_result)
         return self._data
 
     @property

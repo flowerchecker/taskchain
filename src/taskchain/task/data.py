@@ -40,6 +40,9 @@ class Data:
     def load(self) -> Any:
         pass
 
+    def on_run_error(self):
+        pass
+
     @property
     def path(self) -> Union[Path, None]:
         if not self.is_persisting:
@@ -140,6 +143,11 @@ class DirData(Data):
         self.tmp_path.mkdir()
         self._dir = self.tmp_path
 
+    def on_run_error(self):
+        if self.error_path.exists():
+            shutil.rmtree(self.error_path)
+        shutil.move(str(self.tmp_path), str(self.error_path))
+
     @property
     def dir(self) -> Path:
         return self._dir
@@ -151,6 +159,10 @@ class DirData(Data):
     @property
     def tmp_path(self) -> Path:
         return self._base_dir / f'{self._name}_tmp'
+
+    @property
+    def error_path(self) -> Path:
+        return self._base_dir / f'{self._name}_error'
 
     def exists(self) -> bool:
         return self.path.exists()
