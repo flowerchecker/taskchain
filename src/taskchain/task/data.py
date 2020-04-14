@@ -1,8 +1,11 @@
 import abc
 import json
+import pickle
 import shutil
 from pathlib import Path
 from typing import Any, List, Dict, Generator, Union
+
+import pylab
 
 
 class Data:
@@ -122,6 +125,27 @@ class JSONData(FileData):
 
     def load(self) -> Any:
         self._value = json.load(self.path.open())
+        return self._value
+
+
+class FigureData(FileData):
+
+    DATA_TYPES = [pylab.Figure]
+
+    @property
+    def extension(self) -> Union[str, None]:
+        return 'pickle'
+
+    def exists(self) -> bool:
+        return self.path.exists()
+
+    def save(self):
+        pickle.dump(self.value, self.path.open('wb'))
+        self.value.savefig(self._base_dir / f'{self._name}.png')
+        self.value.savefig(self._base_dir / f'{self._name}.svg')
+
+    def load(self) -> Any:
+        self._value = pickle.load(self.path.open('rb'))
         return self._value
 
 
