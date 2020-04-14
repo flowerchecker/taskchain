@@ -279,5 +279,4 @@ def test_chain_objects(tmp_path):
     config = Config(tmp_path, name='config', data=config_data)
     _ = Chain(config)
 
-    print(config['my_object'])
     assert config['my_object'].x == 1
