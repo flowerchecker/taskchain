@@ -6,6 +6,8 @@ from pathlib import Path
 from typing import Any, List, Dict, Generator, Union
 
 import pylab
+import numpy as np
+import pandas as pd
 
 
 class Data:
@@ -108,6 +110,9 @@ class FileData(Data, abc.ABC):
     def extension(self) -> Union[str, None]:
         return None
 
+    def exists(self) -> bool:
+        return self.path.exists()
+
 
 class JSONData(FileData):
 
@@ -117,14 +122,43 @@ class JSONData(FileData):
     def extension(self) -> Union[str, None]:
         return 'json'
 
-    def exists(self) -> bool:
-        return self.path.exists()
-
     def save(self):
         json.dump(self.value, self.path.open('w'), indent=2, sort_keys=True)
 
     def load(self) -> Any:
         self._value = json.load(self.path.open())
+        return self._value
+
+
+class NumpyData(FileData):
+
+    DATA_TYPES = [np.ndarray]
+
+    @property
+    def extension(self) -> Union[str, None]:
+        return 'npy'
+
+    def save(self):
+        np.save(str(self.path), self.value)
+
+    def load(self) -> Any:
+        self._value = np.load(str(self.path))
+        return self._value
+
+
+class PandasData(FileData):
+
+    DATA_TYPES = [pd.DataFrame, pd.Series]
+
+    @property
+    def extension(self) -> Union[str, None]:
+        return 'pd'
+
+    def save(self):
+        self.value.to_pickle(self.path)
+
+    def load(self) -> Any:
+        self._value = pd.read_pickle(self.path)
         return self._value
 
 
@@ -135,9 +169,6 @@ class FigureData(FileData):
     @property
     def extension(self) -> Union[str, None]:
         return 'pickle'
-
-    def exists(self) -> bool:
-        return self.path.exists()
 
     def save(self):
         pickle.dump(self.value, self.path.open('wb'))

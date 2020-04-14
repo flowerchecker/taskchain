@@ -1,7 +1,10 @@
 from pathlib import Path
 
 from taskchain.task import Task, Config, InMemoryData, JSONData
-from taskchain.task.data import DirData
+from taskchain.task.data import DirData, NumpyData, PandasData
+
+import numpy as np
+import pandas as pd
 
 
 def test_persistence(tmp_path):
@@ -160,3 +163,33 @@ def test_dir_data(tmp_path):
     c2 = C(config)
     assert c.value == tmp_path / 'c' / 'test'
     assert c2.run_called == 0
+
+
+def test_numpy_data(tmp_path):
+    data = NumpyData()
+    data.init_persistence(tmp_path, 'test')
+    data.set_value(np.zeros((10, 10)))
+    data.save()
+
+    assert (tmp_path / 'test.npy').exists()
+
+    data2 = NumpyData()
+    data2.init_persistence(tmp_path, 'test')
+    data2.load()
+
+    assert data2.value.shape == (10, 10)
+
+
+def test_pandas_data(tmp_path):
+    data = PandasData()
+    data.init_persistence(tmp_path, 'test')
+    data.set_value(pd.DataFrame([[0, 1],[2, 3]]))
+    data.save()
+
+    assert (tmp_path / 'test.pd').exists()
+
+    data2 = PandasData()
+    data2.init_persistence(tmp_path, 'test')
+    data2.load()
+
+    assert data2.value.shape == (2, 2)
