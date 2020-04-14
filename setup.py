@@ -26,5 +26,6 @@ setuptools.setup(
         'pytest',
         'pyyaml',
         'networkx',
+        'seaborn',
     ]
 )
