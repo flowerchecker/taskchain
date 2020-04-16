@@ -146,6 +146,7 @@ def test_input_name(tmp_path):
     assert len(chain.tasks['e'].input_tasks) == 1
     assert chain.tasks['d'].input_tasks['c'] == chain.tasks['c']
     assert chain.tasks['e'].input_tasks['c'] == chain.tasks['c']
+    assert chain.tasks['e'].input_tasks[0] == chain.tasks['c']
 
 
 def test_dependency_graph(tmp_path):

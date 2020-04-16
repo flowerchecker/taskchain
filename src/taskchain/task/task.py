@@ -3,7 +3,7 @@ import inspect
 import re
 from inspect import isclass
 from pathlib import Path
-from typing import Union, Any, get_type_hints, Type, Dict
+from typing import Union, Any, get_type_hints, Type, Dict, Iterable
 
 from taskchain.task.config import Config
 from taskchain.task.data import Data, DirData
@@ -161,7 +161,7 @@ class Task(object, metaclass=MetaTask):
             raise ValueError(f'Input tasks for task `{self}` not initialized')
         return self._input_tasks
 
-    def set_input_tasks(self, task_map: Dict[str, 'Task']):
+    def set_input_tasks(self, task_map: 'InputTasks'):
         self._input_tasks = task_map
 
     def process_run_result(self, run_result: Any):
@@ -186,3 +186,37 @@ class ModuleTask(Task, metaclass=MetaModuleTask):
     @abc.abstractmethod
     def run(self):
         pass
+
+
+class InputTasks(dict):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.task_list = []
+
+    def __setitem__(self, key, value):
+        if not super().__contains__(key):
+            self.task_list.append(value)
+        super().__setitem__(key, value)
+
+    def __getitem__(self, item):
+        return self.get(item)
+
+    def get(self, item, default=None):
+        if type(item) is int:
+            return self.task_list[item]
+        if default is not None:
+            raise ValueError('Default task is not allowed')
+        return super().get(get_task_full_name(item, self.keys()))
+
+    def __contains__(self, item):
+        return super().__contains__(get_task_full_name(item, self.keys()))
+
+
+def get_task_full_name(task_name: str, tasks: Iterable[str]) -> str:
+    tasks = [t for t in tasks if t.split(':')[-1] == task_name or t == task_name]
+    if len(tasks) > 1:
+        raise KeyError(f'Ambiguous task name `{task_name}`. Possible matches: {tasks}')
+    if len(tasks) == 0:
+        raise KeyError(f'Task `{task_name}` not found')
+    return tasks[0]

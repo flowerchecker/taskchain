@@ -4,7 +4,7 @@ from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
 import networkx as nx
 
 from taskchain.task.config import Config
-from taskchain.task.task import Task
+from taskchain.task.task import Task, get_task_full_name, InputTasks
 from taskchain.utils.clazz import get_classes_by_import_string
 
 
@@ -40,18 +40,10 @@ class Chain(dict):
     def get(self, item, default=None):
         if default is not None:
             raise ValueError('Default task is not allowed')
-        return self.tasks.get(self._get_task_full_name(item))
+        return self.tasks.get(get_task_full_name(item, self.tasks))
 
     def __contains__(self, item):
-        return self._get_task_full_name(item) in self.tasks
-
-    def _get_task_full_name(self, task_name: str) -> str:
-        tasks = [t for t in self.tasks if t.split(':')[-1] == task_name or t == task_name]
-        if len(tasks) > 1:
-            raise KeyError(f'Ambiguous task name `{task_name}`. Possible matches: {tasks}')
-        if len(tasks) == 0:
-            raise KeyError(f'Task `{task_name}` not found in chain')
-        return tasks[0]
+        return get_task_full_name(item, self.tasks.keys()) in self.tasks
 
     def _prepare(self):
         self._process_config(self._base_config)
@@ -93,7 +85,7 @@ class Chain(dict):
 
     def _process_dependencies(self):
         for task_name, task in self.tasks.items():
-            input_tasks = {}
+            input_tasks = InputTasks()
             for input_task in task.meta.get('input_tasks', []):
                 if type(input_task) is not str:
                     for n, t in self.tasks.items():
