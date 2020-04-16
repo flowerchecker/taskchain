@@ -32,16 +32,26 @@ class Chain(dict):
         return f'<chain for config `{self._base_config}`>'
 
     def __getitem__(self, item):
-        return self.tasks[item]
+        return self.get(item)
 
     def __getattr__(self, item):
-        return self.tasks[item]
+        return self.get(item)
 
     def get(self, item, default=None):
-        return self.tasks.get(item, default)
+        if default is not None:
+            raise ValueError('Default task is not allowed')
+        return self.tasks.get(self._get_task_full_name(item))
 
     def __contains__(self, item):
-        return item in self.tasks
+        return self._get_task_full_name(item) in self.tasks
+
+    def _get_task_full_name(self, task_name: str) -> str:
+        tasks = [t for t in self.tasks if t.split(':')[-1] == task_name or t == task_name]
+        if len(tasks) > 1:
+            raise KeyError(f'Ambiguous task name `{task_name}`. Possible matches: {tasks}')
+        if len(tasks) == 0:
+            raise KeyError(f'Task `{task_name}` not found in chain')
+        return tasks[0]
 
     def _prepare(self):
         self._process_config(self._base_config)

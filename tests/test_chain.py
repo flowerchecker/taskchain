@@ -266,10 +266,6 @@ class MyObject(ChainObject):
 
 def test_chain_objects(tmp_path):
 
-    class ZTask(Task):
-        def run(self) -> bool:
-            return False
-
     config_data = {
         'tasks': [],
         'x': 1,
@@ -280,3 +276,37 @@ def test_chain_objects(tmp_path):
     _ = Chain(config)
 
     assert config['my_object'].x == 1
+
+
+def test_task_short_names(tmp_path):
+    class ABTask(Task):
+
+        class Meta:
+            task_group = 'a'
+            name = 'b'
+
+        def run(self) -> bool:
+            return False
+
+    class BBTask(Task):
+
+        class Meta:
+            task_group = 'b'
+            name = 'b'
+
+        def run(self) -> bool:
+            return False
+
+    config_data = {
+        'tasks': [ABTask, BBTask]
+    }
+    chain = Config(tmp_path, name='config', data=config_data).chain()
+
+    with pytest.raises(KeyError):
+        _ = chain['c']
+
+    with pytest.raises(KeyError):
+        _ = chain['b']
+
+    _ = chain['a:b']
+    _ = chain['b:b']
