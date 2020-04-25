@@ -141,7 +141,7 @@ class Chain(dict):
             ancestors.add(task)
         return ancestors
 
-    def force(self, tasks: Union[str, Task, Iterable[Union[str, Task]]]):
+    def force(self, tasks: Union[str, Task, Iterable[Union[str, Task]]], recompute=False):
         if type(tasks) is str or isinstance(tasks, Task):
             tasks = [tasks]
         forced_tasks = set()
@@ -150,6 +150,10 @@ class Chain(dict):
 
         for task in forced_tasks:
             task.force()
+
+        if recompute:
+            for task in list(forced_tasks)[::-1]:
+                _ = task.value
 
 
 class MultiChain:
