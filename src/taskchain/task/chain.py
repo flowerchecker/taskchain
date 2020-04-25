@@ -117,9 +117,9 @@ class Chain(dict):
     def get_task(self, task: Union[str, Task]) -> Task:
         if isinstance(task, Task):
             return task
-        if task not in self.tasks:
+        if task not in self:
             raise ValueError(f'Task `{task}` not found')
-        return self.tasks[task]
+        return self.get(task)
 
     def is_task_dependent_on(self, task: Union[str, Task], dependency_task: Union[str, Task]) -> bool:
         task = self.get_task(task)
