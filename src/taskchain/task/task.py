@@ -1,6 +1,8 @@
 import abc
 import inspect
+import logging
 import re
+import sys
 from inspect import isclass
 from pathlib import Path
 from typing import Union, Any, get_type_hints, Type, Dict, Iterable
@@ -8,6 +10,10 @@ from typing import Union, Any, get_type_hints, Type, Dict, Iterable
 from taskchain.task.config import Config
 from taskchain.task.data import Data, DirData
 from taskchain.utils.clazz import persistent, Meta, inheritors
+
+
+logger = logging.getLogger('tasks_chain')
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 class MetaTask(type):
@@ -119,7 +125,9 @@ class Task(object, metaclass=MetaTask):
             self._data.load()
         else:
             try:
+                logger.info(f'{self} - run started')
                 run_result = self.run()
+                logger.info(f'{self} - run ended')
             except Exception as error:
                 if self._data:
                     self._data.on_run_error()

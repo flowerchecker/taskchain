@@ -1,4 +1,5 @@
 import abc
+import logging
 from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
 
 import networkx as nx
@@ -16,6 +17,8 @@ class ChainObject:
 
 
 class Chain(dict):
+
+    logger = logging.getLogger('tasks_chain')
 
     def __init__(self, config: Config, shared_tasks: Dict[Tuple[str, str], Task] = None):
         super().__init__()
