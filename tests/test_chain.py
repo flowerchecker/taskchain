@@ -311,3 +311,20 @@ def test_task_short_names(tmp_path):
 
     _ = chain['a:b']
     _ = chain['b:b']
+
+
+def test_multiple_chain_instances(tmp_path):
+    config_data = {
+        'tasks': ['tests.tasks.a.*'],
+        'a_number': 1,
+    }
+    config = Config(tmp_path, name='config', data=config_data)
+    chain = config.chain()
+
+    assert len(chain.tasks) == 2
+
+    config2 = Config(tmp_path, name='config', data=config_data)
+    chain2 = config2.chain()
+
+    assert len(chain2.tasks) == 2
+    assert id(chain) != id(chain2)
