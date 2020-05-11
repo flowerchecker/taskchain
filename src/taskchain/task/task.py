@@ -103,6 +103,8 @@ class MetaDoubleModuleTask(MetaTask):
 
 class Task(object, metaclass=MetaTask):
 
+    logger = logger
+
     def __init__(self, config: Config = None):
         self.config: Config = config
         self._data: Union[None, Data, DirData] = None
