@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.1",
     author="Jiří Thran Řihák",
     author_email="jiri.rihak@plant.id",
-    description="Utils for plant.id",
+    description="Pipeline for ML and data processing",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://gitlab.org/flowerchecker/taskchain",
