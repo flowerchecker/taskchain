@@ -93,6 +93,14 @@ class MetaModuleTask(MetaTask):
         return inspect.getmodule(cls).__name__.split('.')[-1]
 
 
+class MetaDoubleModuleTask(MetaTask):
+
+    @property
+    @persistent
+    def group(cls) -> str:
+        return ':'.join(inspect.getmodule(cls).__name__.split('.')[-2:])
+
+
 class Task(object, metaclass=MetaTask):
 
     def __init__(self, config: Config = None):
@@ -190,6 +198,13 @@ class Task(object, metaclass=MetaTask):
 
 
 class ModuleTask(Task, metaclass=MetaModuleTask):
+
+    @abc.abstractmethod
+    def run(self):
+        pass
+
+
+class DoubleModuleTask(Task, metaclass=MetaDoubleModuleTask):
 
     @abc.abstractmethod
     def run(self):
