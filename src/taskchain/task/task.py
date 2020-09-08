@@ -19,17 +19,14 @@ logger.addHandler(logging.StreamHandler(sys.stdout))
 class MetaTask(type):
 
     @property
-    @persistent
     def meta(cls):
         return Meta(cls)
 
     @property
-    @persistent
     def group(cls) -> str:
         return cls.meta.get('task_group', '')
 
     @property
-    @persistent
     def slugname(cls) -> str:
         if 'name' in cls.meta:
             name = cls.meta.name
@@ -42,7 +39,6 @@ class MetaTask(type):
         return name
 
     @property
-    @persistent
     def data_type(cls) -> Type[Union[Data, Any]]:
         return_data_type = get_type_hints(cls.run).get('return')
         meta_data_type = cls.meta.get('data_type')
@@ -63,7 +59,6 @@ class MetaTask(type):
         return data_type
 
     @property
-    @persistent
     def data_class(self) -> Type[Data]:
         if 'data_class' in self.meta:
             return self.meta['data_class']

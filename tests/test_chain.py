@@ -328,3 +328,16 @@ def test_multiple_chain_instances(tmp_path):
 
     assert len(chain2.tasks) == 2
     assert id(chain) != id(chain2)
+
+
+def test_task_inheritance(tmp_path):
+    config_data = {
+        'tasks': ['tests.tasks.inheritance.*'],
+    }
+    config = Config(tmp_path, name='config', data=config_data)
+    chain = config.chain()
+
+    assert len(chain.tasks) == 3
+    assert chain.a.value == 'a'
+    assert chain.b.value == 'b'
+    assert chain.c.value == 'c'
