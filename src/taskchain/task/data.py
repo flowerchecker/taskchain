@@ -231,3 +231,42 @@ class DirData(Data):
     def load(self) -> Path:
         self._dir = self._value = self.path
         return self._value
+
+
+class ContinuesData(Data):
+
+    def __init__(self):
+        super().__init__()
+        self._dir = None
+
+    def init_persistence(self, base_dir: Path, name: str):
+        super().init_persistence(base_dir, name)
+        if not self.tmp_path.exists():
+            self.tmp_path.mkdir()
+        self._dir = self.tmp_path
+
+    @property
+    def _path(self) -> Union[Path, None]:
+        return self._base_dir / self._name
+
+    @property
+    def tmp_path(self) -> Path:
+        return self._base_dir / f'{self._name}_tmp'
+
+    @property
+    def dir(self) -> Path:
+        return self._dir
+
+    def exists(self) -> bool:
+        return self.path.exists()
+
+    def save(self):
+        self._value = self._dir
+
+    def load(self) -> Any:
+        self._dir = self._value = self.path
+        return self._value
+
+    def finished(self):
+        shutil.move(str(self.tmp_path), str(self.path))
+        self._value = self._dir = self.path
