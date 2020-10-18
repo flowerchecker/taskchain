@@ -141,6 +141,12 @@ class Task(object, metaclass=MetaTask):
             self.process_run_result(run_result)
         return self._data
 
+    # to run from task itself
+    def get_data_object(self):
+        if not hasattr(self, '_data'):
+            raise ValueError('Data object is not initialized, run this only from task')
+        return self._data
+
     @property
     def value(self) -> Any:
         return self.data.value

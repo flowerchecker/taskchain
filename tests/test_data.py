@@ -145,7 +145,7 @@ def test_dir_data(tmp_path):
 
         def run(self) -> DirData:
             self.run_called += 1
-            data = self._data
+            data = self.get_data_object()
             assert isinstance(data.dir, Path)
             assert data.dir == tmp_path / 'c' / 'test_tmp'
             (data.dir / 'c').mkdir()
@@ -202,7 +202,7 @@ def test_continues_data(tmp_path):
             self.run_called = 0
 
         def run(self) -> ContinuesData:
-            data = self._data
+            data = self.get_data_object()
             for i in range(4):
                 new = data.dir / str(i)
                 if not new.exists():
