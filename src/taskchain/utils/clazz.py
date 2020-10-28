@@ -85,3 +85,20 @@ def instancelize_clazz(clazz, args, kwargs):
     cls = import_by_string(clazz)
     obj = cls(*args, **kwargs)
     return obj
+
+
+def find_and_instancelize_clazz(obj):
+    if isinstance(obj, dict) and 'class' in obj:
+        return instancelize_clazz(
+            obj['class'],
+            find_and_instancelize_clazz(obj.get('args', [])),
+            find_and_instancelize_clazz(obj.get('kwargs', {})),
+        )
+
+    if type(obj) is list:
+        return [find_and_instancelize_clazz(i) for i in obj]
+
+    if type(obj) is dict:
+        return {k: find_and_instancelize_clazz(v) for k, v in obj.items()}
+
+    return obj

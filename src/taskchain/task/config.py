@@ -4,7 +4,7 @@ from typing import Union, Dict, Iterable, Any
 
 import yaml
 
-from taskchain.utils.clazz import instancelize_clazz
+from taskchain.utils.clazz import find_and_instancelize_clazz
 from taskchain.utils.data import search_and_replace_placeholders
 
 
@@ -92,11 +92,7 @@ class Config(dict):
             return
         for key, value in self._data.items():
             if isinstance(value, dict) and 'class' in value:
-                obj = instancelize_clazz(
-                    value['class'],
-                    value.get('args', []),
-                    value.get('kwargs', {})
-                )
+                obj = find_and_instancelize_clazz(value)
                 self._data[key] = obj
                 self.objects[key] = obj
 

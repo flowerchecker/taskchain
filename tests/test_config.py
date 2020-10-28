@@ -93,6 +93,12 @@ class MyObject:
         self.b = b
 
 
+class MyObject2:
+    def __init__(self, c, o=None):
+        self.c = c
+        self.o = o
+
+
 def test_config_objects(tmp_path):
 
     data = {
@@ -110,3 +116,30 @@ def test_config_objects(tmp_path):
     assert type(config['my_object']) == MyObject
     assert config['my_object'].a == 7
     assert config['my_object'].b == 13
+
+
+def test_config_complex_objects(tmp_path):
+
+    data = {
+        'my_object': {
+            'class': 'tests.test_config.MyObject2',
+            'args': [5],
+            'kwargs': {'o': {
+                'class': 'tests.test_config.MyObject',
+                'args': [7],
+                'kwargs': {'b': 13},
+            }},
+        }
+    }
+
+    config = Config(tmp_path, data=data, name='config')
+    assert 'my_object' in config
+    assert 'my_object' in config.objects
+    assert config['my_object'] == config.objects['my_object']
+    assert type(config['my_object']) == MyObject2
+    assert config['my_object'].c == 5
+
+    assert type(config['my_object'].o) == MyObject
+    inner_object = config['my_object'].o
+    assert inner_object.a == 7
+    assert inner_object.b == 13

@@ -1,7 +1,7 @@
 from types import ModuleType
 
 from taskchain.task import Task
-from taskchain.utils.clazz import persistent, import_by_string
+from taskchain.utils.clazz import persistent, import_by_string, find_and_instancelize_clazz
 from taskchain.utils.data import traverse, search_and_apply
 
 
@@ -81,3 +81,40 @@ def test_search_and_apply():
     assert s[0]['a'] == 2
     assert s[1] == 10
     assert s[2] == 40
+
+
+class TestObject:
+
+    def __init__(self, a, kwa=None):
+        self.a = a
+        self.kwa = kwa
+
+
+def test_find_and_instancelize_clazz():
+    class_def = {'class': 'tests.test_utils.TestObject', 'args': [1], 'kwargs': {'kwa': 2}}
+    r = find_and_instancelize_clazz(class_def)
+    assert r.a == 1
+    assert r.kwa == 2
+
+    r = find_and_instancelize_clazz([class_def, class_def])
+    assert r[0].a == 1
+    assert r[1].a == 1
+    assert r[0].kwa == 2
+    assert r[1].kwa == 2
+
+    r = find_and_instancelize_clazz({'a': class_def, 'b': class_def})
+    assert r['a'].a == 1
+    assert r['b'].a == 1
+    assert r['a'].kwa == 2
+    assert r['b'].kwa == 2
+
+    class_def2 = {
+        'class': 'tests.test_utils.TestObject',
+        'args': [class_def],
+        'kwargs': {'kwa': class_def}
+    }
+    r = find_and_instancelize_clazz(class_def2)
+    assert r.a.a == 1
+    assert r.kwa.a == 1
+    assert r.a.kwa == 2
+    assert r.kwa.kwa == 2
