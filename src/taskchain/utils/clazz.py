@@ -53,20 +53,22 @@ def inheritors(cls, include_self=True):
 
 def import_by_string(string: str) -> Union[ModuleType, List[type], type]:
     parts = string.split('.')
-    has_wiled_card = '*' in parts[-1]
-    is_class = parts[-1][0].upper() == parts[-1][0]
-    if has_wiled_card or is_class:
-        module = importlib.import_module('.'.join(parts[:-1]))
-        pattern = re.compile(re.sub(r'((?<=([^.]))|^)\*', '.*', parts[-1]))
-    else:
+    try:
         return importlib.import_module('.'.join(parts))
+    except ModuleNotFoundError:
+        pass
+
+    has_wiled_card = '*' in parts[-1]
+    module = importlib.import_module('.'.join(parts[:-1]))
+    pattern = re.compile(re.sub(r'((?<=([^.]))|^)\*', '.*', parts[-1]))
 
     members = []
     for name, member in module.__dict__.items():
-        if pattern.match(name) and not name.startswith('__') and inspect.getmodule(member) == module:
+        if pattern.match(name) and not name.startswith('__'):
             if not has_wiled_card:
                 return member
-            members.append(member)
+            if inspect.getmodule(member) == module:
+                members.append(member)
     return members
 
 

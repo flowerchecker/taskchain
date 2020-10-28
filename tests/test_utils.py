@@ -50,6 +50,14 @@ def test_import_by_string():
     assert any(hasattr(m, '__name__') and m.__name__ == 'A' for m in member)
     assert all(not(hasattr(m, '__name__') and m.__name__ == 'Task') for m in member)
 
+    dd = import_by_string('collections.defaultdict')
+    assert dd(int)['666'] == 0
+    assert dd(dict)['666'] == {}
+
+    T = import_by_string('tests.test_task.Task')
+    assert issubclass(T, Task)
+    assert T.__name__ == 'Task'
+
 
 def test_traverse():
     assert len(list(traverse([]))) == 0
