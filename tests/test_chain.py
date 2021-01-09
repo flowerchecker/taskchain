@@ -1,3 +1,5 @@
+from typing import List
+
 import pytest
 
 from taskchain.task import Config, Chain, Task, MultiChain
@@ -341,3 +343,34 @@ def test_task_inheritance(tmp_path):
     assert chain.a.value == 'a'
     assert chain.b.value == 'b'
     assert chain.c.value == 'c'
+
+
+def test_same_tasks_with_multiple_inputs(tmp_path):
+    class A(Task):
+        class Meta:
+            input_parameters = ['value']
+
+        def run(self) -> int:
+            return self.config['value']
+    config_a1 = Config(tmp_path, name='config_a1', data={'tasks': [A], 'value': 1})
+    config_a2 = Config(tmp_path, name='config_a2', data={'tasks': [A], 'value': 2})
+
+    class B(Task):
+        class Meta:
+            input_tasks = [A]
+
+        def run(self) -> int:
+            return self.input_tasks['a'].value
+    config_b = Config(tmp_path, name='config_b', data={'tasks': [B], 'uses': [config_a1]})
+
+    class C(Task):
+        class Meta:
+            input_tasks = [A, B]
+
+        def run(self) -> List:
+            return [self.input_tasks['a'].value, self.input_tasks['b'].value]
+    config_c = Config(tmp_path, name='config_c', data={'tasks': [C], 'uses': [config_b, config_a2]})
+
+    chain = config_c.chain()
+    _ = config_b.chain().b.value  # compute B using A from a1
+    assert chain.c.value == [2, 1]  # compute C using A from a2
