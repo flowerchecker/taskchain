@@ -143,3 +143,9 @@ def test_config_complex_objects(tmp_path):
     inner_object = config['my_object'].o
     assert inner_object.a == 7
     assert inner_object.b == 13
+
+
+def test_namespace(tmp_path):
+    c = Config(tmp_path, name='test', namespace='ns')
+    assert c.name == 'test'
+    assert c.fullname == 'ns::test'

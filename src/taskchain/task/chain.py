@@ -1,5 +1,6 @@
 import abc
 import logging
+import re
 from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
 
 import networkx as nx
@@ -61,7 +62,11 @@ class Chain(dict):
                 assert config.base_dir == used.base_dir, f'Base dirs of configs `{config}` and `{used}` do not match'
                 used_config = used
             else:
-                used_config = Config(config.base_dir, used, context=config.context)
+                pattern = r'(.*) as (.*)'
+                if matched := re.match(pattern, used):
+                    used_config = Config(config.base_dir, matched[1], namespace=matched[2], context=config.context)
+                else:
+                    used_config = Config(config.base_dir, used, context=config.context)
             self._process_config(used_config)
 
         for task_description in config.get('tasks', []):
@@ -74,16 +79,16 @@ class Chain(dict):
                 raise ValueError(f'Unknown task description `{task_description}` in config `{config}`')
 
     def _create_task(self, task_class: Type[Task], config: Config):
-        if self._task_registry and (task_class.slugname, config.name) in self._task_registry:
-            self.tasks[task_class.slugname] = self._task_registry[task_class.slugname, config.name]
-            return self._task_registry[task_class.slugname, config.name]
+        if self._task_registry and (task_class.slugname, config.fullname) in self._task_registry:
+            self.tasks[task_class.slugname] = self._task_registry[task_class.slugname, config.fullname]
+            return self._task_registry[task_class.slugname, config.fullname]
 
         task = task_class(config)
         for input_param in task.meta.get('input_params', []):
             if input_param not in config:
                 raise ValueError(f'Input parameter `{input_param}` required by task `{task}` is not in its config `{config}`')
         self.tasks[task.slugname] = task
-        self._task_registry[task_class.slugname, config.name] = task
+        self._task_registry[task_class.slugname, config.fullname] = task
         return task
 
     def _process_dependencies(self):
@@ -170,7 +175,7 @@ class MultiChain:
 
     def _prepare(self):
         for config in self._base_configs:
-            self.chains[config.name] = Chain(config, self._tasks)
+            self.chains[config.fullname] = Chain(config, self._tasks)
 
     def __getitem__(self, chain_name: str):
         if chain_name not in self.chains:

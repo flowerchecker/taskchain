@@ -4,7 +4,7 @@ from typing import Union, Dict, Iterable, Any
 
 import yaml
 
-from taskchain.utils.clazz import find_and_instancelize_clazz
+from taskchain.utils.clazz import find_and_instancelize_clazz, persistent
 from taskchain.utils.data import search_and_replace_placeholders
 
 
@@ -14,6 +14,7 @@ class Config(dict):
                  base_dir: Union[Path, str, None],
                  filepath: Union[Path, str] = None,
                  name: str = None,
+                 namespace: str = None,
                  data: Dict = None,
                  context: Union[Any, None] = None,
                  ):
@@ -21,6 +22,7 @@ class Config(dict):
 
         self.base_dir = base_dir
         self.name = None
+        self.namespace = namespace
         self._data = None
         self.context = context
         self.objects = {}
@@ -47,8 +49,14 @@ class Config(dict):
             self.apply_context(context)
         self.prepare_objects()
 
+    @property
+    def fullname(self):
+        if self.namespace is None:
+            return f'{self.name}'
+        return f'{self.namespace}::{self.name}'
+
     def __str__(self):
-        return f'{self.name}'
+        return self.fullname
 
     def __repr__(self):
         return f'<config: {self}>'

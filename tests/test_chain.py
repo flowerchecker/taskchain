@@ -1,3 +1,4 @@
+import json
 from typing import List
 
 import pytest
@@ -374,3 +375,20 @@ def test_same_tasks_with_multiple_inputs(tmp_path):
     chain = config_c.chain()
     _ = config_b.chain().b.value  # compute B using A from a1
     assert chain.c.value == [2, 1]  # compute C using A from a2
+
+
+def test_namespace_in_uses(tmp_path):
+    json.dump(
+        {'tasks': ['tests.tasks.a.A'], 'x': 1},
+        (tmp_path / 'config1.json').open('w')
+    )
+    json.dump(
+        {'uses': [f'{tmp_path}/config1.json as ns'], 'y': 2},
+        (tmp_path / 'config2.json').open('w')
+    )
+
+    config = Config(tmp_path, str(tmp_path / 'config2.json'))
+    chain = config.chain()
+    inner_config = chain['a'].config
+    assert inner_config['x'] == 1
+    assert inner_config.fullname == 'ns::config1'
