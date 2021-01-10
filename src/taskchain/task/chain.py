@@ -57,16 +57,21 @@ class Chain(dict):
 
     def _process_config(self, config: Config):
         self.configs[config.name] = config
-        for used in config.get('uses', []):
-            if isinstance(used, Config):
-                assert config.base_dir == used.base_dir, f'Base dirs of configs `{config}` and `{used}` do not match'
-                used_config = used
+        for use in config.get('uses', []):
+            if isinstance(use, Config):
+                assert config.base_dir == use.base_dir, f'Base dirs of configs `{config}` and `{use}` do not match'
+                used_config = use
             else:
                 pattern = r'(.*) as (.*)'
-                if matched := re.match(pattern, used):
-                    used_config = Config(config.base_dir, matched[1], namespace=matched[2], context=config.context)
+                if matched := re.match(pattern, use):
+                    used_config = Config(
+                        config.base_dir,
+                        filepath=matched[1],
+                        namespace=f'{config.namespace}::{matched[2]}' if config.namespace else matched[2],
+                        context=config.context
+                    )
                 else:
-                    used_config = Config(config.base_dir, used, context=config.context)
+                    used_config = Config(config.base_dir, use, context=config.context)
             self._process_config(used_config)
 
         for task_description in config.get('tasks', []):

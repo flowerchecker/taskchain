@@ -460,3 +460,25 @@ def test_same_tasks_with_multiple_inputs(tmp_path):
         else:
             with pytest.raises(ValueError):
                 _ = config_c.chain()
+
+
+def test_namespace_composition(tmp_path):
+    json.dump(
+        {'tasks': ['tests.tasks.a.A']},
+        (tmp_path / 'config1.json').open('w')
+    )
+    json.dump(
+        {'uses': [f'{tmp_path}/config1.json as ns1']},
+        (tmp_path / 'config2.json').open('w')
+    )
+    json.dump(
+        {'uses': [f'{tmp_path}/config2.json as ns2']},
+        (tmp_path / 'config.json').open('w')
+    )
+
+    config = Config(tmp_path, str(tmp_path / 'config.json'))
+    chain = config.chain()
+    assert len(chain.tasks) == 1
+    assert chain.a.config.namespace == 'ns2::ns1'
+    assert chain['a'].value is False
+    assert chain['ns2::ns1::a'].value is False
