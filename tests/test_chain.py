@@ -371,6 +371,7 @@ def test_namespace_in_uses(tmp_path):
 
     config = Config(tmp_path, str(tmp_path / 'config2.json'))
     chain = config.chain()
+    assert chain['a'] == chain['ns::a']
     inner_config = chain['a'].config
     assert inner_config['x'] == 1
     assert inner_config.fullname == 'ns::config1'
@@ -379,6 +380,7 @@ def test_namespace_in_uses(tmp_path):
 def test_namespace_task_addressing(tmp_path):
     class A(Task):
         class Meta:
+            task_group = 'x'
             input_parameters = ['value']
 
         def run(self) -> int:
@@ -392,7 +394,11 @@ def test_namespace_task_addressing(tmp_path):
     chain = config.chain()
     assert len(chain.tasks) == 2
     assert chain['nsa1::a'].value == 1
+    assert chain['nsa1::x:a'].value == 1
     assert chain['nsa2::a'].value == 2
+    assert chain['nsa2::x:a'].value == 2
+    with pytest.raises(KeyError):
+        _ = chain['a']
 
 
 def test_namespace_example(tmp_path):

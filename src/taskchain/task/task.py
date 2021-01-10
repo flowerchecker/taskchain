@@ -239,16 +239,35 @@ class InputTasks(dict):
             return self.task_list[item]
         if default is not None:
             raise ValueError('Default task is not allowed')
-        return super().get(get_task_full_name(item, self.keys()))
+        return super().get(find_task_full_name(item, self.keys()))
 
     def __contains__(self, item):
-        return super().__contains__(get_task_full_name(item, self.keys()))
+        return super().__contains__(find_task_full_name(item, self.keys()))
 
 
-def get_task_full_name(task_name: str, tasks: Iterable[str]) -> str:
-    tasks = [t for t in tasks if t.split(':')[-1] == task_name or t == task_name]
-    if len(tasks) > 1:
-        raise KeyError(f'Ambiguous task name `{task_name}`. Possible matches: {tasks}')
-    if len(tasks) == 0:
+def find_task_full_name(task_name: str, tasks: Iterable[str]) -> str:
+    def _task_name_match(name, fullname):
+        # remove and check namespaces
+        namespace = '::'.join(name.split('::')[:-1])
+        fullnamespace = '::'.join(fullname.split('::')[:-1])
+        if namespace and fullnamespace != namespace:
+            return False
+        name = name.split('::')[-1]
+        fullname = fullname.split('::')[-1]
+
+        # direct check
+        if fullname == name:
+            return True
+
+        # check without group
+        if ':' in fullname and ':' not in name:
+            return fullname.split(':')[-1] == name
+
+        return False
+
+    matching_tasks = [t for t in tasks if _task_name_match(task_name, t)]
+    if len(matching_tasks) > 1:
+        raise KeyError(f'Ambiguous task name `{task_name}`. Possible matches: {matching_tasks}')
+    if len(matching_tasks) == 0:
         raise KeyError(f'Task `{task_name}` not found')
-    return tasks[0]
+    return matching_tasks[0]

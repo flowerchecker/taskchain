@@ -6,7 +6,7 @@ from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
 import networkx as nx
 
 from taskchain.task.config import Config
-from taskchain.task.task import Task, get_task_full_name, InputTasks
+from taskchain.task.task import Task, find_task_full_name, InputTasks
 from taskchain.utils.clazz import get_classes_by_import_string
 
 
@@ -44,10 +44,10 @@ class Chain(dict):
     def get(self, item, default=None):
         if default is not None:
             raise ValueError('Default task is not allowed')
-        return self.tasks.get(get_task_full_name(item, self.tasks))
+        return self.tasks.get(find_task_full_name(item, self.tasks.keys()))
 
     def __contains__(self, item):
-        return get_task_full_name(item, self.tasks.keys()) in self.tasks
+        return find_task_full_name(item, self.tasks.keys()) in self.tasks
 
     def _prepare(self):
         self._process_config(self._base_config)
