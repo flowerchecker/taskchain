@@ -92,6 +92,7 @@ def test_search_and_apply():
 
 
 class TestObject:
+    __test__ = False
 
     def __init__(self, a, kwa=None):
         self.a = a
