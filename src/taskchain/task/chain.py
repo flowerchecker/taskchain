@@ -79,26 +79,32 @@ class Chain(dict):
                 raise ValueError(f'Unknown task description `{task_description}` in config `{config}`')
 
     def _create_task(self, task_class: Type[Task], config: Config):
-        if self._task_registry and (task_class.slugname, config.fullname) in self._task_registry:
-            self.tasks[task_class.slugname] = self._task_registry[task_class.slugname, config.fullname]
-            return self._task_registry[task_class.slugname, config.fullname]
+        task_name = task_class.fullname(config)
+        if self._task_registry and (task_name, config.fullname) in self._task_registry:
+            self.tasks[task_name] = self._task_registry[task_name, config.fullname]
+            return self._task_registry[task_name, config.fullname]
 
         task = task_class(config)
         for input_param in task.meta.get('input_params', []):
             if input_param not in config:
                 raise ValueError(f'Input parameter `{input_param}` required by task `{task}` is not in its config `{config}`')
-        self.tasks[task.slugname] = task
-        self._task_registry[task_class.slugname, config.fullname] = task
+        if task_name in self.tasks:
+            raise ValueError(f'Conflict of task name `{task_name}` with configs `{self.tasks[task_name].config}` and `{task.config}`')
+        self.tasks[task_name] = task
+        self._task_registry[task_name, config.fullname] = task
         return task
 
     def _process_dependencies(self):
         for task_name, task in self.tasks.items():
             input_tasks = InputTasks()
             for input_task in task.meta.get('input_tasks', []):
-                if type(input_task) is not str:
+                if type(input_task) is str:
+                    if '::' not in input_task and task.config.namespace:
+                        input_task = f'{task.config.namespace}::{input_task}'
+                else:
                     for n, t in self.tasks.items():
                         if t.__class__ == input_task:
-                            input_task = t.slugname
+                            input_task = t.fullname
                             break
                 if input_task not in self.tasks:
                     raise ValueError(f'Input task `{input_task}` of task `{task}` not found')

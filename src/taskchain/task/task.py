@@ -38,6 +38,11 @@ class MetaTask(type):
             return f'{cls.group}:{name}'
         return name
 
+    def fullname(cls, config) -> str:
+        if config is None or config.namespace is None:
+            return cls.slugname
+        return f'{config.namespace}::{cls.slugname}'
+
     @property
     def data_type(cls) -> Type[Union[Data, Any]]:
         return_data_type = get_type_hints(cls.run).get('return')
@@ -109,6 +114,7 @@ class Task(object, metaclass=MetaTask):
         self.meta = self.__class__.meta
         self.group = self.__class__.group
         self.slugname = self.__class__.slugname
+        self.fullname = self.__class__.fullname(config)
         self.data_class = self.__class__.data_class
         self.data_type = self.__class__.data_type
 

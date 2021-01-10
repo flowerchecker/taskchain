@@ -201,3 +201,14 @@ def test_run_fail(tmp_path):
     with pytest.raises(ValueError):
         _ = a.value
     assert a.run_called == 2
+
+
+def test_namespace(tmp_path):
+    class A(Task):
+        def run(self) -> int:
+            return 0
+
+    config = Config(tmp_path, name='config', namespace='ns', data={'tasks': [A]})
+    a = A(config)
+    assert a.slugname == 'a'
+    assert a.fullname == 'ns::a'

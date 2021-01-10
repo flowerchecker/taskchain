@@ -346,35 +346,17 @@ def test_task_inheritance(tmp_path):
     assert chain.c.value == 'c'
 
 
-def test_same_tasks_with_multiple_inputs(tmp_path):
-    class A(Task):
-        class Meta:
-            input_parameters = ['value']
+def test_task_dependencies_in_namespace(tmp_path):
+    config_data = {
+        'tasks': [
+            'tests.tasks.b.*',
+        ]
+    }
+    config = Config(tmp_path, name='config', data=config_data, namespace='x')
+    chain = Chain(config)
 
-        def run(self) -> int:
-            return self.config['value']
-    config_a1 = Config(tmp_path, name='config_a1', data={'tasks': [A], 'value': 1})
-    config_a2 = Config(tmp_path, name='config_a2', data={'tasks': [A], 'value': 2})
-
-    class B(Task):
-        class Meta:
-            input_tasks = [A]
-
-        def run(self) -> int:
-            return self.input_tasks['a'].value
-    config_b = Config(tmp_path, name='config_b', data={'tasks': [B], 'uses': [config_a1]})
-
-    class C(Task):
-        class Meta:
-            input_tasks = [A, B]
-
-        def run(self) -> List:
-            return [self.input_tasks['a'].value, self.input_tasks['b'].value]
-    config_c = Config(tmp_path, name='config_c', data={'tasks': [C], 'uses': [config_b, config_a2]})
-
-    chain = config_c.chain()
-    _ = config_b.chain().b.value  # compute B using A from a1
-    assert chain.c.value == [2, 1]  # compute C using A from a2
+    assert len(chain.graph.nodes) == 3
+    assert len(chain.graph.edges) == 2
 
 
 def test_namespace_in_uses(tmp_path):
@@ -392,3 +374,89 @@ def test_namespace_in_uses(tmp_path):
     inner_config = chain['a'].config
     assert inner_config['x'] == 1
     assert inner_config.fullname == 'ns::config1'
+
+
+def test_namespace_task_addressing(tmp_path):
+    class A(Task):
+        class Meta:
+            input_parameters = ['value']
+
+        def run(self) -> int:
+            return self.config['value']
+
+    config_a1 = Config(tmp_path, name='config_a1', namespace='nsa1', data={'tasks': [A], 'value': 1})
+    config_a2 = Config(tmp_path, name='config_a2', namespace='nsa2', data={'tasks': [A], 'value': 2})
+
+    config = Config(tmp_path, name='config_a1', data={'uses': [config_a1, config_a2]})
+
+    chain = config.chain()
+    assert len(chain.tasks) == 2
+    assert chain['nsa1::a'].value == 1
+    assert chain['nsa2::a'].value == 2
+
+
+def test_namespace_example(tmp_path):
+    class Dataset(Task):
+        class Meta:
+            input_parameters = ['size']
+
+        def run(self) -> List:
+            return list(range(self.config['size']))
+
+    class Train(Task):
+        class Meta:
+            input_tasks = ['train::dataset', 'valid::dataset']
+
+        def run(self) -> List:
+            return [sum(self.input_tasks['train::dataset'].value), sum(self.input_tasks['valid::dataset'].value)]
+
+    train_config = Config(tmp_path, name='train_ds', namespace='train', data={'tasks': [Dataset], 'size': 100})
+    valid_config = Config(tmp_path, name='valid_ds', namespace='valid', data={'tasks': [Dataset], 'size': 10})
+    test_config = Config(tmp_path, name='test_ds', namespace='test', data={'tasks': [Dataset], 'size': 20})
+
+    config = Config(tmp_path, name='config', data={'tasks': [Train], 'uses': [train_config, valid_config, test_config]})
+
+    chain = config.chain()
+    assert len(chain.tasks) == 4
+    assert len(chain['train::dataset'].value) == 100
+    assert len(chain['test::dataset'].value) == 20
+    assert len(chain['valid::dataset'].value) == 10
+
+    assert chain['train'].value == [99 * 50, 9 * 5]
+
+
+def test_same_tasks_with_multiple_inputs(tmp_path):
+    class A(Task):
+        class Meta:
+            input_parameters = ['value']
+
+        def run(self) -> int:
+            return self.config['value']
+
+    class B(Task):
+        class Meta:
+            input_tasks = [A]
+
+        def run(self) -> int:
+            return self.input_tasks['a'].value
+
+    class C(Task):
+        class Meta:
+            input_tasks = ['a1::a', 'a2::a', B]
+
+        def run(self) -> List:
+            return [self.input_tasks['a2::a'].value, self.input_tasks['a1::a'].value, self.input_tasks['b'].value]
+
+    for namespace in [False, True]:
+        config_a1 = Config(tmp_path, name='config_a1', data={'tasks': [A], 'value': 1}, namespace='a1' if namespace else None)
+        config_a2 = Config(tmp_path, name='config_a2', data={'tasks': [A], 'value': 2}, namespace='a2' if namespace else None)
+        config_b = Config(tmp_path, name='config_b', data={'tasks': [B], 'uses': [config_a1]})
+        config_c = Config(tmp_path, name='config_c', data={'tasks': [C], 'uses': [config_a2, config_b]})
+
+        if namespace:
+            chain = config_c.chain()
+            _ = config_b.chain().b.value  # compute B using A from a1
+            assert chain.c.value == [2, 1, 1]  # compute C using A from a2
+        else:
+            with pytest.raises(ValueError):
+                _ = config_c.chain()
