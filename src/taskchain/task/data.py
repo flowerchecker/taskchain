@@ -268,5 +268,6 @@ class ContinuesData(Data):
         return self._value
 
     def finished(self):
+        shutil.rmtree(str(self.path), ignore_errors=True)
         shutil.move(str(self.tmp_path), str(self.path))
         self._value = self._dir = self.path
