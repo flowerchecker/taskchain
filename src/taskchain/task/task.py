@@ -172,6 +172,7 @@ class Task(object, metaclass=MetaTask):
     def force(self):
         self._forced = True
         self._data = None
+        return self
 
     def stop_forcing(self):
         self._forced = False
