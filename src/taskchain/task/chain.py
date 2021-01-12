@@ -103,14 +103,13 @@ class Chain(dict):
         for task_name, task in self.tasks.items():
             input_tasks = InputTasks()
             for input_task in task.meta.get('input_tasks', []):
-                if type(input_task) is str:
-                    if '::' not in input_task and task.config.namespace:
-                        input_task = f'{task.config.namespace}::{input_task}'
-                else:
+                if type(input_task) is not str:
                     for n, t in self.tasks.items():
                         if t.__class__ == input_task:
                             input_task = t.fullname
                             break
+                if type(input_task) is str and '::' not in input_task and task.config.namespace:
+                    input_task = f'{task.config.namespace}::{input_task}'
                 if input_task not in self.tasks:
                     raise ValueError(f'Input task `{input_task}` of task `{task}` not found')
                 input_tasks[input_task] = self.tasks[input_task]
