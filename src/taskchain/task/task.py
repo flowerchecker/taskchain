@@ -158,7 +158,7 @@ class Task(object, metaclass=MetaTask):
         return self.data.value
 
     def __str__(self):
-        return self.slugname
+        return self.fullname
 
     def __repr__(self):
         return f'<task: {self}>'
