@@ -9,7 +9,7 @@ from typing import Union, Any, get_type_hints, Type, Dict, Iterable
 
 from taskchain.task.config import Config
 from taskchain.task.data import Data, DirData
-from taskchain.utils.clazz import persistent, Meta, inheritors
+from taskchain.utils.clazz import persistent, Meta, inheritors, isinstance
 
 
 logger = logging.getLogger('tasks_chain')

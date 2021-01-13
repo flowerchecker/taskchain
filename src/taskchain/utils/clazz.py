@@ -51,6 +51,52 @@ def inheritors(cls, include_self=True):
     return subclasses
 
 
+def fullname(clazz):
+    """
+    Return fully qualified name of the given class.
+
+    >>> from collections import Counter
+    >>> fullname(Counter)
+    'collections.Counter'
+    """
+    return f'{clazz.__module__}.{clazz.__name__}'
+
+
+def issubclass(clazz, superclazz):
+    """
+    Check whether one class is subclass of the other.
+
+    >>> class SuperClass:
+    ...     pass
+    >>> class SubClass(SuperClass):
+    ...     pass
+    >>> class SubSubClass(SubClass):
+    ...     pass
+    >>> import collections
+
+    >>> issubclass(SuperClass, SubClass)
+    False
+    >>> issubclass(SubClass, SuperClass)
+    True
+    >>> issubclass(SubSubClass, SuperClass)
+    True
+    >>> issubclass(dict, collections.defaultdict)
+    False
+    >>> issubclass(collections.defaultdict, dict)
+    True
+    >>> issubclass(collections.defaultdict, 'builtins.dict')
+    True
+    """
+    # HACK: fix autoreload in jupyter notebooks
+    superclazz_name = superclazz if type(superclazz) == str else fullname(superclazz)
+    return any(superclazz_name == fullname(c) for c in clazz.__mro__)
+
+
+def isinstance(obj, clazz):
+    # HACK: fix autoreload in jupyter notebooks
+    return issubclass(obj.__class__, clazz)
+
+
 def import_by_string(string: str) -> Union[ModuleType, List[type], type]:
     parts = string.split('.')
     try:
