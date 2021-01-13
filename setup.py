@@ -27,5 +27,7 @@ setuptools.setup(
         'pyyaml',
         'networkx',
         'seaborn',
-    ]
+    ],
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
 )
