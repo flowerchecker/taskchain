@@ -448,21 +448,21 @@ def test_same_tasks_with_multiple_inputs(tmp_path):
 
     class C(Task):
         class Meta:
-            input_tasks = ['a1::a', 'a2::a', B]
+            input_tasks = ['nsb::a', 'a2::a', 'nsb::b']
 
         def run(self) -> List:
-            return [self.input_tasks['a2::a'].value, self.input_tasks['a1::a'].value, self.input_tasks['b'].value]
+            return [self.input_tasks['a2::a'].value, self.input_tasks['nsb::a'].value, self.input_tasks['b'].value]
 
     for namespace in [False, True]:
-        config_a1 = Config(tmp_path, name='config_a1', data={'tasks': [A], 'value': 1}, namespace='a1' if namespace else None)
+        config_a1 = Config(tmp_path, name='config_a1', data={'tasks': [A], 'value': 1})
         config_a2 = Config(tmp_path, name='config_a2', data={'tasks': [A], 'value': 2}, namespace='a2' if namespace else None)
-        config_b = Config(tmp_path, name='config_b', data={'tasks': [B], 'uses': [config_a1]})
+
+        config_b = Config(tmp_path, name='config_b', data={'tasks': [B], 'uses': [config_a1]}, namespace='nsb' if namespace else None)
         config_c = Config(tmp_path, name='config_c', data={'tasks': [C], 'uses': [config_a2, config_b]})
 
         if namespace:
             chain = config_c.chain()
-            _ = config_b.chain().b.value  # compute B using A from a1
-            assert chain.c.value == [2, 1, 1]  # compute C using A from a2
+            assert chain.c.value == [2, 1, 1]
         else:
             with pytest.raises(ValueError):
                 _ = config_c.chain()
@@ -488,3 +488,84 @@ def test_namespace_composition(tmp_path):
     assert chain.a.config.namespace == 'ns2::ns1'
     assert chain['a'].value is False
     assert chain['ns2::ns1::a'].value is False
+
+
+def test_namespaces_and_multiple_tasks(tmp_path):
+    class XA(Task): 
+        def run(self) -> int:
+            return self.config['value']
+
+    class XB(Task):
+        class Meta:
+            task_group = 'g'
+            input_tasks = [XA]
+
+        def run(self) -> int:
+            return self.input_tasks['x_a'].value
+
+    class Y(Task):
+        class Meta:
+            input_tasks = [XB]
+
+        def run(self) -> int:
+            return self.input_tasks['x_b'].value
+
+    class Z(Task):
+        class Meta:
+            input_tasks = ['ns::g:x_b', Y]
+
+        def run(self) -> List:
+            return [self.input_tasks['ns::g:x_b'].value, self.input_tasks['y'].value]
+
+    config_x1 = Config(tmp_path, name='config_x1', data={'tasks': [XA, XB], 'value': 1})
+    config_y = Config(tmp_path, name='config_y', data={'tasks': [Y], 'uses': [config_x1]})
+
+    config_x2 = Config(tmp_path, name='config_x2', data={'tasks': [XA, XB], 'value': 2}, namespace='ns')
+    config_z1 = Config(tmp_path, name='config_z1', data={'tasks': [Z], 'uses': [config_x2, config_y]})
+    config_z2 = Config(tmp_path, name='config_z2', data={'tasks': [Z], 'uses': [config_y, config_x2]})
+
+    for config in [config_z1, config_z2]:
+        chain = config.chain()
+        assert chain.z.value == [2, 1]
+
+
+def test_chained_namespaces(tmp_path):
+    class XA(Task):
+        def run(self) -> int:
+            return self.config['value']
+
+    class XB(Task):
+        class Meta:
+            task_group = 'g'
+            input_tasks = [XA]
+
+        def run(self) -> int:
+            return self.input_tasks['x_a'].value
+
+    class Y(Task):
+        class Meta:
+            input_tasks = ['x::g:x_b']
+
+        def run(self) -> int:
+            return self.input_tasks['x_b'].value
+
+    class Z(Task):
+        class Meta:
+            input_tasks = ['y::y']
+
+        def run(self) -> int:
+            return self.input_tasks['y'].value
+
+    config_x = Config(tmp_path, name='config_x', data={'tasks': [XA, XB], 'value': 1}, namespace='x')
+    config_y = Config(tmp_path, name='config_y', data={'tasks': [Y], 'uses': [config_x]}, namespace='y')
+    config_z = Config(tmp_path, name='config_z', data={'tasks': [Z], 'uses': [config_y]})
+
+    chain = config_z.chain()
+    assert chain.z.value == 1
+    assert chain['x_a'].value == 1
+    assert chain['y::x::x_a'].value == 1
+    assert chain['y::x::x_b'].value == 1
+    assert chain['y::x::g:x_b'].value == 1
+    assert chain['x_b'].value == 1
+    assert chain['g:x_b'].value == 1
+

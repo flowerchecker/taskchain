@@ -60,6 +60,11 @@ class Chain(dict):
         for use in config.get('uses', []):
             if isinstance(use, Config):
                 assert config.base_dir == use.base_dir, f'Base dirs of configs `{config}` and `{use}` do not match'
+                if config.namespace:
+                    if use.namespace:
+                        use.namespace = f'{config.namespace}::{use.namespace}'
+                    else:
+                        use.namespace = config.namespace
                 used_config = use
             else:
                 pattern = r'(.*) as (.*)'
@@ -103,13 +108,10 @@ class Chain(dict):
         for task_name, task in self.tasks.items():
             input_tasks = InputTasks()
             for input_task in task.meta.get('input_tasks', []):
-                if type(input_task) is not str:
-                    for n, t in self.tasks.items():
-                        if t.__class__ == input_task:
-                            input_task = t.fullname
-                            break
-                if type(input_task) is str and '::' not in input_task and task.config.namespace:
-                    input_task = f'{task.config.namespace}::{input_task}'
+                if type(input_task) is not str:     # for reference by class
+                    input_task = input_task.slugname
+                if type(input_task) is str and task.config.namespace and not input_task.startswith(task.config.namespace):
+                    input_task = f'{task.config.namespace}::{input_task}'     # add current config to reference
                 if input_task not in self.tasks:
                     raise ValueError(f'Input task `{input_task}` of task `{task}` not found')
                 input_tasks[input_task] = self.tasks[input_task]
