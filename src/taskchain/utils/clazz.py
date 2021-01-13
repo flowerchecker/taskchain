@@ -59,7 +59,8 @@ def fullname(clazz):
     >>> fullname(Counter)
     'collections.Counter'
     """
-    return f'{clazz.__module__}.{clazz.__name__}'
+    clazz_name = clazz.__name__ if hasattr(clazz, '__name__') else clazz._name
+    return f'{clazz.__module__}.{clazz_name}'
 
 
 def issubclass(clazz, superclazz):

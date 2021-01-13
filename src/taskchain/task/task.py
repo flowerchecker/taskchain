@@ -9,7 +9,7 @@ from typing import Union, Any, get_type_hints, Type, Dict, Iterable
 
 from taskchain.task.config import Config
 from taskchain.task.data import Data, DirData
-from taskchain.utils.clazz import persistent, Meta, inheritors, isinstance
+from taskchain.utils.clazz import persistent, Meta, inheritors, isinstance as custom_isinstance
 
 
 logger = logging.getLogger('tasks_chain')
@@ -198,7 +198,7 @@ class Task(object, metaclass=MetaTask):
         if isclass(self.data_type) and issubclass(self.data_type, Data) and isinstance(run_result, self.data_type):
             self._data = run_result
             self._init_persistence()
-        elif isinstance(run_result, self.data_type):
+        elif isinstance(run_result, self.data_type) or custom_isinstance(run_result, self.data_type):
             self._data.set_value(run_result)
         else:
             raise ValueError(f'Invalid result data type: {type(run_result)} instead of {self.data_type}')
