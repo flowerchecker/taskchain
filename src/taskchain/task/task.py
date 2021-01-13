@@ -169,6 +169,10 @@ class Task(object, metaclass=MetaTask):
         path = self.config.base_dir / self.slugname.replace(':', '/')
         return path
 
+    def reset_data(self):
+        self._data = None
+        return self
+
     def force(self):
         self._forced = True
         self._data = None
