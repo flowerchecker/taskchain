@@ -112,7 +112,9 @@ class Chain(dict):
                     input_task = input_task.slugname
                 if type(input_task) is str and task.config.namespace and not input_task.startswith(task.config.namespace):
                     input_task = f'{task.config.namespace}::{input_task}'     # add current config to reference
-                if input_task not in self.tasks:
+                try:
+                    input_task = find_task_full_name(input_task, self.tasks, determine_namespace=False)
+                except KeyError:
                     raise ValueError(f'Input task `{input_task}` of task `{task}` not found')
                 input_tasks[input_task] = self.tasks[input_task]
             task.set_input_tasks(input_tasks)

@@ -544,7 +544,7 @@ def test_chained_namespaces(tmp_path):
 
     class Y(Task):
         class Meta:
-            input_tasks = ['x::g:x_b']
+            input_tasks = ['x::x_b']
 
         def run(self) -> int:
             return self.input_tasks['x_b'].value

@@ -250,12 +250,12 @@ class InputTasks(dict):
         return super().__contains__(find_task_full_name(item, self.keys()))
 
 
-def find_task_full_name(task_name: str, tasks: Iterable[str]) -> str:
+def find_task_full_name(task_name: str, tasks: Iterable[str], determine_namespace: bool = True) -> str:
     def _task_name_match(name, fullname):
         # remove and check namespaces
         namespace = '::'.join(name.split('::')[:-1])
         fullnamespace = '::'.join(fullname.split('::')[:-1])
-        if namespace and fullnamespace != namespace:
+        if (namespace or not determine_namespace) and fullnamespace != namespace:
             return False
         name = name.split('::')[-1]
         fullname = fullname.split('::')[-1]
