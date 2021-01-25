@@ -1,13 +1,13 @@
-import abc
-import json
-import pickle
-import shutil
 from pathlib import Path
 from typing import Any, List, Dict, Generator, Union
-
-import pylab
+import abc
+import h5py
+import json
 import numpy as np
 import pandas as pd
+import pickle
+import pylab
+import shutil
 
 
 class Data:
@@ -271,3 +271,23 @@ class ContinuesData(Data):
         shutil.rmtree(str(self.path), ignore_errors=True)
         shutil.move(str(self.tmp_path), str(self.path))
         self._value = self._dir = self.path
+
+
+class H5Data(ContinuesData):
+
+    def append_data(self, dataset, data: np.ndarray, dataset_len=None):
+        len_before = dataset.len() if dataset_len is None else dataset_len
+        dataset.resize(len_before + data.shape[0], axis=0)
+        dataset[len_before:] = data
+
+    def data_file(self, mode=None):
+        return h5py.File(self.dir / 'data.h5', 'a' if mode is None else 'r')
+
+    def dataset(self, name, data_file=None, maxshape=None, dtype=None):
+        if data_file is None:
+            data_file = self.data_file()
+        try:
+            return data_file[name]
+        except:
+            shape = tuple([0] + list(maxshape[1:]))
+            return data_file.create_dataset(name, shape=shape, maxshape=maxshape)
