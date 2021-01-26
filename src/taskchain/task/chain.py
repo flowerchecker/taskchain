@@ -33,6 +33,11 @@ class Chain(dict):
         self._prepare()
 
     def __str__(self):
+        a = max(len(n.split(":")[-1]) for n in self.tasks)
+        b = max(len(n) for n in self.tasks)
+        return '\n'.join(f'{n.split(":")[-1]:<{a}}  {n:<{b}}  {t.config}' for n, t in self.tasks.items())
+
+    def __repr__(self):
         return f'<chain for config `{self._base_config}`>'
 
     def __getitem__(self, item):
