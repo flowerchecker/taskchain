@@ -1,4 +1,5 @@
 import abc
+import functools
 import json
 import logging
 import sys
@@ -160,16 +161,26 @@ class CacheException(Exception):
     pass
 
 
-def cached(cache_object=None, key=None, cache_attr='cache'):
-    def _cached(method):
-        def _method(self, *args, **kwargs):
-            if cache_object is None:
-                assert hasattr(self, cache_attr), 'Missing cache argument'
-                cache = self.cache
-            else:
-                cache = cache_object
+class cached:
 
-            if key is None:
+    def __init__(self, cache_object=None, key=None, cache_attr='cache'):
+        if callable(cache_object):
+            self.method = cache_object
+            cache_object = None
+        self.cache_object = cache_object
+        self.key = key
+        self.cache_attr = cache_attr
+
+    def __call__(self, method):
+        def decorated(obj, *args, **kwargs):
+            print(args, kwargs, self.cache_attr)
+            if self.cache_object is None:
+                assert hasattr(obj, self.cache_attr), 'Missing cache argument'
+                cache = getattr(obj, self.cache_attr)
+            else:
+                cache = self.cache_object
+
+            if self.key is None:
                 for i, (arg, parameter) in enumerate(signature(method).parameters.items()):
                     if i == 0:
                         # skip self
@@ -181,8 +192,10 @@ def cached(cache_object=None, key=None, cache_attr='cache'):
                 args = []
                 cache_key = json.dumps(kwargs, sort_keys=True)
             else:
-                cache_key = key(*args, **kwargs)
+                cache_key = self.key(*args, **kwargs)
 
-            return cache.get_or_compute(cache_key, lambda: method(self, *args, **kwargs))
-        return _method
-    return _cached
+            return cache.get_or_compute(cache_key, lambda: method(obj, *args, **kwargs))
+        return decorated
+
+    def __get__(self, instance, instancetype):
+        return functools.partial(self(self.method), instance)

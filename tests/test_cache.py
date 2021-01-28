@@ -13,7 +13,7 @@ def test_cache_decorator():
         def __init__(self):
             self.cache = InMemoryCache()
 
-        @cached()
+        @cached
         def cached_method(self, parameter_1, parameter_2, key_parameter_1=10, key_parameter_2=20):
             return parameter_1 + parameter_2 + key_parameter_1 + key_parameter_2
 
