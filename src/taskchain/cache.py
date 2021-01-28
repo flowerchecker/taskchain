@@ -173,7 +173,6 @@ class cached:
 
     def __call__(self, method):
         def decorated(obj, *args, **kwargs):
-            print(args, kwargs, self.cache_attr)
             if self.cache_object is None:
                 assert hasattr(obj, self.cache_attr), 'Missing cache argument'
                 cache = getattr(obj, self.cache_attr)
