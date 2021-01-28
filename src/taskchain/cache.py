@@ -160,10 +160,14 @@ class CacheException(Exception):
     pass
 
 
-def cached(key=None, cache_attr='cache'):
+def cached(cache_object=None, key=None, cache_attr='cache'):
     def _cached(method):
         def _method(self, *args, **kwargs):
-            assert hasattr(self, cache_attr), 'Missing cache argument'
+            if cache_object is None:
+                assert hasattr(self, cache_attr), 'Missing cache argument'
+                cache = self.cache
+            else:
+                cache = cache_object
 
             if key is None:
                 for i, (arg, parameter) in enumerate(signature(method).parameters.items()):
@@ -179,6 +183,6 @@ def cached(key=None, cache_attr='cache'):
             else:
                 cache_key = key(*args, **kwargs)
 
-            return self.cache.get_or_compute(cache_key, lambda: method(self, *args, **kwargs))
+            return cache.get_or_compute(cache_key, lambda: method(self, *args, **kwargs))
         return _method
     return _cached

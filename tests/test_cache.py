@@ -5,32 +5,49 @@ import pytest
 from taskchain.cache import InMemoryCache, cached, NumpyArrayCache, JsonCache, DataFrameCache
 
 
-class CachedClass:
-    def __init__(self):
-        self.cache = InMemoryCache()
-
-    @cached()
-    def cached_method(self, parameter_1, parameter_2, key_parameter_1=10, key_parameter_2=20):
-        return parameter_1 + parameter_2 + key_parameter_1 + key_parameter_2
-
-
 def test_cache_decorator():
+    external_cache = InMemoryCache()
+    external_cache2 = InMemoryCache()
+
+    class CachedClass:
+        def __init__(self):
+            self.cache = InMemoryCache()
+
+        @cached()
+        def cached_method(self, parameter_1, parameter_2, key_parameter_1=10, key_parameter_2=20):
+            return parameter_1 + parameter_2 + key_parameter_1 + key_parameter_2
+
+        @cached(external_cache)
+        def cached_method2(self, parameter_1, parameter_2, key_parameter_1=10, key_parameter_2=20):
+            return parameter_1 + parameter_2 + key_parameter_1 + key_parameter_2
+
+        @cached(external_cache2)
+        def cached_method3(self, parameter_1, parameter_2, key_parameter_1=10, key_parameter_2=20):
+            return parameter_1 + parameter_2 + key_parameter_1 + key_parameter_2
+
     obj = CachedClass()
-    assert obj.cached_method(1, 2) == 33
-    memory = next(iter(obj.cache._memory.values()))
-    assert len(memory) == 1
 
-    assert obj.cached_method(1, 2) == 33
-    assert len(memory) == 1
+    for cache, method in [
+        (obj.cache, obj.cached_method),
+        (external_cache, obj.cached_method2),
+        (external_cache2, obj.cached_method3),
+    ]:
+        assert len(cache._memory) == 0
+        assert method(1, 2) == 33
+        memory = next(iter(cache._memory.values()))
+        assert len(memory) == 1
 
-    assert obj.cached_method(1, 2, 10, 20) == 33
-    assert len(memory) == 1
+        assert method(1, 2) == 33
+        assert len(memory) == 1
 
-    assert obj.cached_method(1, 2, 10, parameter_2=20) == 33
-    assert len(memory) == 1
+        assert method(1, 2, 10, 20) == 33
+        assert len(memory) == 1
 
-    assert obj.cached_method(1, 2, 20, 10) == 33
-    assert len(memory) == 2
+        assert method(1, 2, 10, parameter_2=20) == 33
+        assert len(memory) == 1
+
+        assert method(1, 2, 20, 10) == 33
+        assert len(memory) == 2
 
 
 @pytest.mark.parametrize('cache_class,value,test', [
