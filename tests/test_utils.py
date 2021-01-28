@@ -1,7 +1,9 @@
 from types import ModuleType
 
+import pytest
+
 from taskchain.task import Task
-from taskchain.utils.clazz import persistent, import_by_string, find_and_instancelize_clazz
+from taskchain.utils.clazz import persistent, import_by_string, find_and_instancelize_clazz, repeat_on_error
 from taskchain.utils.data import traverse, search_and_apply
 
 
@@ -127,3 +129,36 @@ def test_find_and_instancelize_clazz():
     assert r.kwa.a == 1
     assert r.a.kwa == 2
     assert r.kwa.kwa == 2
+
+
+def test_repeat_call():
+
+    class Clazz:
+
+        def __init__(self):
+            self.calls = 0
+
+        @repeat_on_error(waiting_time=0)
+        def method(self, errors, kw=7):
+            self.calls += 1
+            if self.calls > errors:
+                return kw
+            raise Exception
+
+    c = Clazz()
+    assert c.method(0, 8) == 8
+    assert c.calls == 1
+    c.calls = 0
+    assert c.method(5) == 7
+    assert c.calls == 6
+    c.calls = 0
+    assert c.method(9) == 7
+    assert c.calls == 10
+    c.calls = 0
+    with pytest.raises(Exception):
+        c.method(10)
+    assert c.calls == 10
+    c.calls = 0
+    with pytest.raises(Exception):
+        print(c.method(11))
+    assert c.calls == 10

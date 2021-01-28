@@ -2,6 +2,7 @@ import functools
 import importlib
 import inspect
 import re
+from time import sleep
 from types import ModuleType
 from typing import Union, List, Type
 
@@ -38,6 +39,33 @@ class persistent:
 
     def __get__(self, instance, instancetype):
         return functools.partial(self.__call__, instance)
+
+
+class repeat_on_error:
+
+    def __init__(self, retries=10, waiting_time=1, wait_extension=1):
+        if callable(retries):
+            self.method = retries
+            retries = 10
+        self.retries = retries
+        self.waiting_time = waiting_time
+        self.wait_extension = wait_extension
+
+    def __call__(self, method):
+        def decorated(*args, **kwargs):
+            for i in range(self.retries):
+                try:
+                    return method(*args, **kwargs)
+                except Exception as error:
+                    if i + 1 == self.retries:
+                        raise error
+                    sleep(self.waiting_time)
+                    self.waiting_time *= self.wait_extension
+            assert False
+        return decorated
+
+    def __get__(self, instance, instancetype):
+        return functools.partial(self(self.method), instance)
 
 
 def inheritors(cls, include_self=True):
