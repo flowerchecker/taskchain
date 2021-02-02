@@ -87,6 +87,8 @@ class Chain(dict):
         for task_description in config.get('tasks', []):
             if type(task_description) is str:
                 for task_class in get_classes_by_import_string(task_description, Task):
+                    if task_class.meta.get('abstract', False):
+                        continue
                     self._create_task(task_class, config)
             elif issubclass(task_description, Task):
                 self._create_task(task_description, config)
