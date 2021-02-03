@@ -187,6 +187,8 @@ class Chain(dict):
 
 class MultiChain:
 
+    logger = logging.getLogger('tasks_chain')
+
     def __init__(self, configs: Sequence[Config]):
         self._tasks: Dict[Tuple[str, str], Task] = {}
         self.chains: Dict[str, Chain] = {}
@@ -206,3 +208,24 @@ class MultiChain:
     def force(self, tasks: Union[str, Iterable[Union[str, Task]]]):
         for chain in self.chains.values():
             chain.force(tasks)
+
+    def latest(self, chain_name: str=None):
+        for fullname, chain in sorted(self.chains.items(), reverse=True):
+            if chain_name is None or chain_name in fullname:
+                return chain
+
+    def items(self):
+        yield from sorted(self.chains.items())
+
+    def keys(self):
+        yield from sorted(self.chains.keys())
+
+    def values(self):
+        for _, val in sorted(self.chains.items()):
+            yield val
+
+    def __repr__(self):
+        return 'multichain:\n - ' + '\n - '.join(map(repr, self.values()))
+
+    def __str__(self):
+        return '\n'.join(fullname for fullname in self.keys())
