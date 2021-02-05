@@ -70,3 +70,28 @@ def test_cache(tmp_path, cache_class, value, test):
     assert example.counter == 1
     assert test(cache.get_or_compute('key', example.fce))
     assert example.counter == 1
+
+
+def test_cache_decorator_ignore_params():
+    class CachedClass:
+        def __init__(self):
+            self.cache = InMemoryCache()
+
+        @cached(ignore_params=['parameter_2', 'key_parameter_2'])
+        def cached_method(self, parameter_1, parameter_2, key_parameter_1=10, key_parameter_2=20):
+            return parameter_1 + key_parameter_1
+
+    obj = CachedClass()
+
+    assert len(obj.cache._memory) == 0
+    assert obj.cached_method(1, 2) == 11
+    memory = next(iter(obj.cache._memory.values()))
+    assert len(memory) == 1
+
+    assert obj.cached_method(1, 666) == 11
+    memory = next(iter(obj.cache._memory.values()))
+    assert len(memory) == 1
+
+    assert obj.cached_method(1, 666, key_parameter_2=123) == 11
+    memory = next(iter(obj.cache._memory.values()))
+    assert len(memory) == 1

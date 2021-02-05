@@ -163,13 +163,14 @@ class CacheException(Exception):
 
 class cached:
 
-    def __init__(self, cache_object=None, key=None, cache_attr='cache'):
+    def __init__(self, cache_object=None, key=None, cache_attr='cache', ignore_params=None):
         if callable(cache_object):
             self.method = cache_object
             cache_object = None
         self.cache_object = cache_object
         self.key = key
         self.cache_attr = cache_attr
+        self.ignore_params = ignore_params if ignore_params else []
 
     def __call__(self, method):
         def decorated(obj, *args, **kwargs):
@@ -189,7 +190,8 @@ class cached:
                     if parameter.default != Parameter.empty and arg not in kwargs:
                         kwargs[arg] = parameter.default
                 args = []
-                cache_key = json.dumps(kwargs, sort_keys=True)
+                key_kwargs = {k: v for k, v in kwargs.items() if k not in self.ignore_params}
+                cache_key = json.dumps(key_kwargs, sort_keys=True)
             else:
                 cache_key = self.key(*args, **kwargs)
 
