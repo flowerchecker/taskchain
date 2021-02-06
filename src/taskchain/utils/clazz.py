@@ -53,14 +53,15 @@ class repeat_on_error:
 
     def __call__(self, method):
         def decorated(*args, **kwargs):
+            waiting_time = self.waiting_time
             for i in range(self.retries):
                 try:
                     return method(*args, **kwargs)
                 except Exception as error:
                     if i + 1 == self.retries:
                         raise error
-                    sleep(self.waiting_time)
-                    self.waiting_time *= self.wait_extension
+                    sleep(waiting_time)
+                    waiting_time *= self.wait_extension
             assert False
         return decorated
 
