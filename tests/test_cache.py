@@ -50,6 +50,33 @@ def test_cache_decorator():
         assert len(memory) == 2
 
 
+def test_cache_decorator_forcing():
+    class CachedClass:
+        def __init__(self):
+            self.cache = InMemoryCache()
+            self.calls = 0
+
+        @cached
+        def cached_method(self, parameter_1, parameter_2, key_parameter_1=10, key_parameter_2=20):
+            self.calls += 1
+            return parameter_1 + parameter_2 + key_parameter_1 + key_parameter_2
+
+    obj = CachedClass()
+
+    assert obj.cached_method(1, 2) == 33
+    memory = next(iter(obj.cache._memory.values()))
+    assert len(memory) == 1
+    assert obj.calls == 1
+
+    assert obj.cached_method(1, 2) == 33
+    assert len(memory) == 1
+    assert obj.calls == 1
+
+    assert obj.cached_method(1, 2, force_cache=True) == 33
+    assert len(memory) == 1
+    assert obj.calls == 2
+
+
 @pytest.mark.parametrize('cache_class,value,test', [
     (JsonCache, lambda: 'value', lambda v: v == 'value'),
     (JsonCache, lambda: {'a': 3}, lambda v: v['a'] == 3),

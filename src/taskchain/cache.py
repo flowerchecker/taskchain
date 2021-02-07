@@ -173,7 +173,7 @@ class cached:
         self.ignore_params = ignore_params if ignore_params else []
 
     def __call__(self, method):
-        def decorated(obj, *args, **kwargs):
+        def decorated(obj, *args, force_cache=False, **kwargs):
             if self.cache_object is None:
                 assert hasattr(obj, self.cache_attr), 'Missing cache argument'
                 cache = getattr(obj, self.cache_attr)
@@ -195,7 +195,7 @@ class cached:
             else:
                 cache_key = self.key(*args, **kwargs)
 
-            return cache.get_or_compute(cache_key, lambda: method(obj, *args, **kwargs))
+            return cache.get_or_compute(cache_key, lambda: method(obj, *args, **kwargs), force=force_cache)
         return decorated
 
     def __get__(self, instance, instancetype):
