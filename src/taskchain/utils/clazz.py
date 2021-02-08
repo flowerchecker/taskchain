@@ -145,6 +145,8 @@ def import_by_string(string: str) -> Union[ModuleType, List[type], type]:
                 return member
             if inspect.getmodule(member) == module:
                 members.append(member)
+    if len(members) == 0:
+        raise ImportError(f'Cannot import "{string}".')
     return members
 
 
