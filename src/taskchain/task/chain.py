@@ -184,6 +184,10 @@ class Chain(dict):
             for task in list(forced_tasks)[::-1]:
                 _ = task.value
 
+    @property
+    def fullname(self):
+        return self._base_config.fullname
+
 
 class MultiChain:
 
