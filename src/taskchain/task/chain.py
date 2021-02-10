@@ -81,7 +81,12 @@ class Chain(dict):
                         context=config.context
                     )
                 else:
-                    used_config = Config(config.base_dir, use, context=config.context)
+                    used_config = Config(
+                        config.base_dir,
+                        use,
+                        namespace=config.namespace if config.namespace else None,
+                        context=config.context,
+                    )
             self._process_config(used_config)
 
         for task_description in config.get('tasks', []):
