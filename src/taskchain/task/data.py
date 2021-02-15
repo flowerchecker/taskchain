@@ -185,6 +185,7 @@ class GeneratedData(FileData):
 
     DATA_TYPES = [Generator]
 
+    @property
     def extension(self) -> Union[str, None]:
         return 'jsonl'
 
