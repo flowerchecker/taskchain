@@ -1,4 +1,5 @@
 from pathlib import Path
+from taskchain.utils.io import NumpyEncoder, iter_json_file, write_jsons
 from typing import Any, List, Dict, Generator, Union
 import abc
 import h5py
@@ -123,7 +124,7 @@ class JSONData(FileData):
         return 'json'
 
     def save(self):
-        json.dump(self.value, self.path.open('w'), indent=2, sort_keys=True)
+        json.dump(self.value, self.path.open('w'), indent=2, sort_keys=True, cls=NumpyEncoder)
 
     def load(self) -> Any:
         self._value = json.load(self.path.open())
@@ -180,9 +181,22 @@ class FigureData(FileData):
         return self._value
 
 
-class GeneratedData(Data, abc.ABC):
+class GeneratedData(FileData):
 
     DATA_TYPES = [Generator]
+
+    def extension(self) -> Union[str, None]:
+        return 'jsonl'
+
+    def save(self):
+        write_jsons(self.value, self.path)
+
+    def load(self) -> Any:
+        return list(iter_json_file(self.path))
+
+    def set_value(self, value: Any = None):
+        value = list(value)
+        super().set_value(value)
 
 
 class DirData(Data):
