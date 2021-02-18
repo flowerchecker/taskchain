@@ -193,6 +193,35 @@ class Chain(dict):
     def fullname(self):
         return self._base_config.fullname
 
+    def draw(self, node_attr=None, edge_attr=None, graph_attr=None):
+        import graphviz as gv
+        import seaborn as sns
+
+        node_attr = dict(
+            **{'shape': 'plain_text', 'style': 'filled', 'width': '2'},
+            **(node_attr if node_attr else {})
+        )
+        graph_attr = dict(
+            **{'splines': 'ortho'},
+            **(graph_attr if graph_attr else {})
+        )
+        edge_attr = dict(
+            **{},
+            **(edge_attr if edge_attr else {})
+        )
+
+        groups = list({(n.config.namespace, n.group) for n in self.graph.nodes})
+        colors = sns.color_palette('pastel', len(groups)).as_hex()
+
+        G = gv.Digraph(engine='dot', graph_attr=graph_attr, node_attr=node_attr, edge_attr=edge_attr)
+
+        for node in self.graph.nodes:
+            G.node(node.fullname.split(':')[-1], color=colors[groups.index((node.config.namespace, node.group))])
+
+        for edge in self.graph.edges:
+            G.edge(edge[0].fullname.split(':')[-1], edge[1].fullname.split(':')[-1])
+        return G
+
 
 class MultiChain:
 
