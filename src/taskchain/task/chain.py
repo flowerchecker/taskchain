@@ -213,13 +213,22 @@ class Chain(dict):
         groups = list({(n.config.namespace, n.group) for n in self.graph.nodes})
         colors = sns.color_palette('pastel', len(groups)).as_hex()
 
-        G = gv.Digraph(engine='dot', graph_attr=graph_attr, node_attr=node_attr, edge_attr=edge_attr)
+        G = gv.Digraph(
+            engine='dot',
+            graph_attr=graph_attr,
+            node_attr=node_attr,
+            edge_attr=edge_attr
+        )
 
         for node in self.graph.nodes:
-            G.node(node.fullname.split(':')[-1], color=colors[groups.index((node.config.namespace, node.group))])
+            G.node(
+                node.fullname.replace(':', '/'),
+               label=node.fullname.split(':')[-1],
+                color=colors[groups.index((node.config.namespace, node.group))]
+            )
 
         for edge in self.graph.edges:
-            G.edge(edge[0].fullname.split(':')[-1], edge[1].fullname.split(':')[-1])
+            G.edge(edge[0].fullname.replace(':', '/'), edge[1].fullname.replace(':', '/'))
         return G
 
 
