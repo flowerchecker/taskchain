@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from taskchain.task import Task, Config, InMemoryData, JSONData
-from taskchain.task.data import DirData, NumpyData, PandasData, ContinuesData
+from taskchain.task.data import DirData, NumpyData, PandasData, ContinuesData, GeneratedData
 
 import numpy as np
 import pandas as pd
@@ -193,6 +193,23 @@ def test_pandas_data(tmp_path):
     data2.load()
 
     assert data2.value.shape == (2, 2)
+
+
+def test_generator_data(tmp_path):
+    data = GeneratedData()
+    data.init_persistence(tmp_path, 'test')
+    def _gen():
+        yield from range(10)
+    data.set_value(_gen())
+    data.save()
+
+    assert (tmp_path / 'test.jsonl').exists()
+
+    data2 = GeneratedData()
+    data2.init_persistence(tmp_path, 'test')
+    data2.load()
+
+    assert data2.value == list(range(10))
 
 
 def test_continues_data(tmp_path):

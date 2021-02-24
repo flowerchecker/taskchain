@@ -193,7 +193,8 @@ class GeneratedData(FileData):
         write_jsons(self.value, self.path)
 
     def load(self) -> Any:
-        return list(iter_json_file(self.path))
+        self._value = list(iter_json_file(self.path))
+        return self._value
 
     def set_value(self, value: Any = None):
         value = list(value)
