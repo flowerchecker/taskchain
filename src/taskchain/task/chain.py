@@ -193,22 +193,16 @@ class Chain(dict):
     def fullname(self):
         return self._base_config.fullname
 
-    def draw(self, node_attr=None, edge_attr=None, graph_attr=None):
+    def draw(self, node_attrs=None, edge_attrs=None, graph_attrs=None, split_by_namespaces=False):
         import graphviz as gv
         import seaborn as sns
 
-        node_attr = dict(
-            **{'shape': 'plain_text', 'style': 'filled', 'width': '2'},
-            **(node_attr if node_attr else {})
-        )
-        graph_attr = dict(
-            **{'splines': 'ortho'},
-            **(graph_attr if graph_attr else {})
-        )
-        edge_attr = dict(
-            **{},
-            **(edge_attr if edge_attr else {})
-        )
+        node_attr = {'shape': 'plain_text', 'style': 'filled', 'width': '2'}
+        node_attr.update((node_attrs if node_attrs else {}))
+        graph_attr = {'splines': 'ortho'}
+        graph_attr.update(graph_attrs if graph_attrs else {})
+        edge_attr = {}
+        edge_attr.update(edge_attrs if edge_attrs else {})
 
         groups = list({(n.config.namespace, n.group) for n in self.graph.nodes})
         colors = sns.color_palette('pastel', len(groups)).as_hex()
@@ -220,15 +214,20 @@ class Chain(dict):
             edge_attr=edge_attr
         )
 
+        def _get_slugname(task: Task):
+            if split_by_namespaces:
+                return node.fullname.replace(':', '/')
+            return f'{task.slugname.split(":")[-1]}#{task.config._filepath}'
+
         for node in self.graph.nodes:
             G.node(
-                node.fullname.replace(':', '/'),
-               label=node.fullname.split(':')[-1],
+                _get_slugname(node),
+                label=node.fullname.split(':')[-1],
                 color=colors[groups.index((node.config.namespace, node.group))]
             )
 
         for edge in self.graph.edges:
-            G.edge(edge[0].fullname.replace(':', '/'), edge[1].fullname.replace(':', '/'))
+            G.edge(_get_slugname(edge[0]), _get_slugname(edge[1]))
         return G
 
 

@@ -26,6 +26,7 @@ class Config(dict):
         self._data = None
         self.context = context
         self.objects = {}
+        self._filepath = filepath
 
         if filepath is not None:
             filepath = Path(filepath)
