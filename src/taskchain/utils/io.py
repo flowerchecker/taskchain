@@ -37,6 +37,8 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.tolist()
         if isinstance(obj, np.int32):
             return int(obj)
+        if isinstance(obj, np.float32):
+            return float(obj)
         if np.isnan(obj) and self.ignore_nan:
             return None
         return json.JSONEncoder.default(self, obj)
