@@ -88,7 +88,6 @@ class MetaTask(type):
 class MetaModuleTask(MetaTask):
 
     @property
-    @persistent
     def group(cls) -> str:
         return inspect.getmodule(cls).__name__.split('.')[-1]
 
@@ -96,9 +95,8 @@ class MetaModuleTask(MetaTask):
 class MetaDoubleModuleTask(MetaTask):
 
     @property
-    @persistent
     def group(cls) -> str:
-        return ':'.join(inspect.getmodule(cls).__name__.split('.')[-2:])
+        return cls.meta.get('task_group', ':'.join(inspect.getmodule(cls).__name__.split('.')[-2:]))
 
 
 class Task(object, metaclass=MetaTask):
