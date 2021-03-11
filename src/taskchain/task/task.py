@@ -164,6 +164,8 @@ class Task(object, metaclass=MetaTask):
     @property
     @persistent
     def path(self) -> Path:
+        if self.config.base_dir is None:
+            raise ValueError(f'Config `{self.config}` has not base dir set')
         path = self.config.base_dir / self.slugname.replace(':', '/')
         return path
 

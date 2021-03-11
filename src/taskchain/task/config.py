@@ -11,7 +11,7 @@ from taskchain.utils.data import search_and_replace_placeholders
 class Config(dict):
 
     def __init__(self,
-                 base_dir: Union[Path, str, None],
+                 base_dir: Union[Path, str, None] = None,
                  filepath: Union[Path, str] = None,
                  name: str = None,
                  namespace: str = None,
