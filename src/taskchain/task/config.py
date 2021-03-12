@@ -21,7 +21,7 @@ class Config(dict):
         super().__init__()
 
         self.base_dir = base_dir
-        self.name = None
+        self._name = None
         self.namespace = namespace
         self._data = None
         self.context = context
@@ -31,7 +31,7 @@ class Config(dict):
             filepath = Path(filepath)
             name_parts = filepath.name.split('.')
             extension = name_parts[-1]
-            self.name = '.'.join(name_parts[:-1])
+            self._name = '.'.join(name_parts[:-1])
             if extension == 'json':
                 self._data = json.load(filepath.open())
             elif extension == 'yaml':
@@ -40,14 +40,18 @@ class Config(dict):
         if data is not None:
             self._data = data
         if name is not None:
-            self.name = name
-        if self.name is None:
-            raise ValueError(f'Missing config name')
+            self._name = name
 
         self._validate_data()
         if context is not None:
             self.apply_context(context)
         self.prepare_objects()
+
+    @property
+    def name(self):
+        if self._name is None:
+            raise ValueError(f'Missing config name')
+        return self._name
 
     @property
     def fullname(self):

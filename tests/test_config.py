@@ -12,7 +12,7 @@ def test_name(tmp_path):
     yaml.dump(data, (tmp_path / 'yaml.test.yaml').open('w'))
 
     with pytest.raises(ValueError):
-        _ = Config(tmp_path)
+        _ = Config(tmp_path).name
 
     c = Config(tmp_path, name='test')
     assert c.name == 'test'
