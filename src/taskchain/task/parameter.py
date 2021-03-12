@@ -1,4 +1,4 @@
-from typing import Union, Any
+from typing import Union, Any, Iterable
 
 from taskchain.task import Config
 
@@ -75,3 +75,38 @@ class Parameter:
             return None
 
         return f'{self.name}={repr(self.value)}'
+
+
+class ParameterRegistry(dict):
+
+    def __init__(self, parameters: Iterable[Parameter] = None):
+        super().__init__()
+        self._parameters = {}
+        for parameter in parameters if parameters is not None else []:
+            if parameter.name in self._parameters:
+                raise ValueError(f'Multiple parameters with same name `{parameter.name}`')
+            self._parameters[parameter.name] = parameter
+
+    def set_values(self, config: Config):
+        for parameter in self._parameters.values():
+            parameter.set_value(config)
+
+    def get(self, item: str):
+        return self._parameters[item].value
+
+    def __getitem__(self, item):
+        return self.get(item)
+
+    def __getattr__(self, item: str):
+        return self.get(item)
+
+    @property
+    def hash(self):
+        hashes = []
+        for name, parameter in sorted(self._parameters.items()):
+            hsh = parameter.hash
+            if hsh is not None:
+                hashes.append(hsh)
+        if hashes:
+            return '###'.join(hashes)
+        return None

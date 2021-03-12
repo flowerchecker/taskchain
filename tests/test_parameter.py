@@ -1,7 +1,7 @@
 import pytest
 
 from taskchain.task import Config
-from taskchain.task.parameter import Parameter
+from taskchain.task.parameter import Parameter, ParameterRegistry
 
 
 def test_value():
@@ -89,3 +89,32 @@ def test_hash():
     p = Parameter('value1', default=2, dont_persist_default_value=True)
     p.set_value(config)
     assert p.hash is not None
+
+
+def test_registry():
+    config = Config(name='config', data={
+        'value0': None,
+        'value1': 1,
+        'value2': 'abc',
+    })
+
+    with pytest.raises(ValueError):
+        ParameterRegistry([Parameter('v1'), Parameter('v1')])
+
+    ps = [
+        Parameter('value1'),
+        Parameter('value2')
+    ]
+
+    registry = ParameterRegistry(ps)
+    registry.set_values(config)
+    assert registry['value1'] == 1
+    assert registry.value1 == 1
+    assert registry['value2'] == registry.value2 == 'abc'
+
+    registry2 = ParameterRegistry([
+        Parameter('value2'), Parameter('value1'),
+        Parameter('value0', ignore_persistence=True)
+    ])
+    registry2.set_values(config)
+    assert registry.hash == registry2.hash
