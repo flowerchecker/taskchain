@@ -111,8 +111,6 @@ def test_config_objects(tmp_path):
 
     config = Config(tmp_path, data=data, name='config')
     assert 'my_object' in config
-    assert 'my_object' in config.objects
-    assert config['my_object'] == config.objects['my_object']
     assert type(config['my_object']) == MyObject
     assert config['my_object'].a == 7
     assert config['my_object'].b == 13
@@ -134,8 +132,6 @@ def test_config_complex_objects(tmp_path):
 
     config = Config(tmp_path, data=data, name='config')
     assert 'my_object' in config
-    assert 'my_object' in config.objects
-    assert config['my_object'] == config.objects['my_object']
     assert type(config['my_object']) == MyObject2
     assert config['my_object'].c == 5
 

@@ -25,7 +25,6 @@ class Config(dict):
         self.namespace = namespace
         self._data = None
         self.context = context
-        self.objects = {}
         self._filepath = filepath
 
         if filepath is not None:
@@ -103,7 +102,6 @@ class Config(dict):
             if isinstance(value, dict) and 'class' in value:
                 obj = find_and_instancelize_clazz(value)
                 self._data[key] = obj
-                self.objects[key] = obj
 
     def chain(self, **kwargs):
         from taskchain.task import Chain
