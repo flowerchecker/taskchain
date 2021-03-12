@@ -16,7 +16,7 @@ class Config(dict):
                  name: str = None,
                  namespace: str = None,
                  data: Dict = None,
-                 context: Union[Any, None] = None,
+                 global_vars: Union[Any, None] = None,
                  ):
         super().__init__()
 
@@ -24,7 +24,7 @@ class Config(dict):
         self._name = None
         self.namespace = namespace
         self._data = None
-        self.context = context
+        self.global_vars = global_vars
         self._filepath = filepath
 
         if filepath is not None:
@@ -43,8 +43,8 @@ class Config(dict):
             self._name = name
 
         self._validate_data()
-        if context is not None:
-            self.apply_context(context)
+        if global_vars is not None:
+            self.apply_global_vars(global_vars)
         self.prepare_objects()
 
     @property
@@ -96,7 +96,7 @@ class Config(dict):
         if not isinstance(tasks, Iterable) or isinstance(tasks, str):
             raise ValueError(f'`tasks` of config `{self}` have to list or str')
 
-    def apply_context(self, context):
+    def apply_global_vars(self, context):
         search_and_replace_placeholders(self._data, context)
 
     def prepare_objects(self):

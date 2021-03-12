@@ -89,14 +89,14 @@ class Chain(dict):
                         config.base_dir,
                         filepath=matched[1],
                         namespace=f'{config.namespace}::{matched[2]}' if config.namespace else matched[2],
-                        context=config.context
+                        global_vars=config.global_vars
                     )
                 else:
                     used_config = Config(
                         config.base_dir,
                         use,
                         namespace=config.namespace if config.namespace else None,
-                        context=config.context,
+                        global_vars=config.global_vars,
                     )
             self._process_config(used_config)
 
