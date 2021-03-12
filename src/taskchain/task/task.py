@@ -221,7 +221,7 @@ class Task(object, metaclass=MetaTask):
 
     def _init_persistence(self):
         if self._config is not None and not self._data.is_persisting:
-            self._data.init_persistence(self.path, self._config.name)
+            self._data.init_persistence(self.path, self._config.get_name_for_persistence(self))
 
 
 class ModuleTask(Task, metaclass=MetaModuleTask):

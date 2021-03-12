@@ -1,6 +1,7 @@
 import abc
 import logging
 import re
+from hashlib import sha256
 from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
 
 import networkx as nx
@@ -23,13 +24,13 @@ class Chain(dict):
 
     def __init__(self, config: Config,
                  shared_tasks: Dict[Tuple[str, str], Task] = None,
-                 task_parameter_configs: bool = False
+                 parameter_mode: bool = True
                  ):
         super().__init__()
         self.tasks: Dict[str, Task] = {}
         self.configs: Dict[str, Config] = {}
 
-        self._task_parameter_configs = task_parameter_configs
+        self._parameter_mode = parameter_mode
         self._base_config = config
         self._task_registry = shared_tasks if shared_tasks is not None else {}
         self.graph: Union[None, nx.DiGraph] = None
@@ -60,11 +61,12 @@ class Chain(dict):
 
     def _prepare(self):
         self._process_config(self._base_config)
-        tasks = self._create_tasks(task_registry=None if self._task_parameter_configs else self._task_registry)
+        tasks = self._create_tasks(task_registry=None if self._parameter_mode else self._task_registry)
         self._process_dependencies(tasks)
 
-        if self._task_parameter_configs:
-            pass
+        if self._parameter_mode:
+            self.tasks = self._recreate_tasks_with_parameter_config(tasks, self._task_registry)
+            self._process_dependencies(self.tasks)
         else:
             self.tasks = tasks
 
@@ -100,7 +102,7 @@ class Chain(dict):
                     )
             self._process_config(used_config)
 
-    def _create_tasks(self, task_registry=None):
+    def _create_tasks(self, task_registry=None) -> Dict[str, Task]:
         tasks = {}
 
         def _register_task(_task: Task):
@@ -124,6 +126,24 @@ class Chain(dict):
                 else:
                     raise ValueError(f'Unknown task description `{task_description}` in config `{config}`')
         return tasks
+
+    def _recreate_tasks_with_parameter_config(self, tasks: Dict[str, Task], task_registry: Dict) -> Dict[str, Task]:
+        new_tasks: Dict[str, Task] = {}
+
+        def _get_task(_task):
+            if _task.fullname in new_tasks:
+                return new_tasks[_task.fullname]
+            input_tasks = {n: _get_task(t) for n, t in _task.input_tasks.items()}
+            config = TaskParameterConfig(_task, input_tasks)
+            new_task = self._create_task(_task.__class__, config, task_registry)
+            assert new_task.fullname == _task.fullname
+            new_tasks[new_task.fullname] = new_task
+            return new_task
+
+        for task in tasks.values():
+            _get_task(task)
+
+        return new_tasks
 
     @staticmethod
     def _create_task(task_class: Type[Task], config: Config, task_registry: Dict = None):
@@ -166,7 +186,7 @@ class Chain(dict):
 
     def _init_objects(self):
         for config in self.configs.values():
-            for obj in config.objects.values():
+            for obj in config.data.values():
                 if isinstance(obj, ChainObject):
                     obj.init_chain(self)
 
@@ -253,20 +273,44 @@ class Chain(dict):
         return G
 
 
+class TaskParameterConfig(Config):
+    def __init__(self, original_task: Task, input_tasks: Dict[str, Task]):
+        super(Config, self).__init__()
+
+        original_config = original_task.get_config()
+        self.base_dir = original_config.base_dir
+        self.namespace = original_config.namespace
+        self.global_vars = original_config
+        self._name = f'{original_config.name}/{original_task}'
+
+        self._data = {}
+        for parameter in original_task.parameters.values():
+            if parameter.name_in_config in original_config:
+                self._data[parameter.name_in_config] = original_config[parameter.name_in_config]
+
+        self.input_tasks = {name: task.get_config().get_name_for_persistence(task) for name, task in input_tasks.items()}
+
+    def get_name_for_persistence(self, task: Task) -> str:
+        parameter_hash = task.parameters.hash
+        input_tasks_hash = '###'.join(f'{n}={it}' for n, it in self.input_tasks.items())
+        return sha256(f'{parameter_hash}$$${input_tasks_hash}'.encode()).hexdigest()[:32]
+
+
 class MultiChain:
 
     logger = logging.getLogger('tasks_chain')
 
-    def __init__(self, configs: Sequence[Config]):
+    def __init__(self, configs: Sequence[Config], parameter_mode: bool = True):
         self._tasks: Dict[Tuple[str, str], Task] = {}
         self.chains: Dict[str, Chain] = {}
         self._base_configs = configs
+        self.parameter_mode = parameter_mode
 
         self._prepare()
 
     def _prepare(self):
         for config in self._base_configs:
-            self.chains[config.fullname] = Chain(config, self._tasks)
+            self.chains[config.fullname] = Chain(config, self._tasks, parameter_mode=self.parameter_mode)
 
     def __getitem__(self, chain_name: str):
         if chain_name not in self.chains:

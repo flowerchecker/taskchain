@@ -48,10 +48,13 @@ class Config(dict):
         self.prepare_objects()
 
     @property
-    def name(self):
+    def name(self) -> str:
         if self._name is None:
             raise ValueError(f'Missing config name')
         return self._name
+
+    def get_name_for_persistence(self, *args, **kwargs) -> str:
+        return self.name
 
     @property
     def fullname(self):

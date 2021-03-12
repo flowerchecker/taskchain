@@ -243,9 +243,6 @@ def test_multi_chain(tmp_path):
     mc = MultiChain([config1, config2])
     assert len(mc.chains) == 2
     assert len(mc._tasks) == 7
-    assert ('z', 'config1') in mc._tasks
-    assert ('x', 'common_config') in mc._tasks
-    assert ('p', 'common_config') in mc._tasks
 
     assert len(mc['config1'].tasks) == 6
     assert len(mc['config2'].tasks) == 6
@@ -376,7 +373,7 @@ def test_namespace_in_uses(tmp_path):
     assert chain['a'] == chain['ns::a']
     inner_config = chain['a'].get_config()
     assert inner_config['x'] == 1
-    assert inner_config.fullname == 'ns::config1'
+    assert inner_config.namespace == 'ns'
 
 
 def test_namespace_task_addressing(tmp_path):
@@ -577,4 +574,63 @@ def test_chained_namespaces(tmp_path):
     assert chain['y::x::g:x_b'].value == 1
     assert chain['x_b'].value == 1
     assert chain['g:x_b'].value == 1
+
+
+@pytest.mark.parametrize('parameter_mode', [True, False])
+def test_parameter_mode(tmp_path, parameter_mode):
+    class A(Task):
+        class Meta:
+            parameters = [
+                Parameter('a'),
+                Parameter('x', default=0, ignore_persistence=True),
+            ]
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.run_called = 0
+
+        def run(self) -> int:
+            self.run_called += 1
+            return self.params['a']
+
+    class B(Task):
+        class Meta:
+            input_tasks = [A]
+            parameters = [Parameter('b')]
+
+        def run(self) -> int:
+            return self.input_tasks['a'].value * self.parameters['b']
+
+    config1 = Config(tmp_path, name='config1', data={'tasks': [A, B], 'a': 2, 'b': 2, 'x': 1})
+    config2 = Config(tmp_path, name='config2', data={'tasks': [A, B], 'a': 2, 'b': 3, 'x': 2})
+    config3 = Config(tmp_path, name='config3', data={'tasks': [A, B], 'a': 3, 'b': 3})
+
+    chain1 = config1.chain(parameter_mode=parameter_mode)
+    assert chain1.b.value == 4
+    assert chain1.a.run_called == 1
+    assert len(list((tmp_path / 'a').glob('*.json'))) == 1
+
+    chain2 = config2.chain(parameter_mode=parameter_mode)
+    assert chain2.b.value == 6
+    assert chain1.a.run_called == 1
+    assert len(list((tmp_path / 'a').glob('*.json'))) == 1 if parameter_mode else 2
+
+    if parameter_mode:
+        assert chain1.a.get_config().get_name_for_persistence(chain1.a) == chain2.a.get_config().get_name_for_persistence(chain2.a)
+    else:
+        assert chain1.a.get_config().get_name_for_persistence(chain1.a) != chain2.a.get_config().get_name_for_persistence(chain2.a)
+
+    chain3 = config3.chain(parameter_mode=parameter_mode)
+    assert chain3.b.value == 9
+    assert chain1.a.run_called == 1
+    assert len(list((tmp_path / 'a').glob('*.json'))) == 2 if parameter_mode else 3
+
+    assert chain3.a.get_config().get_name_for_persistence(chain3.a) != chain2.a.get_config().get_name_for_persistence(chain2.a)
+
+    chain = Config(tmp_path, name='config2', data={'tasks': [A, B], 'a': 2, 'b': 3}).chain(parameter_mode=parameter_mode)
+    assert chain.a.run_called == 0
+
+    for x in (tmp_path / 'a').glob('*'):
+        print(x)
+
 
