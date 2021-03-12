@@ -76,7 +76,7 @@ class Parameter:
         return f'{self.name}={repr(self.value)}'
 
 
-class ParameterRegistry(dict):
+class ParameterRegistry:
 
     def __init__(self, parameters: Iterable[Parameter] = None):
         super().__init__()
@@ -93,11 +93,28 @@ class ParameterRegistry(dict):
     def get(self, item: str):
         return self._parameters[item].value
 
-    def __getitem__(self, item):
+    def __getitem__(self, item, default=None):
+        if default is not None:
+            raise ValueError('Default argument is not allowed')
         return self.get(item)
 
     def __getattr__(self, item: str):
         return self.get(item)
+
+    def __str__(self):
+        return str(self._parameters)
+
+    def __contains__(self, item):
+        return item in self._parameters
+
+    def items(self):
+        return self._parameters.items()
+
+    def keys(self):
+        return self._parameters.keys()
+
+    def values(self):
+        return self._parameters.values()
 
     @property
     def hash(self):
