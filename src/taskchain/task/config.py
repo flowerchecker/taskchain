@@ -4,7 +4,7 @@ from typing import Union, Dict, Iterable, Any
 
 import yaml
 
-from taskchain.utils.clazz import find_and_instancelize_clazz, persistent
+from taskchain.utils.clazz import find_and_instancelize_clazz
 from taskchain.utils.data import search_and_replace_placeholders
 
 
@@ -105,6 +105,6 @@ class Config(dict):
                 self._data[key] = obj
                 self.objects[key] = obj
 
-    def chain(self):
+    def chain(self, **kwargs):
         from taskchain.task import Chain
-        return Chain(self)
+        return Chain(self, **kwargs)

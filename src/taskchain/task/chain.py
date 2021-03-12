@@ -21,11 +21,15 @@ class Chain(dict):
 
     logger = logging.getLogger('tasks_chain')
 
-    def __init__(self, config: Config, shared_tasks: Dict[Tuple[str, str], Task] = None):
+    def __init__(self, config: Config,
+                 shared_tasks: Dict[Tuple[str, str], Task] = None,
+                 task_parameter_configs: bool = False
+                 ):
         super().__init__()
         self.tasks: Dict[str, Task] = {}
         self.configs: Dict[str, Config] = {}
 
+        self._task_parameter_configs = task_parameter_configs
         self._base_config = config
         self._task_registry = shared_tasks if shared_tasks is not None else {}
         self.graph: Union[None, nx.DiGraph] = None
@@ -56,7 +60,14 @@ class Chain(dict):
 
     def _prepare(self):
         self._process_config(self._base_config)
-        self._process_dependencies()
+        tasks = self._create_tasks(task_registry=None if self._task_parameter_configs else self._task_registry)
+        self._process_dependencies(tasks)
+
+        if self._task_parameter_configs:
+            pass
+        else:
+            self.tasks = tasks
+
         self._build_graph()
         self._init_objects()
 
@@ -89,34 +100,46 @@ class Chain(dict):
                     )
             self._process_config(used_config)
 
-        for task_description in config.get('tasks', []):
-            if type(task_description) is str:
-                for task_class in get_classes_by_import_string(task_description, Task):
-                    if task_class.meta.get('abstract', False):
-                        continue
-                    self._create_task(task_class, config)
-            elif issubclass(task_description, Task):
-                self._create_task(task_description, config)
-            else:
-                raise ValueError(f'Unknown task description `{task_description}` in config `{config}`')
+    def _create_tasks(self, task_registry=None):
+        tasks = {}
 
-    def _create_task(self, task_class: Type[Task], config: Config):
+        def _register_task(_task: Task):
+            task_name = _task.fullname
+            if task_name in tasks:
+                raise ValueError(f'Conflict of task name `{task_name}` '
+                                 f'with configs `{tasks[task_name].get_config()}` and `{task.get_config()}`')
+            tasks[task_name] = _task
+
+        for config in self.configs.values():
+            for task_description in config.get('tasks', []):
+                if type(task_description) is str:
+                    for task_class in get_classes_by_import_string(task_description, Task):
+                        if task_class.meta.get('abstract', False):
+                            continue
+                        task = self._create_task(task_class, config, task_registry)
+                        _register_task(task)
+                elif issubclass(task_description, Task):
+                    task = self._create_task(task_description, config, task_registry)
+                    _register_task(task)
+                else:
+                    raise ValueError(f'Unknown task description `{task_description}` in config `{config}`')
+        return tasks
+
+    @staticmethod
+    def _create_task(task_class: Type[Task], config: Config, task_registry: Dict = None):
         task_name = task_class.fullname(config)
-        if self._task_registry and (task_name, config.fullname) in self._task_registry:
-            self.tasks[task_name] = self._task_registry[task_name, config.fullname]
-            return self._task_registry[task_name, config.fullname]
+        if task_registry and (task_name, config.fullname) in task_registry:
+            return task_registry[task_name, config.fullname]
 
         task = task_class(config)
         task.parameters.set_values(config)
-        if task_name in self.tasks:
-            raise ValueError(f'Conflict of task name `{task_name}` '
-                             f'with configs `{self.tasks[task_name].get_config()}` and `{task.get_config()}`')
-        self.tasks[task_name] = task
-        self._task_registry[task_name, config.fullname] = task
+        if task_registry is not None:
+            task_registry[task_name, config.fullname] = task
         return task
 
-    def _process_dependencies(self):
-        for task_name, task in self.tasks.items():
+    @staticmethod
+    def _process_dependencies(tasks: Dict[str, Task]):
+        for task_name, task in tasks.items():
             input_tasks = InputTasks()
             for input_task in task.meta.get('input_tasks', []):
                 if type(input_task) is not str:     # for reference by class
@@ -124,10 +147,10 @@ class Chain(dict):
                 if type(input_task) is str and task.get_config().namespace and not input_task.startswith(task.get_config().namespace):
                     input_task = f'{task.get_config().namespace}::{input_task}'     # add current config to reference
                 try:
-                    input_task = find_task_full_name(input_task, self.tasks, determine_namespace=False)
+                    input_task = find_task_full_name(input_task, tasks, determine_namespace=False)
                 except KeyError:
                     raise ValueError(f'Input task `{input_task}` of task `{task}` not found')
-                input_tasks[input_task] = self.tasks[input_task]
+                input_tasks[input_task] = tasks[input_task]
             task.set_input_tasks(input_tasks)
 
     def _build_graph(self):
