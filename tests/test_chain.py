@@ -5,6 +5,7 @@ import pytest
 
 from taskchain.task import Config, Chain, Task, MultiChain
 from taskchain.task.chain import ChainObject
+from taskchain.task.parameter import Parameter
 from tests.tasks.a import ATask
 
 
@@ -90,7 +91,8 @@ def test_params(tmp_path):
     }
     config = Config(tmp_path, name='config2', data=config_data)
     chain = Chain(config)
-    assert chain.tasks['b'].config.a_number == 7
+    assert chain.tasks['b'].params.a_number == 7
+    assert chain.tasks['b'].parameters.a_number == 7
 
 
 class XTask(Task):
@@ -372,7 +374,7 @@ def test_namespace_in_uses(tmp_path):
     config = Config(tmp_path, str(tmp_path / 'config2.json'))
     chain = config.chain()
     assert chain['a'] == chain['ns::a']
-    inner_config = chain['a'].config
+    inner_config = chain['a'].get_config()
     assert inner_config['x'] == 1
     assert inner_config.fullname == 'ns::config1'
 
@@ -381,10 +383,10 @@ def test_namespace_task_addressing(tmp_path):
     class A(Task):
         class Meta:
             task_group = 'x'
-            input_parameters = ['value']
+            parameters = [Parameter('value')]
 
         def run(self) -> int:
-            return self.config['value']
+            return self.params['value']
 
     config_a1 = Config(tmp_path, name='config_a1', namespace='nsa1', data={'tasks': [A], 'value': 1})
     config_a2 = Config(tmp_path, name='config_a2', namespace='nsa2', data={'tasks': [A], 'value': 2})
@@ -393,6 +395,7 @@ def test_namespace_task_addressing(tmp_path):
 
     chain = config.chain()
     assert len(chain.tasks) == 2
+    print(chain['nsa1::a'].get_config().value)
     assert chain['nsa1::a'].value == 1
     assert chain['nsa1::x:a'].value == 1
     assert chain['nsa2::a'].value == 2
@@ -404,10 +407,10 @@ def test_namespace_task_addressing(tmp_path):
 def test_namespace_example(tmp_path):
     class Dataset(Task):
         class Meta:
-            input_parameters = ['size']
+            parameters = [Parameter('size')]
 
         def run(self) -> List:
-            return list(range(self.config['size']))
+            return list(range(self.params['size']))
 
     class Train(Task):
         class Meta:
@@ -434,10 +437,10 @@ def test_namespace_example(tmp_path):
 def test_same_tasks_with_multiple_inputs(tmp_path):
     class A(Task):
         class Meta:
-            input_parameters = ['value']
+            parameters = [Parameter('value')]
 
         def run(self) -> int:
-            return self.config['value']
+            return self.params['value']
 
     class B(Task):
         class Meta:
@@ -485,15 +488,18 @@ def test_namespace_composition(tmp_path):
     config = Config(tmp_path, str(tmp_path / 'config.json'))
     chain = config.chain()
     assert len(chain.tasks) == 1
-    assert chain.a.config.namespace == 'ns2::ns1'
+    assert chain.a.get_config().namespace == 'ns2::ns1'
     assert chain['a'].value is False
     assert chain['ns2::ns1::a'].value is False
 
 
 def test_namespaces_and_multiple_tasks(tmp_path):
-    class XA(Task): 
+    class XA(Task):
+        class Meta:
+            parameters = [Parameter('value')]
+
         def run(self) -> int:
-            return self.config['value']
+            return self.params['value']
 
     class XB(Task):
         class Meta:
@@ -531,8 +537,11 @@ def test_namespaces_and_multiple_tasks(tmp_path):
 
 def test_chained_namespaces(tmp_path):
     class XA(Task):
+        class Meta:
+            parameters = [Parameter('value')]
+
         def run(self) -> int:
-            return self.config['value']
+            return self.params['value']
 
     class XB(Task):
         class Meta:

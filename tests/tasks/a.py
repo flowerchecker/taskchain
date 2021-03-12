@@ -1,4 +1,5 @@
 from taskchain.task import Task
+from taskchain.task.parameter import Parameter
 
 
 class ATask(Task):
@@ -10,7 +11,7 @@ class ATask(Task):
 class BTask(Task):
 
     class Meta:
-        input_params = ['a_number']
+        parameters = [Parameter('a_number')]
 
     def run(self) -> bool:
         return False

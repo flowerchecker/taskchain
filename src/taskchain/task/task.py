@@ -3,12 +3,14 @@ import inspect
 import logging
 import re
 import sys
+from copy import deepcopy
 from inspect import isclass
 from pathlib import Path
 from typing import Union, Any, get_type_hints, Type, Dict, Iterable
 
 from taskchain.task.config import Config
 from taskchain.task.data import Data, DirData
+from taskchain.task.parameter import ParameterRegistry
 from taskchain.utils.clazz import persistent, Meta, inheritors, isinstance as custom_isinstance, fullname
 
 
@@ -104,7 +106,7 @@ class Task(object, metaclass=MetaTask):
     logger = logger
 
     def __init__(self, config: Config = None):
-        self.config: Config = config
+        self._config: Config = config
         self._data: Union[None, Data, DirData] = None
         self._input_tasks: Union[None, Dict[str, 'Task']] = None
         self._forced = False
@@ -115,6 +117,14 @@ class Task(object, metaclass=MetaTask):
         self.fullname = self.__class__.fullname(config)
         self.data_class = self.__class__.data_class
         self.data_type = self.__class__.data_type
+
+        self.prepare_parameters(config)
+
+    def prepare_parameters(self, config):
+        parameters = self.meta.get('parameters')
+        if parameters is not None:
+            parameters = deepcopy(parameters)
+        self.params = self.parameters = ParameterRegistry(parameters)
 
     @abc.abstractmethod
     def run(self):
@@ -161,12 +171,15 @@ class Task(object, metaclass=MetaTask):
     def __repr__(self):
         return f'<task: {self}>'
 
+    def get_config(self):
+        return self._config
+
     @property
     @persistent
     def path(self) -> Path:
-        if self.config.base_dir is None:
-            raise ValueError(f'Config `{self.config}` has not base dir set')
-        path = self.config.base_dir / self.slugname.replace(':', '/')
+        if self._config.base_dir is None:
+            raise ValueError(f'Config `{self._config}` has not base dir set')
+        path = self._config.base_dir / self.slugname.replace(':', '/')
         return path
 
     def reset_data(self):
@@ -207,8 +220,8 @@ class Task(object, metaclass=MetaTask):
             self._data.save()
 
     def _init_persistence(self):
-        if self.config is not None and not self._data.is_persisting:
-            self._data.init_persistence(self.path, self.config.name)
+        if self._config is not None and not self._data.is_persisting:
+            self._data.init_persistence(self.path, self._config.name)
 
 
 class ModuleTask(Task, metaclass=MetaModuleTask):

@@ -35,7 +35,7 @@ class Chain(dict):
     def __str__(self):
         a = max(len(n.split(":")[-1]) for n in self.tasks)
         b = max(len(n) for n in self.tasks)
-        return '\n'.join(f'{n.split(":")[-1]:<{a}}  {n:<{b}}  {t.config}' for n, t in self.tasks.items())
+        return '\n'.join(f'{n.split(":")[-1]:<{a}}  {n:<{b}}  {t.get_config()}' for n, t in self.tasks.items())
 
     def __repr__(self):
         return f'<chain for config `{self._base_config}`>'
@@ -107,11 +107,10 @@ class Chain(dict):
             return self._task_registry[task_name, config.fullname]
 
         task = task_class(config)
-        for input_param in task.meta.get('input_params', []):
-            if input_param not in config:
-                raise ValueError(f'Input parameter `{input_param}` required by task `{task}` is not in its config `{config}`')
+        task.parameters.set_values(config)
         if task_name in self.tasks:
-            raise ValueError(f'Conflict of task name `{task_name}` with configs `{self.tasks[task_name].config}` and `{task.config}`')
+            raise ValueError(f'Conflict of task name `{task_name}` '
+                             f'with configs `{self.tasks[task_name].get_config()}` and `{task.get_config()}`')
         self.tasks[task_name] = task
         self._task_registry[task_name, config.fullname] = task
         return task
@@ -122,8 +121,8 @@ class Chain(dict):
             for input_task in task.meta.get('input_tasks', []):
                 if type(input_task) is not str:     # for reference by class
                     input_task = input_task.slugname
-                if type(input_task) is str and task.config.namespace and not input_task.startswith(task.config.namespace):
-                    input_task = f'{task.config.namespace}::{input_task}'     # add current config to reference
+                if type(input_task) is str and task.get_config().namespace and not input_task.startswith(task.get_config().namespace):
+                    input_task = f'{task.get_config().namespace}::{input_task}'     # add current config to reference
                 try:
                     input_task = find_task_full_name(input_task, self.tasks, determine_namespace=False)
                 except KeyError:
@@ -217,7 +216,7 @@ class Chain(dict):
         def _get_slugname(task: Task):
             if split_by_namespaces:
                 return node.fullname.replace(':', '/')
-            return f'{task.slugname.split(":")[-1]}#{task.config._filepath}'
+            return f'{task.slugname.split(":")[-1]}#{task.get_config()._filepath}'
 
         for node in self.graph.nodes:
             G.node(

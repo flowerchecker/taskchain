@@ -1,6 +1,5 @@
 from typing import Union, Any, Iterable
 
-from taskchain.task import Config
 
 NO_DEFAULT = '>>NO_DEFAULT<<'
 NO_VALUE = '>>NO_VALUE<<'
@@ -51,7 +50,7 @@ class Parameter:
 
         return self._value
 
-    def set_value(self, config: Config) -> Any:
+    def set_value(self, config) -> Any:
         if self.name_in_config in config:
             value = config[self.name_in_config]
         else:
@@ -87,7 +86,7 @@ class ParameterRegistry(dict):
                 raise ValueError(f'Multiple parameters with same name `{parameter.name}`')
             self._parameters[parameter.name] = parameter
 
-    def set_values(self, config: Config):
+    def set_values(self, config):
         for parameter in self._parameters.values():
             parameter.set_value(config)
 
