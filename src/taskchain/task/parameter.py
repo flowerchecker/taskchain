@@ -141,6 +141,9 @@ class ParameterObject:
     def repr(self) -> str:
         raise NotImplemented
 
+    def __repr__(self):
+        return self.repr()
+
 
 class AutoParameterObject(ParameterObject):
 
@@ -159,7 +162,8 @@ class AutoParameterObject(ParameterObject):
         if self._args is None \
                 or self._kwargs is None \
                 or len(self._args) != len([p for p in parameters.values() if p.default == SignatureParameter.empty]):
-            raise AttributeError(f'Object `{self}`, args or kwargs not saved correctly, did you use _init instead of __init__?')
+            raise AttributeError(f'Object `{self.__class__.__name__}`, args or kwargs not saved correctly, '
+                                 f'did you use _init instead of __init__?')
 
         ignore_persistence_args = self.ignore_persistence_args()
         dont_persist_default_value_args = self.dont_persist_default_value_args()
