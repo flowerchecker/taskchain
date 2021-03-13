@@ -1,7 +1,7 @@
 import pytest
 
 from taskchain.task import Config
-from taskchain.task.parameter import Parameter, ParameterRegistry
+from taskchain.task.parameter import Parameter, ParameterRegistry, ParameterObject
 
 
 def test_value():
@@ -118,3 +118,26 @@ def test_registry():
     ])
     registry2.set_values(config)
     assert registry.hash == registry2.hash
+
+
+class Obj(ParameterObject):
+
+    def __init__(self, arg):
+        self.arg = arg
+
+    def hash(self) -> str:
+        return self.arg
+
+
+def test_object_parameter():
+
+    config = Config(name='config', data={
+        'obj': {
+            'class': 'tests.test_parameter.Obj',
+            'args': ['abc']
+        }
+    })
+
+    p = Parameter('obj')
+    p.set_value(config)
+    assert p.hash == 'obj=abc'

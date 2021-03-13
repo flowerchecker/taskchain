@@ -5,7 +5,7 @@ import pytest
 
 from taskchain.task import Config, Chain, Task, MultiChain
 from taskchain.task.chain import ChainObject
-from taskchain.task.parameter import Parameter
+from taskchain.task.parameter import Parameter, ParameterObject
 from tests.tasks.a import ATask
 
 
@@ -258,13 +258,16 @@ def test_multi_chain(tmp_path):
     assert not mc['config2'].tasks['o'].is_forced
 
 
-class MyObject(ChainObject):
+class MyObject(ChainObject, ParameterObject):
 
     def __init__(self):
         self.x = None
 
     def init_chain(self, chain):
         self.x = chain._base_config.x
+
+    def hash(self):
+        return ''
 
 
 def test_chain_objects(tmp_path):

@@ -4,6 +4,7 @@ from typing import Union, Dict, Iterable, Any
 
 import yaml
 
+from taskchain.task.parameter import ParameterObject
 from taskchain.utils.clazz import find_and_instancelize_clazz
 from taskchain.utils.data import search_and_replace_placeholders
 
@@ -108,6 +109,8 @@ class Config(dict):
         for key, value in self._data.items():
             if isinstance(value, dict) and 'class' in value:
                 obj = find_and_instancelize_clazz(value)
+                if not isinstance(obj, ParameterObject):
+                    raise ValueError(f'Object `{obj}` in config `{self}` is not instance of ParameterObject')
                 self._data[key] = obj
 
     def chain(self, **kwargs):

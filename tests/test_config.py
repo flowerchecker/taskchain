@@ -4,6 +4,7 @@ import pytest
 import yaml
 
 from taskchain.task import Config
+from taskchain.task.parameter import ParameterObject
 
 
 def test_name(tmp_path):
@@ -87,16 +88,22 @@ def test_context(tmp_path):
     assert config['b'] == '2'
 
 
-class MyObject:
+class MyObject(ParameterObject):
     def __init__(self, a, b=1):
         self.a = a
         self.b = b
 
+    def hash(self):
+        return ''
 
-class MyObject2:
+
+class MyObject2(ParameterObject):
     def __init__(self, c, o=None):
         self.c = c
         self.o = o
+
+    def hash(self):
+        return ''
 
 
 def test_config_objects(tmp_path):

@@ -1,3 +1,4 @@
+import abc
 from typing import Union, Any, Iterable
 
 
@@ -65,6 +66,11 @@ class Parameter:
         self._value = value
         return value
 
+    def value_hash(self):
+        if isinstance(self.value, ParameterObject):
+            return self.value.hash()
+        return repr(self.value)
+
     @property
     def hash(self) -> Union[str, None]:
         if self.ignore_persistence:
@@ -73,7 +79,7 @@ class Parameter:
         if self.dont_persist_default_value and self.value == self.default:
             return None
 
-        return f'{self.name}={repr(self.value)}'
+        return f'{self.name}={self.value_hash()}'
 
 
 class ParameterRegistry:
@@ -126,3 +132,10 @@ class ParameterRegistry:
         if hashes:
             return '###'.join(hashes)
         return None
+
+
+class ParameterObject:
+
+    @abc.abstractmethod
+    def hash(self) -> str:
+        raise NotImplemented
