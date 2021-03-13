@@ -1,5 +1,6 @@
 import abc
-from typing import Union, Any, Iterable
+from inspect import signature, Parameter as SignatureParameter
+from typing import Union, Any, Iterable, List
 
 
 class NO_DEFAULT: pass
@@ -139,3 +140,44 @@ class ParameterObject:
     @abc.abstractmethod
     def hash(self) -> str:
         raise NotImplemented
+
+
+class AutoParameterObject(ParameterObject):
+
+    def __init__(self, *args, **kwargs):
+        self._args = args
+        self._kwargs = kwargs
+        self._init(*args, *kwargs)
+
+    @abc.abstractmethod
+    def _init(self, *args, **kwargs):
+        pass
+
+    def hash(self) -> str:
+        parameters = signature(self._init).parameters
+
+        if self._args is None \
+                or self._kwargs is None \
+                or len(self._args) != len([p for p in parameters.values() if p.default == SignatureParameter.empty]):
+            raise AttributeError(f'Object `{self}`, args or kwargs not saved correctly, did you use _init instead of __init__?')
+
+        ignore_persistence_args = self.ignore_persistence_args()
+        dont_persist_default_value_args = self.dont_persist_default_value_args()
+        kwargs = dict(self._kwargs)
+        for i, (arg, parameter) in enumerate(parameters.items()):
+            if i < len(self._args):
+                kwargs[arg] = self._args[i]
+            if parameter.default != SignatureParameter.empty and arg not in kwargs:
+                kwargs[arg] = parameter.default
+            if arg in dont_persist_default_value_args and kwargs[arg] == parameter.default:
+                del kwargs[arg]
+        args_hash = ', '.join(f'{k}={repr(v)}' for k, v in sorted(kwargs.items()) if k not in ignore_persistence_args)
+        return f'{self.__class__.__name__}({args_hash})'
+
+    @staticmethod
+    def ignore_persistence_args() -> List[str]:
+        return []
+
+    @staticmethod
+    def dont_persist_default_value_args() -> List[str]:
+        return []

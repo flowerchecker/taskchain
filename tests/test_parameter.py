@@ -1,7 +1,7 @@
 import pytest
 
 from taskchain.task import Config
-from taskchain.task.parameter import Parameter, ParameterRegistry, ParameterObject
+from taskchain.task.parameter import Parameter, ParameterRegistry, ParameterObject, AutoParameterObject
 
 
 def test_value():
@@ -141,3 +141,66 @@ def test_object_parameter():
     p = Parameter('obj')
     p.set_value(config)
     assert p.hash == 'obj=abc'
+
+
+def test_auto_parameter_object_bad_init():
+
+    class Obj(AutoParameterObject):
+        def __init__(self, a1, a2, k1=3, k2=4):
+            pass
+
+    with pytest.raises(AttributeError):
+        Obj(1, 2).hash()
+
+    class Obj2(AutoParameterObject):
+        def __init__(self, a1, a2, k1=3, k2=4):
+            super().__init__()
+
+    with pytest.raises(AttributeError):
+        Obj2(1, 2).hash()
+
+
+def test_auto_parameter_object():
+
+    class Obj(AutoParameterObject):
+        def _init(self, a1, a2, k1=3, k2=4):
+            pass
+
+    assert Obj(1, 2).hash() == Obj(1, 2).hash()
+    assert Obj(1, 2).hash() != Obj(1, 3).hash()
+    assert Obj(1, 2).hash() == Obj(1, 2, k1=3).hash()
+    assert Obj(1, 2).hash() != Obj(1, 2, k1=4).hash()
+
+
+def test_auto_parameter_object_ignore_persistence():
+
+    class Obj(AutoParameterObject):
+        def _init(self, a1, a2, k1=3, verbose=False):
+            pass
+
+        @staticmethod
+        def ignore_persistence_args():
+            return ['verbose']
+
+    assert Obj(1, 2).hash() == Obj(1, 2, verbose=True).hash()
+    assert Obj(1, 2, verbose=False).hash() == Obj(1, 2, verbose=True).hash()
+
+
+def test_auto_parameter_object_dont_persist_default_value():
+
+    class OldObj(AutoParameterObject):
+        def _init(self, a1, a2, k1=3):
+            pass
+
+    class Obj(AutoParameterObject):
+        def _init(self, a1, a2, k1=3, new_param=1):
+            pass
+
+        @staticmethod
+        def dont_persist_default_value_args():
+            return ['new_param']
+
+    assert Obj(1, 2).hash() == Obj(1, 2, new_param=1).hash()
+    assert Obj(1, 2).hash() != Obj(1, 2, new_param=2).hash()
+    assert OldObj(1, 2).hash().replace('OldObj', 'Obj') == Obj(1, 2).hash()
+
