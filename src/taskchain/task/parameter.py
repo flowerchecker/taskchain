@@ -2,8 +2,8 @@ import abc
 from typing import Union, Any, Iterable
 
 
-NO_DEFAULT = '>>NO_DEFAULT<<'
-NO_VALUE = '>>NO_VALUE<<'
+class NO_DEFAULT: pass
+class NO_VALUE: pass
 
 
 class Parameter:
@@ -35,7 +35,7 @@ class Parameter:
         self.ignore_persistence = ignore_persistence
         self.dont_persist_default_value = dont_persist_default_value
 
-        self._value = NO_VALUE
+        self._value = self.NO_VALUE
 
     def __str__(self):
         return self.name
