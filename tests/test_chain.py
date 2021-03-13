@@ -266,7 +266,7 @@ class MyObject(ChainObject, ParameterObject):
     def init_chain(self, chain):
         self.x = chain._base_config.x
 
-    def hash(self):
+    def repr(self):
         return ''
 
 

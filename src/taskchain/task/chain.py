@@ -291,9 +291,9 @@ class TaskParameterConfig(Config):
         self.input_tasks = {name: task.get_config().get_name_for_persistence(task) for name, task in input_tasks.items()}
 
     def get_name_for_persistence(self, task: Task) -> str:
-        parameter_hash = task.parameters.hash
-        input_tasks_hash = '###'.join(f'{n}={it}' for n, it in self.input_tasks.items())
-        return sha256(f'{parameter_hash}$$${input_tasks_hash}'.encode()).hexdigest()[:32]
+        parameter_repr = task.parameters.repr
+        input_tasks_repr = '###'.join(f'{n}={it}' for n, it in self.input_tasks.items())
+        return sha256(f'{parameter_repr}$$${input_tasks_repr}'.encode()).hexdigest()[:32]
 
 
 class MultiChain:

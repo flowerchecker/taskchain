@@ -93,7 +93,7 @@ class MyObject(ParameterObject):
         self.a = a
         self.b = b
 
-    def hash(self):
+    def repr(self):
         return ''
 
 
@@ -102,7 +102,7 @@ class MyObject2(ParameterObject):
         self.c = c
         self.o = o
 
-    def hash(self):
+    def repr(self):
         return ''
 
 

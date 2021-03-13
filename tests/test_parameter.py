@@ -76,19 +76,19 @@ def test_hash():
 
     p = Parameter('value1', ignore_persistence=True)
     p.set_value(config)
-    assert p.hash is None
+    assert p.repr is None
 
     p = Parameter('value1')
     p.set_value(config)
-    assert p.hash is not None
+    assert p.repr is not None
 
     p = Parameter('value1', default=1, dont_persist_default_value=True)
     p.set_value(config)
-    assert p.hash is None
+    assert p.repr is None
 
     p = Parameter('value1', default=2, dont_persist_default_value=True)
     p.set_value(config)
-    assert p.hash is not None
+    assert p.repr is not None
 
 
 def test_registry():
@@ -117,7 +117,7 @@ def test_registry():
         Parameter('value0', ignore_persistence=True)
     ])
     registry2.set_values(config)
-    assert registry.hash == registry2.hash
+    assert registry.repr == registry2.repr
 
 
 class Obj(ParameterObject):
@@ -125,7 +125,7 @@ class Obj(ParameterObject):
     def __init__(self, arg):
         self.arg = arg
 
-    def hash(self) -> str:
+    def repr(self) -> str:
         return self.arg
 
 
@@ -140,7 +140,7 @@ def test_object_parameter():
 
     p = Parameter('obj')
     p.set_value(config)
-    assert p.hash == 'obj=abc'
+    assert p.repr == 'obj=abc'
 
 
 def test_auto_parameter_object_bad_init():
@@ -150,14 +150,14 @@ def test_auto_parameter_object_bad_init():
             pass
 
     with pytest.raises(AttributeError):
-        Obj(1, 2).hash()
+        Obj(1, 2).repr()
 
     class Obj2(AutoParameterObject):
         def __init__(self, a1, a2, k1=3, k2=4):
             super().__init__()
 
     with pytest.raises(AttributeError):
-        Obj2(1, 2).hash()
+        Obj2(1, 2).repr()
 
 
 def test_auto_parameter_object():
@@ -166,10 +166,10 @@ def test_auto_parameter_object():
         def _init(self, a1, a2, k1=3, k2=4):
             pass
 
-    assert Obj(1, 2).hash() == Obj(1, 2).hash()
-    assert Obj(1, 2).hash() != Obj(1, 3).hash()
-    assert Obj(1, 2).hash() == Obj(1, 2, k1=3).hash()
-    assert Obj(1, 2).hash() != Obj(1, 2, k1=4).hash()
+    assert Obj(1, 2).repr() == Obj(1, 2).repr()
+    assert Obj(1, 2).repr() != Obj(1, 3).repr()
+    assert Obj(1, 2).repr() == Obj(1, 2, k1=3).repr()
+    assert Obj(1, 2).repr() != Obj(1, 2, k1=4).repr()
 
 
 def test_auto_parameter_object_ignore_persistence():
@@ -182,8 +182,8 @@ def test_auto_parameter_object_ignore_persistence():
         def ignore_persistence_args():
             return ['verbose']
 
-    assert Obj(1, 2).hash() == Obj(1, 2, verbose=True).hash()
-    assert Obj(1, 2, verbose=False).hash() == Obj(1, 2, verbose=True).hash()
+    assert Obj(1, 2).repr() == Obj(1, 2, verbose=True).repr()
+    assert Obj(1, 2, verbose=False).repr() == Obj(1, 2, verbose=True).repr()
 
 
 def test_auto_parameter_object_dont_persist_default_value():
@@ -200,7 +200,7 @@ def test_auto_parameter_object_dont_persist_default_value():
         def dont_persist_default_value_args():
             return ['new_param']
 
-    assert Obj(1, 2).hash() == Obj(1, 2, new_param=1).hash()
-    assert Obj(1, 2).hash() != Obj(1, 2, new_param=2).hash()
-    assert OldObj(1, 2).hash().replace('OldObj', 'Obj') == Obj(1, 2).hash()
+    assert Obj(1, 2).repr() == Obj(1, 2, new_param=1).repr()
+    assert Obj(1, 2).repr() != Obj(1, 2, new_param=2).repr()
+    assert OldObj(1, 2).repr().replace('OldObj', 'Obj') == Obj(1, 2).repr()
 

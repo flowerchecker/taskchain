@@ -67,20 +67,20 @@ class Parameter:
         self._value = value
         return value
 
-    def value_hash(self):
+    def value_repr(self):
         if isinstance(self.value, ParameterObject):
-            return self.value.hash()
+            return self.value.repr()
         return repr(self.value)
 
     @property
-    def hash(self) -> Union[str, None]:
+    def repr(self) -> Union[str, None]:
         if self.ignore_persistence:
             return None
 
         if self.dont_persist_default_value and self.value == self.default:
             return None
 
-        return f'{self.name}={self.value_hash()}'
+        return f'{self.name}={self.value_repr()}'
 
 
 class ParameterRegistry:
@@ -124,21 +124,21 @@ class ParameterRegistry:
         return self._parameters.values()
 
     @property
-    def hash(self):
-        hashes = []
+    def repr(self):
+        reprs = []
         for name, parameter in sorted(self._parameters.items()):
-            hsh = parameter.hash
-            if hsh is not None:
-                hashes.append(hsh)
-        if hashes:
-            return '###'.join(hashes)
+            repr = parameter.repr
+            if repr is not None:
+                reprs.append(repr)
+        if reprs:
+            return '###'.join(reprs)
         return None
 
 
 class ParameterObject:
 
     @abc.abstractmethod
-    def hash(self) -> str:
+    def repr(self) -> str:
         raise NotImplemented
 
 
@@ -153,7 +153,7 @@ class AutoParameterObject(ParameterObject):
     def _init(self, *args, **kwargs):
         pass
 
-    def hash(self) -> str:
+    def repr(self) -> str:
         parameters = signature(self._init).parameters
 
         if self._args is None \
@@ -171,8 +171,8 @@ class AutoParameterObject(ParameterObject):
                 kwargs[arg] = parameter.default
             if arg in dont_persist_default_value_args and kwargs[arg] == parameter.default:
                 del kwargs[arg]
-        args_hash = ', '.join(f'{k}={repr(v)}' for k, v in sorted(kwargs.items()) if k not in ignore_persistence_args)
-        return f'{self.__class__.__name__}({args_hash})'
+        args_repr = ', '.join(f'{k}={repr(v)}' for k, v in sorted(kwargs.items()) if k not in ignore_persistence_args)
+        return f'{self.__class__.__name__}({args_repr})'
 
     @staticmethod
     def ignore_persistence_args() -> List[str]:
