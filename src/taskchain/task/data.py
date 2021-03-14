@@ -1,14 +1,17 @@
-from pathlib import Path
-from taskchain.utils.io import NumpyEncoder, iter_json_file, write_jsons
-from typing import Any, List, Dict, Generator, Union
 import abc
-import h5py
 import json
+import pickle
+import shutil
+from pathlib import Path
+from typing import Any, List, Dict, Generator, Union
+
+import h5py
 import numpy as np
 import pandas as pd
-import pickle
 import pylab
-import shutil
+import yaml
+
+from taskchain.utils.io import NumpyEncoder, iter_json_file, write_jsons
 
 
 class Data:
@@ -75,6 +78,19 @@ class Data:
             return f'{self._base_dir}:{self._name}'
         return f'{self.__class__.__name__}'
 
+    @property
+    def run_info_path(self) -> Path:
+        path = self._path
+        return path.parent / f'{path.stem}.run_info.yaml'
+
+    def save_run_info(self, info: Dict):
+        yaml.dump(info, self.run_info_path.open('w'))
+
+    def load_run_info(self) -> Union[Dict, None]:
+        if not self.run_info_path.exists():
+            return None
+        return yaml.load(self.run_info_path.open())
+
 
 class InMemoryData(Data):
 
@@ -97,6 +113,16 @@ class InMemoryData(Data):
 
     def load(self) -> Any:
         return self
+
+    @property
+    def run_info_path(self):
+        return None
+
+    def save_run_info(self, info: dict):
+        pass
+
+    def load_run_info(self) -> dict:
+        pass
 
 
 class FileData(Data, abc.ABC):

@@ -268,3 +268,15 @@ def test_continues_data(tmp_path):
     d4.value
     assert d4.run_called == 0
     assert not (d4.value / '4').exists()
+
+
+def test_run_info(tmp_path):
+    d = JSONData()
+    d.init_persistence(tmp_path, 'name')
+    run_info = {'a': 1, 'b': ['asd']}
+    d.save_run_info(run_info)
+
+    assert (tmp_path / 'name.run_info.yaml').exists()
+    loaded = d.load_run_info()
+    assert loaded == run_info
+    assert loaded['a'] == 1

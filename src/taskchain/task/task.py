@@ -1,9 +1,12 @@
 import abc
+import getpass
 import inspect
 import logging
 import re
 import sys
+from collections import defaultdict
 from copy import deepcopy
+from datetime import datetime
 from inspect import isclass
 from pathlib import Path
 from typing import Union, Any, get_type_hints, Type, Dict, Iterable
@@ -139,12 +142,13 @@ class Task(object, metaclass=MetaTask):
         if len(inspect.signature(self.data_class).parameters) == 0:
             # data class is not meant to be created out of run method -> data cannot be loaded
             self._data = self.data_class()
-            self._init_persistence()
+            self._init_persistence(self._data)
 
         if self._data and self._data.is_persisting and self._data.exists() and not self._forced:
             self._data.load()
         else:
             try:
+                self._init_run_info()
                 logger.info(f'{self} - run started')
                 run_result = self.run()
                 logger.info(f'{self} - run ended')
@@ -154,6 +158,7 @@ class Task(object, metaclass=MetaTask):
                     self._data = None
                 raise error
             self.process_run_result(run_result)
+            self._finish_run_info()
         return self._data
 
     # to run from task itself
@@ -211,7 +216,7 @@ class Task(object, metaclass=MetaTask):
     def process_run_result(self, run_result: Any):
         if isclass(self.data_type) and issubclass(self.data_type, Data) and isinstance(run_result, self.data_type):
             self._data = run_result
-            self._init_persistence()
+            self._init_persistence(self._data)
         elif isinstance(run_result, self.data_type) or custom_isinstance(run_result, self.data_type) or fullname(self.data_type) == 'typing.Generator':
             self._data.set_value(run_result)
         else:
@@ -220,9 +225,58 @@ class Task(object, metaclass=MetaTask):
         if self._data.is_persisting:
             self._data.save()
 
-    def _init_persistence(self):
-        if self._config is not None and not self._data.is_persisting:
-            self._data.init_persistence(self.path, self._config.get_name_for_persistence(self))
+    def _init_persistence(self, data):
+        if self._config is not None and not data.is_persisting:
+            data.init_persistence(self.path, self._config.get_name_for_persistence(self))
+
+    @property
+    def run_info(self) -> Dict:
+        if hasattr(self, '_data') and self._data is not None:
+            data = self._data
+        else:
+            data = self.data_class()
+            self._init_persistence(data)
+
+        return data.load_run_info()
+
+    def _init_run_info(self):
+        self._run_info = {
+            'task': {
+                'name': self.slugname,
+                'class': self.__class__.__name__,
+                'module': self.__class__.__module__,
+            },
+            'parameters': {p.name: p.value_repr() for p in self.parameters.values()},
+            'user': {
+                'name': getpass.getuser(),
+            },
+            'log': [],
+        }
+        if self._config is not None:
+            self._run_info['config'] = {
+                'name': self._config.name,
+                'namespace': self._config.namespace,
+                'context': self._config.context.name if self._config.context is not None else None,
+            }
+
+            from taskchain.task.chain import TaskParameterConfig
+            if isinstance(self._config, TaskParameterConfig):
+                self._run_info['input_tasks'] = self._config.input_tasks
+        self._run_info['started'] = datetime.timestamp(datetime.now())
+
+    def log(self, record):
+        if isinstance(record, defaultdict):
+            record = dict(record)
+        self._run_info['log'].append(record)
+
+    def _finish_run_info(self):
+        now = datetime.now()
+        self._run_info['ended'] = str(now)
+        self._run_info['time'] = datetime.timestamp(now) - self._run_info['started']
+        self._run_info['started'] = str(datetime.fromtimestamp(self._run_info['started']))
+
+        if self._data and self._data._base_dir:
+            self._data.save_run_info(self._run_info)
 
 
 class ModuleTask(Task, metaclass=MetaModuleTask):

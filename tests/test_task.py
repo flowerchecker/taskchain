@@ -1,9 +1,11 @@
+from collections import defaultdict
 from typing import Generator, Dict
 
 import pytest
 
 from taskchain.task import Task, Config, ModuleTask
 from taskchain.task.data import JSONData, GeneratedData
+from taskchain.task.parameter import Parameter
 
 
 class ThisIsSomethingTask(Task):
@@ -212,3 +214,38 @@ def test_namespace(tmp_path):
     a = A(config)
     assert a.slugname == 'a'
     assert a.fullname == 'ns::a'
+
+
+def test_run_info(tmp_path):
+    class A(Task):
+        class Meta:
+            parameters = [Parameter('p'), Parameter('s')]
+
+        def run(self) -> int:
+            self.log('working')
+            stats = defaultdict(int)
+            stats['hit'] += 1
+            self.log(stats)
+            return 0
+
+    a = A(config=Config(tmp_path, name='cfg', namespace='ns', data={'p': 1, 's': 'abc'}, context={}))
+    _ = a.value
+
+    a = A(config=Config(tmp_path, name='cfg', namespace='ns', data={'p': 1, 's': 'abc'}))
+    info = a.run_info
+    assert info['parameters'] == {'p': '1', 's': "'abc'"}
+    assert info['config']['namespace'] == 'ns'
+    assert info['config']['name'] == 'cfg'
+    assert info['config']['context'] == 'dict_context()'
+    assert len(info['log']) == 2
+    assert info['log'][0] == 'working'
+    assert info['log'][1] == {'hit': 1}
+
+    assert 'started' in info
+    assert 'ended' in info
+    assert 0 < info['time'] < 0.01
+
+    assert (tmp_path / 'a' / 'cfg.run_info.yaml').exists()
+
+    for line in (tmp_path / 'a' / 'cfg.run_info.yaml').open().readlines():
+        print(line[:-1])
