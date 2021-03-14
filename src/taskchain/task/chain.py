@@ -303,7 +303,7 @@ class TaskParameterConfig(Config):
 
     def get_name_for_persistence(self, task: Task) -> str:
         parameter_repr = task.parameters.repr
-        input_tasks_repr = '###'.join(f'{n}={it}' for n, it in self.input_tasks.items())
+        input_tasks_repr = '###'.join(f'{n}={it}' for n, it in sorted(self.input_tasks.items()))
         return sha256(f'{parameter_repr}$$${input_tasks_repr}'.encode()).hexdigest()[:32]
 
 
