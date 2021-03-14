@@ -76,7 +76,27 @@ class Chain(dict):
     def _process_config(self, config: Config):
         self.configs[config.name] = config
         for use in config.get('uses', []):
-            if isinstance(use, Config):
+            if isinstance(use, str):
+                pattern = r'(.*) as (.*)'
+                if matched := re.match(pattern, use):
+                    # uses config with namespace
+                    used_config = Config(
+                        config.base_dir,
+                        filepath=matched[1],
+                        namespace=f'{config.namespace}::{matched[2]}' if config.namespace else matched[2],
+                        global_vars=config.global_vars,
+                    )
+                else:
+                    # uses config without namespace
+                    used_config = Config(
+                        config.base_dir,
+                        use,
+                        namespace=config.namespace if config.namespace else None,
+                        global_vars=config.global_vars,
+                    )
+            else:
+                # mainly for testing
+                assert isinstance(use, Config)
                 assert config.base_dir == use.base_dir, f'Base dirs of configs `{config}` and `{use}` do not match'
                 if config.namespace:
                     if use.namespace:
@@ -84,22 +104,6 @@ class Chain(dict):
                     else:
                         use.namespace = config.namespace
                 used_config = use
-            else:
-                pattern = r'(.*) as (.*)'
-                if matched := re.match(pattern, use):
-                    used_config = Config(
-                        config.base_dir,
-                        filepath=matched[1],
-                        namespace=f'{config.namespace}::{matched[2]}' if config.namespace else matched[2],
-                        global_vars=config.global_vars
-                    )
-                else:
-                    used_config = Config(
-                        config.base_dir,
-                        use,
-                        namespace=config.namespace if config.namespace else None,
-                        global_vars=config.global_vars,
-                    )
             self._process_config(used_config)
 
     def _create_tasks(self, task_registry=None) -> Dict[str, Task]:
