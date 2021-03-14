@@ -172,17 +172,21 @@ class Chain(dict):
         for task_name, task in tasks.items():
             input_tasks = InputTasks()
             for input_task in task.meta.get('input_tasks', []):
-                if type(input_task) is not str:     # for reference by class
-                    input_task = input_task.slugname
-                if type(input_task) is str and task.get_config().namespace and not input_task.startswith(task.get_config().namespace):
-                    input_task = f'{task.get_config().namespace}::{input_task}'     # add current config to reference
+                if type(input_task) is str:
+                    input_task_name = input_task
+                else:  # for reference by class
+                    input_task_name = input_task.slugname
+                if type(input_task_name) is str and task.get_config().namespace and not input_task_name.startswith(task.get_config().namespace):
+                    input_task_name = f'{task.get_config().namespace}::{input_task_name}'     # add current config to reference
+                if input_task_name in input_tasks.keys():
+                    raise ValueError(f'Multiple input tasks with same name `{input_task_name}`')
                 try:
-                    input_task = find_task_full_name(input_task, tasks, determine_namespace=False)
+                    found_name = find_task_full_name(input_task_name, tasks, determine_namespace=False)
+                    if type(input_task) is str:
+                        input_task_name = found_name
                 except KeyError:
-                    raise ValueError(f'Input task `{input_task}` of task `{task}` not found')
-                if input_task in input_tasks:
-                    raise ValueError(f'Multiple input tasks with same name `{input_task}`')
-                input_tasks[input_task] = tasks[input_task]
+                    raise ValueError(f'Input task `{input_task_name}` of task `{task}` not found')
+                input_tasks[input_task_name] = tasks[input_task_name]
             task.set_input_tasks(input_tasks)
 
     def _build_graph(self):
