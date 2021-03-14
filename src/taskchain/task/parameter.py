@@ -114,6 +114,9 @@ class ParameterRegistry:
     def __contains__(self, item):
         return item in self._parameters
 
+    def __bool__(self):
+        return True
+
     def items(self):
         return self._parameters.items()
 

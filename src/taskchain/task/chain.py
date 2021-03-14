@@ -304,7 +304,8 @@ class TaskParameterConfig(Config):
         original_config = original_task.get_config()
         self.base_dir = original_config.base_dir
         self.namespace = original_config.namespace
-        self.global_vars = original_config
+        self.global_vars = original_config.global_vars
+        self.context = original_config.context
         self._name = f'{original_config.name}/{original_task}'
 
         self._data = {}
