@@ -285,6 +285,19 @@ class Chain(dict):
 
 
 class TaskParameterConfig(Config):
+    """
+    Helper config used in parameter mode.
+
+    It takes
+     - instance of Task and create config with only parameters which are used by this task
+     - input tasks (already with TaskParameterConfig)
+    From this data creates unique hash used in persistence
+
+    Note: These configs creates a kind of blockchain. Each config is block,
+          parameters are content of blocks and input_tasks are dependencies between blocks.
+          Change in one config invalidates all dependant configs, which is property desired
+          and required for correct functionality of TaskChains data persistence.
+    """
     def __init__(self, original_task: Task, input_tasks: Dict[str, Task]):
         super(Config, self).__init__()
 

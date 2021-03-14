@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Union, Dict, Iterable, Any, List
+from typing import Union, Dict, Iterable, Any
 
 import yaml
 
@@ -12,6 +12,17 @@ from taskchain.utils.data import search_and_replace_placeholders
 
 
 class Config(dict):
+    """
+    Object carrying parameters needed for task execution.
+    Config also describe which tasks configures (`tasks` field) and
+    and on which other configs depends (`uses` field).
+    Thus, config carry all information needed to assemble task chain.
+
+    Typical usage:
+    ```python
+    chain = Config(task_data_dir, 'config.yaml').chain()
+    ```
+    """
 
     def __init__(self,
                  base_dir: Union[Path, str, None] = None,
@@ -22,6 +33,15 @@ class Config(dict):
                  namespace: str = None,
                  data: Dict = None,
                  ):
+        """
+        :param base_dir: dir with task data, required for task data persistence
+        :param filepath: json or yaml with config data
+        :param global_vars: data to fill placeholders inf config data such as `{DATA_DIR}`
+        :param context: config which amend or overwrite data of this config
+        :param name: specify name of config directly, required when not using filepath
+        :param namespace: used by chains, allow work with same tasks with multiple configs in one chain
+        :param data: alternative for `filepath`, inject data directly
+        """
         super().__init__()
 
         self.base_dir = base_dir
@@ -64,10 +84,12 @@ class Config(dict):
         return self._name
 
     def get_name_for_persistence(self, *args, **kwargs) -> str:
+        """ Used for creating filename in task data persistence, should uniquely define config """
         return self.name
 
     @property
     def fullname(self):
+        """ Name with namespace """
         if self.namespace is None:
             return f'{self.name}'
         return f'{self.namespace}::{self.name}'
@@ -97,9 +119,11 @@ class Config(dict):
         return item in self.data
 
     def apply_context(self, context: Context):
+        """ Amend or rewrite data of config by data from context"""
         self._data.update(context.data)
 
     def _validate_data(self):
+        """ Check correct format of data """
         if self._data is None:
             return
 
@@ -112,10 +136,11 @@ class Config(dict):
         if not isinstance(tasks, Iterable) or isinstance(tasks, str):
             raise ValueError(f'`tasks` of config `{self}` have to list or str')
 
-    def apply_global_vars(self, context):
-        search_and_replace_placeholders(self._data, context)
+    def apply_global_vars(self, global_vars):
+        search_and_replace_placeholders(self._data, global_vars)
 
     def prepare_objects(self):
+        """ Instantiate objects described in config """
         if self._data is None:
             return
         for key, value in self._data.items():
@@ -126,15 +151,19 @@ class Config(dict):
                 self._data[key] = obj
 
     def chain(self, **kwargs):
+        """ Create chain from this config """
         from taskchain.task import Chain
         return Chain(self, **kwargs)
 
 
 class Context(Config):
-    pass
+    """
+    Config intended for amend or rewrite other configs
+    """
 
     @staticmethod
     def prepare_context(context_config: Union[None, dict, str, Path, Context, Iterable]) -> Union[Context, None]:
+        """ Helper function for instantiating Context from various sources"""
         if context_config is None:
             return
         if type(context_config) is str or isinstance(context_config, Path):
@@ -151,6 +180,11 @@ class Context(Config):
 
     @staticmethod
     def merge_contexts(contexts: Iterable[Context]) -> Context:
+        """
+        Helper function for merging multiple Context to one
+
+        Later contexts have higher priority and rewrite data of earlier contexts if there is conflict in data.
+        """
         data = {}
         names = []
         for context in contexts:
