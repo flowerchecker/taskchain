@@ -125,6 +125,7 @@ class Task(object, metaclass=MetaTask):
         if parameters is not None:
             parameters = deepcopy(parameters)
         self.params = self.parameters = ParameterRegistry(parameters)
+        self.parameters.set_values(self._config)
 
     @abc.abstractmethod
     def run(self):

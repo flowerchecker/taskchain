@@ -163,7 +163,6 @@ class Chain(dict):
             return task_registry[task_name, config.name]
 
         task = task_class(config)
-        task.parameters.set_values(config)
         if task_registry is not None:
             task_registry[task_name, config.name] = task
         return task
