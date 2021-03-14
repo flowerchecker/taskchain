@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Generator, Dict
+from typing import Generator, Dict, List
 
 import pytest
 
@@ -249,3 +249,66 @@ def test_run_info(tmp_path):
 
     for line in (tmp_path / 'a' / 'cfg.run_info.yaml').open().readlines():
         print(line[:-1])
+
+
+def test_run_input_arguments(tmp_path):
+    class A(Task):
+        class Meta:
+            task_group = 'group'
+
+        def run(self) -> int:
+            return 1
+
+    class B(Task):
+        def run(self) -> int:
+            return 2
+
+    class C1(Task):
+        class Meta:
+            input_tasks = [A, B]
+
+        def run(self, a, b) -> List:
+            return [a, b]
+
+    chain = Config(tmp_path, name='config1', data={'tasks': [A, B, C1]}).chain()
+    assert chain.c1.value == [1, 2]
+
+    class C2(Task):
+        class Meta:
+            input_tasks = [A, B]
+
+        def run(self, b) -> List:
+            return [self.input_tasks['a'].value, b]
+
+    chain = Config(tmp_path, name='config1', data={'tasks': [A, B, C2]}).chain()
+    assert chain.c2.value == [1, 2]
+
+    class C3(Task):
+        class Meta:
+            input_tasks = [A, B]
+
+        def run(self, b=7) -> List:
+            return [self.input_tasks['a'].value, b]
+
+    chain = Config(tmp_path, name='config1', data={'tasks': [A, B, C3]}).chain()
+    with pytest.raises(AttributeError):
+        _ = chain.c3.value
+
+    class ATask(Task):
+        class Meta:
+            task_group = 'group2'
+
+        def run(self) -> int:
+            return 3
+
+    class C4(Task):
+        class Meta:
+            input_tasks = [A, ATask]
+
+        def run(self, a) -> List:
+            return [self.input_tasks['a'].value, a]
+
+    print('---------')
+    chain = Config(tmp_path, name='config1', data={'tasks': [A, ATask, C4]}).chain()
+    with pytest.raises(KeyError):
+        _ = chain.c4.value

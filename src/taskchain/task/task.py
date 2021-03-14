@@ -131,7 +131,7 @@ class Task(object, metaclass=MetaTask):
         self.parameters.set_values(self._config)
 
     @abc.abstractmethod
-    def run(self):
+    def run(self, *args):
         pass
 
     @property
@@ -150,7 +150,7 @@ class Task(object, metaclass=MetaTask):
             try:
                 self._init_run_info()
                 logger.info(f'{self} - run started')
-                run_result = self.run()
+                run_result = self.run(*self._get_run_arguments())
                 logger.info(f'{self} - run ended')
             except Exception as error:
                 if self._data:
@@ -160,6 +160,14 @@ class Task(object, metaclass=MetaTask):
             self.process_run_result(run_result)
             self._finish_run_info()
         return self._data
+
+    def _get_run_arguments(self):
+        args = []
+        for arg, parameter in inspect.signature(self.run).parameters.items():
+            if parameter.default != inspect.Parameter.empty:
+                raise AttributeError('Kwargs arguments in run method not allowed')
+            args.append(self.input_tasks[arg].value)
+        return args
 
     # to run from task itself
     def get_data_object(self):
