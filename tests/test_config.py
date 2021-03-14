@@ -4,6 +4,7 @@ import pytest
 import yaml
 
 from taskchain.task import Config
+from taskchain.task.config import Context
 from taskchain.task.parameter import ParameterObject
 
 
@@ -78,7 +79,7 @@ def test_data(tmp_path):
             _ = c.x
 
 
-def test_context(tmp_path):
+def test_global_vars(tmp_path):
     config = Config(tmp_path, data={'a': '{A}/{B}.{B}', 'b': '{B}'}, global_vars={'B': 2}, name='config')
     assert config['a'] == '{A}/2.2'
     assert config['b'] == '2'
@@ -152,3 +153,22 @@ def test_namespace(tmp_path):
     c = Config(tmp_path, name='test', namespace='ns')
     assert c.name == 'test'
     assert c.fullname == 'ns::test'
+
+
+def test_context(tmp_path):
+    json.dump({'b': 7}, (tmp_path / 'file_context.json').open('w'))
+
+    config = Config(data={'a': 1, 'rw': 666}, context=[
+        str(tmp_path / 'file_context.json'),
+        tmp_path / 'file_context.json',
+        {'c': 4, 'rw': 0},
+        {'c': 6, 'rw': 1},
+        Context(data={'d': 8}, name='my_context')
+    ])
+
+    assert len(config.context.name.split(';')) == 5
+    assert config.a == 1
+    assert config.b == 7
+    assert config.c == 6
+    assert config.rw == 1
+    assert config.d == 8

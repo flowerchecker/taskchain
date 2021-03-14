@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import json
 from pathlib import Path
-from typing import Union, Dict, Iterable, Any
+from typing import Union, Dict, Iterable, Any, List
 
 import yaml
 
@@ -14,10 +16,11 @@ class Config(dict):
     def __init__(self,
                  base_dir: Union[Path, str, None] = None,
                  filepath: Union[Path, str] = None,
+                 global_vars: Union[Any, None] = None,
+                 context: Union[None, dict, str, Path, Context, Iterable] = None,
                  name: str = None,
                  namespace: str = None,
                  data: Dict = None,
-                 global_vars: Union[Any, None] = None,
                  ):
         super().__init__()
 
@@ -25,6 +28,7 @@ class Config(dict):
         self._name = None
         self.namespace = namespace
         self._data = None
+        self.context = Context.prepare_context(context)
         self.global_vars = global_vars
         self._filepath = filepath
 
@@ -43,9 +47,14 @@ class Config(dict):
         if name is not None:
             self._name = name
 
+        self._prepare()
+
+    def _prepare(self):
+        if self.context is not None:
+            self.apply_context(self.context)
         self._validate_data()
-        if global_vars is not None:
-            self.apply_global_vars(global_vars)
+        if self.global_vars is not None:
+            self.apply_global_vars(self.global_vars)
         self.prepare_objects()
 
     @property
@@ -87,6 +96,9 @@ class Config(dict):
     def __contains__(self, item):
         return item in self.data
 
+    def apply_context(self, context: Context):
+        self._data.update(context.data)
+
     def _validate_data(self):
         if self._data is None:
             return
@@ -116,3 +128,33 @@ class Config(dict):
     def chain(self, **kwargs):
         from taskchain.task import Chain
         return Chain(self, **kwargs)
+
+
+class Context(Config):
+    pass
+
+    @staticmethod
+    def prepare_context(context_config: Union[None, dict, str, Path, Context, Iterable]) -> Union[Context, None]:
+        if context_config is None:
+            return
+        if type(context_config) is str or isinstance(context_config, Path):
+            return Context(filepath=context_config)
+        if type(context_config) is dict:
+            return Context(data=context_config, name=f'dict_context({",".join(sorted(context_config))})')
+        if isinstance(context_config, Context):
+            return context_config
+        if isinstance(context_config, Iterable):
+            contexts = map(Context.prepare_context, context_config)
+            return Context.merge_contexts(contexts)
+
+        raise ValueError(f'Unknown context type `{type(context_config)}`')
+
+    @staticmethod
+    def merge_contexts(contexts: Iterable[Context]) -> Context:
+        data = {}
+        names = []
+        for context in contexts:
+            data.update(context.data)
+            names.append(context.name)
+        return Context(data=data, name=';'.join(names))
+

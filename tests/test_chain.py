@@ -637,3 +637,31 @@ def test_parameter_mode(tmp_path, parameter_mode):
         print(x)
 
 
+def test_context(tmp_path):
+    config_data = {
+        'uses': [
+            Config(tmp_path, name='config1', data={'a': 2}),
+        ],
+        'b': 1,
+    }
+    chain = Config(tmp_path, name='config2', data=config_data).chain()
+    assert chain.configs['config1'].a == 2
+    assert chain.configs['config2'].b == 1
+
+    chain = Config(tmp_path, name='config2', data=config_data, context={'a': 3, 'b': 2}).chain()
+    assert chain.configs['config2'].b == 2
+    assert chain.configs['config1'].a == 3
+
+
+def test_context_with_files(tmp_path):
+    json.dump({'a': 2}, (tmp_path / 'config1.json').open('w'))
+    json.dump({'b': 1, 'uses': [str(tmp_path / 'config1.json')]}, (tmp_path / 'config2.json').open('w'))
+    json.dump({'a': 3, 'b': 2}, (tmp_path / 'context.json').open('w'))
+
+    chain = Config(tmp_path, tmp_path / 'config2.json').chain()
+    assert chain.configs['config1'].a == 2
+    assert chain.configs['config2'].b == 1
+
+    chain = Config(tmp_path, tmp_path / 'config2.json', context=tmp_path / 'context.json').chain()
+    assert chain.configs['config2'].b == 2
+    assert chain.configs['config1'].a == 3

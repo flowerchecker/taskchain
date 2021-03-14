@@ -35,6 +35,9 @@ class Chain(dict):
         self._task_registry = shared_tasks if shared_tasks is not None else {}
         self.graph: Union[None, nx.DiGraph] = None
 
+        if not parameter_mode and config.context is not None:
+            logging.warning('Using context without parameter mode can break persistence!')
+
         self._prepare()
 
     def __str__(self):
@@ -85,6 +88,7 @@ class Chain(dict):
                         filepath=matched[1],
                         namespace=f'{config.namespace}::{matched[2]}' if config.namespace else matched[2],
                         global_vars=config.global_vars,
+                        context=config.context,
                     )
                 else:
                     # uses config without namespace
@@ -93,6 +97,7 @@ class Chain(dict):
                         use,
                         namespace=config.namespace if config.namespace else None,
                         global_vars=config.global_vars,
+                        context=config.context,
                     )
             else:
                 # mainly for testing
@@ -103,6 +108,8 @@ class Chain(dict):
                         use.namespace = f'{config.namespace}::{use.namespace}'
                     else:
                         use.namespace = config.namespace
+                use.context = config.context
+                use._prepare()
                 used_config = use
             self._process_config(used_config)
 
