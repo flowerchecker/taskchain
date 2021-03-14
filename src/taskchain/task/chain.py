@@ -180,6 +180,8 @@ class Chain(dict):
                     input_task = find_task_full_name(input_task, tasks, determine_namespace=False)
                 except KeyError:
                     raise ValueError(f'Input task `{input_task}` of task `{task}` not found')
+                if input_task in input_tasks:
+                    raise ValueError(f'Multiple input tasks with same name `{input_task}`')
                 input_tasks[input_task] = tasks[input_task]
             task.set_input_tasks(input_tasks)
 

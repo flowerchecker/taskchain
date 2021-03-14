@@ -315,7 +315,10 @@ class InputTasks(dict):
         return super().get(find_task_full_name(item, self.keys()))
 
     def __contains__(self, item):
-        return super().__contains__(find_task_full_name(item, self.keys()))
+        try:
+            return super().__contains__(find_task_full_name(item, self.keys()))
+        except KeyError:
+            return False
 
 
 def find_task_full_name(task_name: str, tasks: Iterable[str], determine_namespace: bool = True) -> str:
