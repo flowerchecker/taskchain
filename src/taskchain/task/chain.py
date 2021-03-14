@@ -159,13 +159,13 @@ class Chain(dict):
     @staticmethod
     def _create_task(task_class: Type[Task], config: Config, task_registry: Dict = None):
         task_name = task_class.fullname(config)
-        if task_registry and (task_name, config.fullname) in task_registry:
-            return task_registry[task_name, config.fullname]
+        if task_registry and (task_name, config.name) in task_registry:
+            return task_registry[task_name, config.name]
 
         task = task_class(config)
         task.parameters.set_values(config)
         if task_registry is not None:
-            task_registry[task_name, config.fullname] = task
+            task_registry[task_name, config.name] = task
         return task
 
     @staticmethod
@@ -244,7 +244,7 @@ class Chain(dict):
 
     @property
     def fullname(self):
-        return self._base_config.fullname
+        return self._base_config.name
 
     def draw(self, node_attrs=None, edge_attrs=None, graph_attrs=None, split_by_namespaces=False):
         import graphviz as gv
@@ -321,7 +321,7 @@ class MultiChain:
 
     def _prepare(self):
         for config in self._base_configs:
-            self.chains[config.fullname] = Chain(config, self._tasks, parameter_mode=self.parameter_mode)
+            self.chains[config.name] = Chain(config, self._tasks, parameter_mode=self.parameter_mode)
 
     def __getitem__(self, chain_name: str):
         if chain_name not in self.chains:
