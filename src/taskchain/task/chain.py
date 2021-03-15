@@ -264,7 +264,7 @@ class Chain(dict):
         edge_attr = {}
         edge_attr.update(edge_attrs if edge_attrs else {})
 
-        groups = list({(n.config.namespace, n.group) for n in self.graph.nodes})
+        groups = list({(n.get_config().namespace, n.group) for n in self.graph.nodes})
         colors = sns.color_palette('pastel', len(groups)).as_hex()
 
         G = gv.Digraph(
@@ -277,13 +277,13 @@ class Chain(dict):
         def _get_slugname(task: Task):
             if split_by_namespaces:
                 return node.fullname.replace(':', '/')
-            return f'{task.slugname.split(":")[-1]}#{task.get_config()._filepath}'
+            return f'{task.slugname.split(":")[-1]}#{task.get_config().get_name_for_persistence(task)}'
 
         for node in self.graph.nodes:
             G.node(
                 _get_slugname(node),
                 label=node.fullname.split(':')[-1],
-                color=colors[groups.index((node.config.namespace, node.group))]
+                color=colors[groups.index((node.get_config().namespace, node.group))]
             )
 
         for edge in self.graph.edges:
