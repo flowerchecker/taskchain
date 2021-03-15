@@ -159,16 +159,21 @@ def test_forcing(tmp_path):
     config = Config(tmp_path, name='config')
 
     a = A(config)
+    assert not a.has_data
     _ = a.value
+    assert a.has_data
     assert a.run_called == 1
     _ = a.value
+    assert a.has_data
     assert a.run_called == 1
 
     a = A(config)
     _ = a.value
+    assert a.has_data
     assert a.run_called == 0
     a.force()
     _ = a.value
+    assert a.has_data
     assert a.run_called == 1
     _ = a.value
     assert a.run_called == 1

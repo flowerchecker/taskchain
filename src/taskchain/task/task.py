@@ -196,6 +196,22 @@ class Task(object, metaclass=MetaTask):
         path = self._config.base_dir / self.slugname.replace(':', '/')
         return path
 
+    @property
+    def _data_without_value(self) -> Data:
+        if hasattr(self, '_data') and self._data is not None:
+            return self._data
+        data = self.data_class()
+        self._init_persistence(data)
+        return data
+
+    @property
+    def has_data(self) -> bool:
+        return self._data_without_value.exists()
+
+    @property
+    def data_path(self) -> Path:
+        return self._data_without_value.path
+
     def reset_data(self):
         self._data = None
         return self
@@ -239,12 +255,7 @@ class Task(object, metaclass=MetaTask):
 
     @property
     def run_info(self) -> Dict:
-        if hasattr(self, '_data') and self._data is not None:
-            data = self._data
-        else:
-            data = self.data_class()
-            self._init_persistence(data)
-
+        data = self._data_without_value
         return data.load_run_info()
 
     def _init_run_info(self):
