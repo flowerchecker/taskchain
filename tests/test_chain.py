@@ -15,7 +15,7 @@ def test_config(tmp_path):
     }
     config = Config(tmp_path, name='config', data=config_data)
     chain = Chain(config)
-    assert len(chain.configs) == 1
+    assert len(chain._configs) == 1
 
 
 def test_configs(tmp_path):
@@ -28,10 +28,10 @@ def test_configs(tmp_path):
     }
     config = Config(tmp_path, name='config1', data=config_data)
     chain = Chain(config)
-    assert len(chain.configs) == 3
-    assert chain.configs['config1'].a == 1
-    assert chain.configs['config2'].a == 2
-    assert chain.configs['config3'].a == 3
+    assert len(chain._configs) == 3
+    assert chain._configs['config1'].a == 1
+    assert chain._configs['config2'].a == 2
+    assert chain._configs['config3'].a == 3
 
 
 def test_task_creation(tmp_path):
@@ -391,7 +391,7 @@ def test_namespace_task_addressing(tmp_path):
     config_a1 = Config(tmp_path, name='config_a1', namespace='nsa1', data={'tasks': [A], 'value': 1})
     config_a2 = Config(tmp_path, name='config_a2', namespace='nsa2', data={'tasks': [A], 'value': 2})
 
-    config = Config(tmp_path, name='config_a1', data={'uses': [config_a1, config_a2]})
+    config = Config(tmp_path, name='config', data={'uses': [config_a1, config_a2]})
 
     chain = config.chain()
     assert len(chain.tasks) == 2
@@ -645,12 +645,12 @@ def test_context(tmp_path):
         'b': 1,
     }
     chain = Config(tmp_path, name='config2', data=config_data).chain()
-    assert chain.configs['config1'].a == 2
-    assert chain.configs['config2'].b == 1
+    assert chain._configs['config1'].a == 2
+    assert chain._configs['config2'].b == 1
 
     chain = Config(tmp_path, name='config2', data=config_data, context={'a': 3, 'b': 2}).chain()
-    assert chain.configs['config2'].b == 2
-    assert chain.configs['config1'].a == 3
+    assert chain._configs['config2'].b == 2
+    assert chain._configs['config1'].a == 3
 
 
 def test_context_with_files(tmp_path):
@@ -659,9 +659,9 @@ def test_context_with_files(tmp_path):
     json.dump({'a': 3, 'b': 2}, (tmp_path / 'context.json').open('w'))
 
     chain = Config(tmp_path, tmp_path / 'config2.json').chain()
-    assert chain.configs['config1'].a == 2
-    assert chain.configs['config2'].b == 1
+    assert chain._configs[str(tmp_path / 'config1.json')].a == 2
+    assert chain._configs[str(tmp_path / 'config2.json')].b == 1
 
     chain = Config(tmp_path, tmp_path / 'config2.json', context=tmp_path / 'context.json').chain()
-    assert chain.configs['config2'].b == 2
-    assert chain.configs['config1'].a == 3
+    assert chain._configs[str(tmp_path / 'config2.json')].b == 2
+    assert chain._configs[str(tmp_path / 'config1.json')].a == 3

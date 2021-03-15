@@ -28,7 +28,7 @@ class Chain(dict):
                  ):
         super().__init__()
         self.tasks: Dict[str, Task] = {}
-        self.configs: Dict[str, Config] = {}
+        self._configs: Dict[str, Config] = {}
 
         self._parameter_mode = parameter_mode
         self._base_config = config
@@ -77,7 +77,9 @@ class Chain(dict):
         self._init_objects()
 
     def _process_config(self, config: Config):
-        self.configs[config.name] = config
+        if config.repr_name in self._configs:
+            return
+        self._configs[config.repr_name] = config
         for use in config.get('uses', []):
             if isinstance(use, str):
                 pattern = r'(.*) as (.*)'
@@ -123,7 +125,7 @@ class Chain(dict):
                                  f'with configs `{tasks[task_name].get_config()}` and `{task.get_config()}`')
             tasks[task_name] = _task
 
-        for config in self.configs.values():
+        for config in self._configs.values():
             for task_description in config.get('tasks', []):
                 if type(task_description) is str:
                     for task_class in get_classes_by_import_string(task_description, Task):
@@ -201,7 +203,7 @@ class Chain(dict):
             raise ValueError('Chain is not acyclic')
 
     def _init_objects(self):
-        for config in self.configs.values():
+        for config in self._configs.values():
             for obj in config.data.values():
                 if isinstance(obj, ChainObject):
                     obj.init_chain(self)
