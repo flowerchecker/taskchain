@@ -157,10 +157,10 @@ class Config(dict):
                     raise ValueError(f'Object `{obj}` in config `{self}` is not instance of ParameterObject')
                 self._data[key] = obj
 
-    def chain(self, **kwargs):
+    def chain(self, parameter_mode=True, **kwargs):
         """ Create chain from this config """
         from taskchain.task import Chain
-        return Chain(self, **kwargs)
+        return Chain(self, parameter_mode=parameter_mode, **kwargs)
 
 
 class Context(Config):
