@@ -307,8 +307,3 @@ def test_run_input_arguments(tmp_path):
 
         def run(self, a) -> List:
             return [self.input_tasks['a'].value, a]
-
-    print('---------')
-    chain = Config(tmp_path, name='config1', data={'tasks': [A, ATask, C4]}).chain()
-    with pytest.raises(KeyError):
-        _ = chain.c4.value
