@@ -327,6 +327,10 @@ class TaskParameterConfig(Config):
         input_tasks_repr = '###'.join(f'{n}={it}' for n, it in sorted(self.input_tasks.items()))
         return sha256(f'{parameter_repr}$$${input_tasks_repr}'.encode()).hexdigest()[:32]
 
+    @property
+    def repr_name(self) -> str:
+        return self.name
+
 
 class MultiChain:
 

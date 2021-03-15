@@ -95,7 +95,7 @@ class Config(dict):
         return f'{self.namespace}::{self.name}'
 
     @property
-    def repr_name(self):
+    def repr_name(self) -> str:
         """ Should be unique representation of this config"""
         if self._filepath:
             return str(self._filepath)
