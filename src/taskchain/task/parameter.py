@@ -1,5 +1,5 @@
 import abc
-from inspect import signature, Parameter as SignatureParameter
+from inspect import signature
 from typing import Union, Any, Iterable, List
 
 
@@ -149,36 +149,32 @@ class ParameterObject:
 
 
 class AutoParameterObject(ParameterObject):
+    """
+    ParameterObject with automatic `repr` method based on arguments of __init__ method.
 
-    def __init__(self, *args, **kwargs):
-        self._args = args
-        self._kwargs = kwargs
-        self._init(*args, *kwargs)
-
-    @abc.abstractmethod
-    def _init(self, *args, **kwargs):
-        pass
+    For correct functionality, is necessary store all __init__ argument values as self.arg_name or self._arg_name
+    """
 
     def repr(self) -> str:
-        parameters = signature(self._init).parameters
-
-        if self._args is None \
-                or self._kwargs is None \
-                or len(self._args) != len([p for p in parameters.values() if p.default == SignatureParameter.empty]):
-            raise AttributeError(f'Object `{self.__class__.__name__}`, args or kwargs not saved correctly, '
-                                 f'did you use _init instead of __init__?')
+        parameters = signature(self.__init__).parameters
 
         ignore_persistence_args = self.ignore_persistence_args()
         dont_persist_default_value_args = self.dont_persist_default_value_args()
-        kwargs = dict(self._kwargs)
+        args = {}
         for i, (arg, parameter) in enumerate(parameters.items()):
-            if i < len(self._args):
-                kwargs[arg] = self._args[i]
-            if parameter.default != SignatureParameter.empty and arg not in kwargs:
-                kwargs[arg] = parameter.default
-            if arg in dont_persist_default_value_args and kwargs[arg] == parameter.default:
-                del kwargs[arg]
-        args_repr = ', '.join(f'{k}={repr(v)}' for k, v in sorted(kwargs.items()) if k not in ignore_persistence_args)
+            if arg in ignore_persistence_args:
+                continue
+            if hasattr(self, arg):
+                value = getattr(self, arg)
+            elif hasattr(self, '_' + arg):
+                value = getattr(self, '_' + arg)
+            else:
+                raise AttributeError(f'Value of __init__ argument `{arg}` not found, '
+                                     f'make sure that value is saved in `self.{arg}` or `self._{arg}`')
+            args[arg] = value
+            if arg in dont_persist_default_value_args and args[arg] == parameter.default:
+                del args[arg]
+        args_repr = ', '.join(f'{k}={repr(v)}' for k, v in sorted(args.items()))
         return f'{self.__class__.__name__}({args_repr})'
 
     @staticmethod

@@ -155,6 +155,9 @@ def test_auto_parameter_object_bad_init():
     class Obj2(AutoParameterObject):
         def __init__(self, a1, a2, k1=3, k2=4):
             super().__init__()
+            self.a1 = a1
+            self._a2 = a2
+            self.k1 = k1
 
     with pytest.raises(AttributeError):
         Obj2(1, 2).repr()
@@ -163,8 +166,11 @@ def test_auto_parameter_object_bad_init():
 def test_auto_parameter_object():
 
     class Obj(AutoParameterObject):
-        def _init(self, a1, a2, k1=3, k2=4):
-            pass
+        def __init__(self, a1, a2, k1=3, k2=4):
+            self.a1 = a1
+            self._a2 = a2
+            self.k1 = k1
+            self._k2 = k1
 
     assert Obj(1, 2).repr() == Obj(1, 2).repr()
     assert Obj(1, 2).repr() != Obj(1, 3).repr()
@@ -175,8 +181,10 @@ def test_auto_parameter_object():
 def test_auto_parameter_object_ignore_persistence():
 
     class Obj(AutoParameterObject):
-        def _init(self, a1, a2, k1=3, verbose=False):
-            pass
+        def __init__(self, a1, a2, k1=3, verbose=False):
+            self.a1 = a1
+            self._a2 = a2
+            self.k1 = k1
 
         @staticmethod
         def ignore_persistence_args():
@@ -189,12 +197,17 @@ def test_auto_parameter_object_ignore_persistence():
 def test_auto_parameter_object_dont_persist_default_value():
 
     class OldObj(AutoParameterObject):
-        def _init(self, a1, a2, k1=3):
-            pass
+        def __init__(self, a1, a2, k1=3):
+            self.a1 = a1
+            self._a2 = a2
+            self.k1 = k1
 
     class Obj(AutoParameterObject):
-        def _init(self, a1, a2, k1=3, new_param=1):
-            pass
+        def __init__(self, a1, a2, k1=3, new_param=1):
+            self.a1 = a1
+            self._a2 = a2
+            self.k1 = k1
+            self._new_param = new_param
 
         @staticmethod
         def dont_persist_default_value_args():
