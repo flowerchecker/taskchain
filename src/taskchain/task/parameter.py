@@ -179,7 +179,7 @@ class AutoParameterObject(ParameterObject):
 
     @staticmethod
     def ignore_persistence_args() -> List[str]:
-        return []
+        return ['verbose', 'debug']
 
     @staticmethod
     def dont_persist_default_value_args() -> List[str]:
