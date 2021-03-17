@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from taskchain.task import Config
@@ -217,3 +219,10 @@ def test_auto_parameter_object_dont_persist_default_value():
     assert Obj(1, 2).repr() != Obj(1, 2, new_param=2).repr()
     assert OldObj(1, 2).repr().replace('OldObj', 'Obj') == Obj(1, 2).repr()
 
+
+def test_path(tmp_path):
+    p = Parameter('path', dtype=Path)
+
+    p.set_value(Config(data={'path': str(tmp_path)}))
+    assert p.value == tmp_path
+    assert isinstance(p.value, Path)

@@ -1,5 +1,6 @@
 import abc
 from inspect import signature
+from pathlib import Path
 from typing import Union, Any, Iterable, List
 
 
@@ -61,6 +62,8 @@ class Parameter:
             value = self.default
 
         if self.dtype is not None:
+            if self.dtype is Path:
+                value = Path(value)
             if value is not None and not isinstance(value, self.dtype):
                 raise ValueError(f'Value `{value}` of parameter `{self}` has type {type(value)} instead of `{self.dtype}`')
 
