@@ -32,6 +32,7 @@ class Config(dict):
                  name: str = None,
                  namespace: str = None,
                  data: Dict = None,
+                 part: str = None,
                  ):
         """
         :param base_dir: dir with task data, required for task data persistence
@@ -41,6 +42,7 @@ class Config(dict):
         :param name: specify name of config directly, required when not using filepath
         :param namespace: used by chains, allow work with same tasks with multiple configs in one chain
         :param data: alternative for `filepath`, inject data directly
+        :param part: for multi config files, name of file part
         """
         super().__init__()
 
@@ -51,8 +53,11 @@ class Config(dict):
         self.context = Context.prepare_context(context)
         self.global_vars = global_vars
         self._filepath = filepath
+        self._part = part
 
         if filepath is not None:
+            if '#' in str(filepath):
+                filepath, self._part = str(filepath).split('#')
             filepath = Path(filepath)
             name_parts = filepath.name.split('.')
             extension = name_parts[-1]
@@ -61,6 +66,8 @@ class Config(dict):
                 self._data = json.load(filepath.open())
             elif extension == 'yaml':
                 self._data = yaml.load(filepath.open(), Loader=yaml.Loader)
+            else:
+                raise ValueError(f'Unknown file extension for config file `{filepath}`')
 
         if data is not None:
             self._data = data
@@ -70,6 +77,9 @@ class Config(dict):
         self._prepare()
 
     def _prepare(self):
+        if self._data and 'configs' in self._data:
+            self._get_part()
+            self._update_uses()
         if self.context is not None:
             self.apply_context(self.context)
         self._validate_data()
@@ -77,10 +87,39 @@ class Config(dict):
             self.apply_global_vars(self.global_vars)
         self.prepare_objects()
 
+    def _get_part(self):
+        assert len(self._data) == 1, 'Multipart configs should contain only field `configs`'
+
+        if self._part:
+            try:
+                self._data = self._data['configs'][self._part]
+            except KeyError:
+                raise KeyError(f'Part `{self._part}` not found in config `{self}`')
+            return
+
+        assert len([c for c in self._data['configs'] if 'main_part' in c]) < 2, \
+            f'More then one part of config `self` are marked as main'
+        for part_name, part in self._data['configs'].items():
+            if part.get('main_part', False):
+                self._data = part
+                self._part = part_name
+                return
+
+        raise KeyError(f'No part specified for multi config `{self}`')
+
+    def _update_uses(self):
+        if self._filepath is None or 'uses' not in self._data:
+            return
+        for i, use in enumerate(self._data['uses']):
+            if isinstance(use, str) and use.startswith('#'):
+                self._data['uses'][i] = str(self._filepath) + use
+
     @property
     def name(self) -> str:
         if self._name is None:
             raise ValueError(f'Missing config name')
+        if self._part:
+            return f'{self._name}#{self._part}'
         return self._name
 
     def get_name_for_persistence(self, *args, **kwargs) -> str:
@@ -98,6 +137,8 @@ class Config(dict):
     def repr_name(self) -> str:
         """ Should be unique representation of this config"""
         if self._filepath:
+            if self._part:
+                return f'{self._filepath}#{self._part}'
             return str(self._filepath)
         return self.name
 

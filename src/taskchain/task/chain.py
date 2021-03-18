@@ -314,6 +314,7 @@ class TaskParameterConfig(Config):
         self.global_vars = original_config.global_vars
         self.context = original_config.context
         self._name = f'{original_config.name}/{original_task}'
+        self._part = None
 
         self._data = {}
         for parameter in original_task.parameters.values():

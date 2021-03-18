@@ -665,3 +665,20 @@ def test_context_with_files(tmp_path):
     chain = Config(tmp_path, tmp_path / 'config2.json', context=tmp_path / 'context.json').chain()
     assert chain._configs[str(tmp_path / 'config2.json')].b == 2
     assert chain._configs[str(tmp_path / 'config1.json')].a == 3
+
+
+def test_multi_configs_uses(tmp_path):
+    json.dump(
+        {'configs': {
+            'c1': {'tasks': ['tests.tasks.a.A'], 'x': 1},
+            'c2': {'tasks': ['tests.tasks.a.A'], 'x': 2},
+            'c': {'main_part': True, 'uses': ['#c1 as ns', '#c2 as ns2'], 'y': 2},
+        }},
+        (tmp_path / 'config.json').open('w')
+    )
+
+    c = Config(filepath=tmp_path / 'config.json')
+    chain = c.chain()
+    chain['ns::a'].params.x = 1
+    chain['ns2::a'].params.x = 2
+    assert len(chain._configs) == 3

@@ -172,3 +172,64 @@ def test_context(tmp_path):
     assert config.c == 6
     assert config.rw == 1
     assert config.d == 8
+
+
+def test_multi_configs():
+    data = {'configs': {
+        'config1': {
+            'a': 1,
+        },
+        'config2': {
+            'a': 2,
+        },
+        'config3': {
+            'a': 3,
+            'b': 2,
+        },
+    }}
+
+    assert Config(data=data, part='config1', name='c').a == 1
+    assert Config(data=data, part='config1', name='c').name == 'c#config1'
+    assert Config(data=data, part='config2', name='c').a == 2
+    assert Config(data=data, part='config3', name='c').a == 3
+    with pytest.raises(KeyError):
+        assert Config(data=data, part='config1').b
+
+    with pytest.raises(KeyError):
+        assert Config(data=data, part='config', name='c').a
+
+    with pytest.raises(KeyError):
+        assert Config(data=data, name='c').a
+
+    data = {'configs': {
+        'config1': {
+            'a': 1,
+        },
+        'config2': {
+            'main_part': True,
+            'a': 2,
+        },
+    }}
+    assert Config(data=data, name='c').a == 2
+    assert Config(data=data, name='c').name == 'c#config2'
+
+
+def test_multi_configs_file(tmp_path):
+    json.dump({'configs': {
+        'config1': {
+            'a': 1,
+        },
+        'config2': {
+            'main_part': True,
+            'a': 2,
+        },
+    }}, (tmp_path / 'file_context.json').open('w'))
+
+    print(f'{tmp_path / "file_context.json"}#config1')
+    c1 = Config(filepath=f'{tmp_path / "file_context.json"}#config1')
+    assert c1.a == 1
+    assert c1.name == 'file_context#config1'
+
+    c1 = Config(filepath=f'{tmp_path / "file_context.json"}')
+    assert c1.a == 2
+    assert c1.name == 'file_context#config2'
