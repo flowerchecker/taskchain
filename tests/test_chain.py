@@ -682,3 +682,41 @@ def test_multi_configs_uses(tmp_path):
     chain['ns::a'].params.x = 1
     chain['ns2::a'].params.x = 2
     assert len(chain._configs) == 3
+
+
+class Abc(Task):
+    class Meta:
+        parameters = [
+            Parameter('x'),
+            Parameter('y'),
+        ]
+
+    def run(self) -> int:
+        return 1000 * self.params.x + self.params.y
+
+
+def test_context_for_namespaces(tmp_path):
+
+    json.dump(
+        {'configs': {
+            'c1': {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1},
+            'c2': {'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2},
+            'c': {'main_part': True, 'uses': ['#c1 as ns', '#c2 as ns2'], 'z': 2},
+        }},
+        (tmp_path / 'config.json').open('w')
+    )
+
+    config = Config(tmp_path, filepath=tmp_path / 'config.json', context={
+        'for_namespaces': {
+            'ns': {'x': 11},
+            'ns2': {'x': 21},
+            'nsX': {'x': 77},
+        },
+        'x': 666,
+        'y': 33,
+    })
+
+    chain = config.chain()
+
+    assert chain['ns::abc'].value == 11033
+    assert chain['ns2::abc'].value == 21033

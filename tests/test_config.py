@@ -233,3 +233,36 @@ def test_multi_configs_file(tmp_path):
     c1 = Config(filepath=f'{tmp_path / "file_context.json"}')
     assert c1.a == 2
     assert c1.name == 'file_context#config2'
+
+
+def test_context_for_namespaces_merging():
+
+    context = Context.prepare_context([
+        {
+            'for_namespaces': {
+                'ns1': {
+                    'a': 11,
+                },
+                'ns2': {
+                    'a': 21,
+                },
+            },
+            'a': 1,
+        },
+        {
+            'for_namespaces': {
+                'ns1': {
+                    'a': 22,
+                },
+                'ns3': {
+                    'a': 32,
+                },
+            },
+            'a': 2,
+        },
+    ])
+
+    assert context.for_namespaces['ns1']['a'] == 22
+    assert context.for_namespaces['ns2']['a'] == 21
+    assert context.for_namespaces['ns3']['a'] == 32
+    assert context.a == 2

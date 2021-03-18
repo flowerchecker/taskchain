@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections import defaultdict
 from pathlib import Path
 from typing import Union, Dict, Iterable, Any
 
@@ -169,6 +170,10 @@ class Config(dict):
     def apply_context(self, context: Context):
         """ Amend or rewrite data of config by data from context"""
         self._data.update(context.data)
+        if self.namespace:
+            for namespace, data in context.for_namespaces.items():
+                if self.namespace == namespace:
+                    self._data.update(data)
 
     def _validate_data(self):
         """ Check correct format of data """
@@ -235,8 +240,19 @@ class Context(Config):
         """
         data = {}
         names = []
+        for_namespaces = defaultdict(dict)
         for context in contexts:
             data.update(context.data)
             names.append(context.name)
+            for namespace, values in context.for_namespaces.items():
+                for_namespaces[namespace].update(values)
+        data['for_namespaces'] = for_namespaces
         return Context(data=data, name=';'.join(names))
 
+    def _prepare(self):
+        if 'for_namespaces' in self._data:
+            self.for_namespaces = self._data['for_namespaces']
+            del self._data['for_namespaces']
+        else:
+            self.for_namespaces = {}
+        super()._prepare()
