@@ -3,7 +3,6 @@ import getpass
 import inspect
 import logging
 import re
-import sys
 from collections import defaultdict
 from copy import deepcopy
 from datetime import datetime
@@ -15,10 +14,6 @@ from taskchain.task.config import Config
 from taskchain.task.data import Data, DirData
 from taskchain.task.parameter import ParameterRegistry
 from taskchain.utils.clazz import persistent, Meta, inheritors, isinstance as custom_isinstance, fullname
-
-
-logger = logging.getLogger('tasks_chain')
-logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 class MetaTask(type):
@@ -106,8 +101,6 @@ class MetaDoubleModuleTask(MetaTask):
 
 class Task(object, metaclass=MetaTask):
 
-    logger = logger
-
     def __init__(self, config: Config = None):
         self._config: Config = config
         self._data: Union[None, Data, DirData] = None
@@ -120,6 +113,9 @@ class Task(object, metaclass=MetaTask):
         self.fullname = self.__class__.fullname(config)
         self.data_class = self.__class__.data_class
         self.data_type = self.__class__.data_type
+
+        self.logger = logging.getLogger(f'task_{self.fullname}')
+        self.logger.setLevel(logging.DEBUG)
 
         self.prepare_parameters(config)
 
@@ -149,9 +145,15 @@ class Task(object, metaclass=MetaTask):
         else:
             try:
                 self._init_run_info()
-                logger.info(f'{self} - run started')
+                if self._data and self._data.is_logging:
+                    data_log_handler = self._data.get_log_handler()
+                    self.logger.addHandler(data_log_handler)
+                else:
+                    data_log_handler = None
+                self.logger.info(f'{self} - run started with params: {self.params.repr}')
                 run_result = self.run(*self._get_run_arguments())
-                logger.info(f'{self} - run ended')
+                self.logger.info(f'{self} - run ended')
+                self.logger.removeHandler(data_log_handler)
             except Exception as error:
                 if self._data:
                     self._data.on_run_error()
@@ -283,7 +285,7 @@ class Task(object, metaclass=MetaTask):
                 self._run_info['input_tasks'] = self._config.input_tasks
         self._run_info['started'] = datetime.timestamp(datetime.now())
 
-    def log(self, record):
+    def save_to_run_info(self, record):
         if isinstance(record, defaultdict):
             record = dict(record)
         self._run_info['log'].append(record)
@@ -294,8 +296,15 @@ class Task(object, metaclass=MetaTask):
         self._run_info['time'] = datetime.timestamp(now) - self._run_info['started']
         self._run_info['started'] = str(datetime.fromtimestamp(self._run_info['started']))
 
-        if self._data and self._data._base_dir:
+        if self._data and self._data.is_persisting:
             self._data.save_run_info(self._run_info)
+
+    @property
+    def log(self):
+        data = self._data_without_value
+        if data:
+            return data.log
+        return None
 
 
 class ModuleTask(Task, metaclass=MetaModuleTask):

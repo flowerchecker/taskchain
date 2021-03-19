@@ -227,10 +227,10 @@ def test_run_info(tmp_path):
             parameters = [Parameter('p'), Parameter('s')]
 
         def run(self) -> int:
-            self.log('working')
+            self.save_to_run_info('working')
             stats = defaultdict(int)
             stats['hit'] += 1
-            self.log(stats)
+            self.save_to_run_info(stats)
             return 0
 
     a = A(config=Config(tmp_path, name='cfg', namespace='ns', data={'p': 1, 's': 'abc'}, context={}))

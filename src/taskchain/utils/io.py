@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from tqdm import tqdm
 from typing import Union
@@ -42,3 +43,12 @@ class NumpyEncoder(json.JSONEncoder):
         if np.isnan(obj) and self.ignore_nan:
             return None
         return json.JSONEncoder.default(self, obj)
+
+
+class ListHandler(logging.Handler):
+    def __init__(self, log_list):
+        logging.Handler.__init__(self)
+        self.log_list = log_list
+
+    def emit(self, record):
+        self.log_list.append(record.msg)

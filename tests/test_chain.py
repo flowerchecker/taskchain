@@ -1,9 +1,10 @@
 import json
+import logging
 from typing import List
 
 import pytest
 
-from taskchain.task import Config, Chain, Task, MultiChain
+from taskchain.task import Config, Chain, Task, MultiChain, InMemoryData
 from taskchain.task.chain import ChainObject
 from taskchain.task.parameter import Parameter, ParameterObject
 from tests.tasks.a import ATask
@@ -720,3 +721,63 @@ def test_context_for_namespaces(tmp_path):
 
     assert chain['ns::abc'].value == 11033
     assert chain['ns2::abc'].value == 21033
+
+
+def test_logging(tmp_path, caplog):
+    class T(Task):
+
+        class Meta:
+            parameters = [Parameter('debugs', default=1, ignore_persistence=True)]
+
+        def run(self) -> int:
+            for _ in range(self.params.debugs):
+                self.logger.debug('debug')
+            self.logger.info('info')
+            self.logger.warning('warning')
+            self.logger.error('error')
+
+            return 0
+
+    chain = Config(tmp_path, name='config', data={'tasks': [T]}).chain()
+    assert chain.t.value == 0
+    assert len(chain.t.log) == 4 + 2
+    assert len(caplog.record_tuples) == 6
+
+    chain = Config(tmp_path, name='config', data={'tasks': [T], 'debugs': 3}).chain()
+    chain.set_log_level(logging.DEBUG)
+    assert chain.t.value == 0
+    assert len(chain.t.log) == 4 + 2
+    assert len(caplog.record_tuples) == 6
+
+    chain = Config(tmp_path, name='config', data={'tasks': [T], 'debugs': 3}).chain()
+    chain.set_log_level(logging.ERROR)
+    assert chain.t.force().value == 0
+    assert len(chain.t.log) == 6 + 2
+    assert len(caplog.record_tuples) == 6 + 8
+
+    chain.set_log_level(logging.DEBUG)
+    assert chain.t.force().value == 0
+    assert len(chain.t.log) == 6 + 2
+    assert len(caplog.record_tuples) == 6 + 8 + 8
+
+    class R(Task):
+
+        class Meta:
+            parameters = [Parameter('debugs', default=1, ignore_persistence=True)]
+            data_class = InMemoryData
+
+        def run(self) -> int:
+            for _ in range(self.params.debugs):
+                self.logger.debug('debug')
+            self.logger.info('info')
+            self.logger.warning('warning')
+            self.logger.error('error')
+
+            return 0
+
+    chain = Config(tmp_path, name='config', data={'tasks': [R]}).chain()
+    assert chain.r.value == 0
+    assert len(chain.r.log) == 4 + 2
+    chain = Config(tmp_path, name='config', data={'tasks': [R]}).chain()
+    assert chain.r.value == 0
+    assert len(chain.r.log) == 4 + 2

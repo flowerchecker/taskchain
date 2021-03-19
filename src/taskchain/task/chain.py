@@ -10,6 +10,9 @@ from taskchain.task.config import Config
 from taskchain.task.task import Task, find_task_full_name, InputTasks
 from taskchain.utils.clazz import get_classes_by_import_string
 
+log_handler = logging.StreamHandler()
+log_handler.setLevel(logging.WARNING)
+
 
 class ChainObject:
 
@@ -20,7 +23,11 @@ class ChainObject:
 
 class Chain(dict):
 
-    logger = logging.getLogger('tasks_chain')
+    log_handler = log_handler
+
+    @staticmethod
+    def set_log_level(level):
+        Chain.log_handler.setLevel(level)
 
     def __init__(self, config: Config,
                  shared_tasks: Dict[Tuple[str, str], Task] = None,
@@ -165,6 +172,7 @@ class Chain(dict):
             return task_registry[task_name, config.name]
 
         task = task_class(config)
+        task.logger.addHandler(Chain.log_handler)
         if task_registry is not None:
             task_registry[task_name, config.name] = task
         return task

@@ -1,5 +1,6 @@
 import abc
 import json
+import logging
 import pickle
 import shutil
 from pathlib import Path
@@ -11,7 +12,7 @@ import pandas as pd
 import pylab
 import yaml
 
-from taskchain.utils.io import NumpyEncoder, iter_json_file, write_jsons
+from taskchain.utils.io import NumpyEncoder, iter_json_file, write_jsons, ListHandler
 
 
 class Data:
@@ -89,7 +90,25 @@ class Data:
     def load_run_info(self) -> Union[Dict, None]:
         if not self.run_info_path.exists():
             return None
-        return yaml.load(self.run_info_path.open())
+        return yaml.load(self.run_info_path.open(), yaml.Loader)
+
+    @property
+    def log_path(self) -> Path:
+        path = self._path
+        return path.parent / f'{path.stem}.log'
+
+    def get_log_handler(self):
+        return logging.FileHandler(self.log_path, mode='w')
+
+    @property
+    def log(self):
+        if not self.log_path.exists():
+            return None
+        return self.log_path.open().readlines()
+
+    @property
+    def is_logging(self):
+        return self.is_persisting
 
 
 class InMemoryData(Data):
@@ -97,6 +116,7 @@ class InMemoryData(Data):
     def __init__(self):
         super().__init__()
         self._value = self
+        self._log = None
 
     def init_persistence(self, base_dir: Path, name: str):
         pass
@@ -123,6 +143,22 @@ class InMemoryData(Data):
 
     def load_run_info(self) -> dict:
         pass
+
+    @property
+    def log_path(self):
+        return
+
+    def get_log_handler(self):
+        self._log = []
+        return ListHandler(self._log)
+
+    @property
+    def log(self):
+        return self._log
+
+    @property
+    def is_logging(self):
+        return True
 
 
 class FileData(Data, abc.ABC):
