@@ -271,12 +271,13 @@ def test_run_input_arguments(tmp_path):
     class C1(Task):
         class Meta:
             input_tasks = [A, B]
+            parameters = [Parameter('x'), Parameter('y', default=66)]
 
-        def run(self, a, b) -> List:
-            return [a, b]
+        def run(self, a, b, x, y) -> List:
+            return [a, b, x, y]
 
-    chain = Config(tmp_path, name='config1', data={'tasks': [A, B, C1]}).chain()
-    assert chain.c1.value == [1, 2]
+    chain = Config(tmp_path, name='config1', data={'tasks': [A, B, C1], 'x': 77}).chain()
+    assert chain.c1.value == [1, 2, 77, 66]
 
     class C2(Task):
         class Meta:
@@ -312,3 +313,19 @@ def test_run_input_arguments(tmp_path):
 
         def run(self, a) -> List:
             return [self.input_tasks['a'].value, a]
+
+    chain = Config(tmp_path, name='config1', data={'tasks': [A, ATask, C4]}).chain()
+    with pytest.raises(KeyError):
+        _ = chain.c4.value
+
+    class C5(Task):
+        class Meta:
+            input_tasks = [A, B]
+            parameters = [Parameter('a')]
+
+        def run(self, a) -> List:
+            return [a]
+
+    chain = Config(tmp_path, name='config1', data={'tasks': [A, B, C5], 'a': 77}).chain()
+    with pytest.raises(KeyError):
+        _ = chain.c5.value

@@ -168,7 +168,16 @@ class Task(object, metaclass=MetaTask):
         for arg, parameter in inspect.signature(self.run).parameters.items():
             if parameter.default != inspect.Parameter.empty:
                 raise AttributeError('Kwargs arguments in run method not allowed')
-            args.append(self.input_tasks[arg].value)
+
+            input_tasks_arg = self.input_tasks[arg].value if arg in self.input_tasks else None
+            parameter_arg = self.parameters[arg] if arg in self.parameters else None
+
+            if input_tasks_arg is None and parameter_arg is None:
+                raise KeyError(f'Argument `{arg}` of run method of {self} not found in input_tasks nor parameters')
+
+            if input_tasks_arg is not None and parameter_arg is not None:
+                raise KeyError(f'Argument `{arg}` of run method of {self} found in both input_tasks and parameters')
+            args.append(input_tasks_arg if input_tasks_arg else parameter_arg)
         return args
 
     # to run from task itself
