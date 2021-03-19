@@ -104,7 +104,7 @@ class Data:
     def log(self):
         if not self.log_path.exists():
             return None
-        return self.log_path.open().readlines()
+        return [l.strip() for l in self.log_path.open().readlines()]
 
     @property
     def is_logging(self):
