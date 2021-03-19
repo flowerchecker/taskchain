@@ -38,7 +38,7 @@ def search_and_apply(obj: Any, fce: Callable, allowed_types: Iterable[Type] = No
     _traverse(obj)
 
 
-def search_and_replace_placeholders(obj, replacements):
+def search_and_replace_placeholders(obj, replacements, use_repr_strings=True):
     def _replace(match):
         placeholder = match.group(1)
         if isinstance(replacements, dict):
@@ -51,6 +51,22 @@ def search_and_replace_placeholders(obj, replacements):
         return str(getattr(replacements, placeholder))
 
     def _apply(string):
-        return re.sub(r'{(.*?)}', _replace, string)
+        new_string, replacement_count = re.subn(r'{(.*?)}', _replace, string)
+        if use_repr_strings and replacement_count:
+            return ReprStr(new_string, string)
+        return new_string
 
+    if isinstance(obj, str):
+        return _apply(obj)
     search_and_apply(obj, fce=_apply, allowed_types=(str,))
+    return obj
+
+
+class ReprStr(str):
+    def __new__(cls, value, repr_: str):
+        s = str.__new__(cls, value)
+        s.repr = repr(repr_)
+        return s
+
+    def __repr__(self):
+        return self.repr

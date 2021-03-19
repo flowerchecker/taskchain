@@ -4,7 +4,7 @@ import pytest
 
 from taskchain.task import Task
 from taskchain.utils.clazz import persistent, import_by_string, find_and_instancelize_clazz, repeat_on_error
-from taskchain.utils.data import traverse, search_and_apply
+from taskchain.utils.data import traverse, search_and_apply, ReprStr
 
 
 class Clazz:
@@ -162,3 +162,11 @@ def test_repeat_call():
     with pytest.raises(Exception):
         print(c.method(11))
     assert c.calls == 10
+
+
+def test_repr_str():
+    s = ReprStr('a', 'b')
+    assert isinstance(s, str)
+    assert type(s) is ReprStr
+    assert str(s) == 'a'
+    assert repr(s) == "'b'"

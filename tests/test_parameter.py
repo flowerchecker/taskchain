@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from taskchain.task import Config
-from taskchain.task.parameter import Parameter, ParameterRegistry, ParameterObject, AutoParameterObject
+from taskchain.task.parameter import Parameter, ParameterRegistry, AutoParameterObject, ParameterObject
 
 
 def test_value():
@@ -128,7 +128,13 @@ class Obj(ParameterObject):
         self.arg = arg
 
     def repr(self) -> str:
-        return self.arg
+        return repr(self.arg)
+
+
+class AutoObj(AutoParameterObject):
+
+    def __init__(self, arg):
+        self.arg = arg
 
 
 def test_object_parameter():
@@ -142,7 +148,31 @@ def test_object_parameter():
 
     p = Parameter('obj')
     p.set_value(config)
-    assert p.repr == 'obj=abc'
+    assert p.repr == "obj='abc'"
+
+    config = Config(name='config', data={
+        'obj': {
+            'class': 'tests.test_parameter.Obj',
+            'args': ['{A}/abc']
+        }
+    }, global_vars={'A': 'a'})
+
+    p = Parameter('obj')
+    p.set_value(config)
+    assert p.repr == "obj='{A}/abc'"
+    assert p.value.arg == 'a/abc'
+
+    config = Config(name='config', data={
+        'obj': {
+            'class': 'tests.test_parameter.AutoObj',
+            'args': ['{A}/abc']
+        }
+    }, global_vars={'A': 'a'})
+
+    p = Parameter('obj')
+    p.set_value(config)
+    assert p.repr == "obj=AutoObj(arg='{A}/abc')"
+    assert p.value.arg == 'a/abc'
 
 
 def test_auto_parameter_object_bad_init():
@@ -226,3 +256,19 @@ def test_path(tmp_path):
     p.set_value(Config(data={'path': str(tmp_path)}))
     assert p.value == tmp_path
     assert isinstance(p.value, Path)
+
+
+def test_global_vars(tmp_path):
+
+    ps = ParameterRegistry([
+        Parameter('a'),
+        Parameter('b'),
+    ])
+
+    ps.set_values(Config(tmp_path, data={'a': '{A}/{B}.{B}', 'b': '{B}'}, global_vars={'B': 2}, name='config'))
+    assert ps.a == '{A}/2.2'
+    assert ps.repr == "a='{A}/{B}.{B}'###b='{B}'"
+    assert ps.b == '2'
+
+    ps.set_values(Config(tmp_path, data={'a': '{A}/{B}.{B}', 'b': '{B}'}, global_vars={'A': '1', 'B': '2'}, name='config'))
+    assert ps['a'] == '1/2.2'

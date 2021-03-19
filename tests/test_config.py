@@ -79,16 +79,6 @@ def test_data(tmp_path):
             _ = c.x
 
 
-def test_global_vars(tmp_path):
-    config = Config(tmp_path, data={'a': '{A}/{B}.{B}', 'b': '{B}'}, global_vars={'B': 2}, name='config')
-    assert config['a'] == '{A}/2.2'
-    assert config['b'] == '2'
-
-    config = Config(tmp_path, data={'a': '{A}/{B}.{B}', 'b': '{B}'}, global_vars={'A': '1', 'B': '2'}, name='config')
-    assert config['a'] == '1/2.2'
-    assert config['b'] == '2'
-
-
 class MyObject(ParameterObject):
     def __init__(self, a, b=1):
         self.a = a
