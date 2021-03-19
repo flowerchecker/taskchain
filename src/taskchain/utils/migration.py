@@ -3,7 +3,7 @@ from shutil import copyfile, copytree
 from taskchain.task import Config, InMemoryData
 
 
-def migrate_to_parameter_mode(config: Config, target_dir, dry: bool = True):
+def migrate_to_parameter_mode(config: Config, target_dir, dry: bool = True, verbose: bool = True):
     assert config.base_dir != target_dir, 'target_dir has to be different from configs base_dir'
     old_chain = config.chain(parameter_mode=False)
     new_chain = Config(target_dir, config._filepath, global_vars=config.global_vars, context=config.context).chain()
@@ -11,7 +11,10 @@ def migrate_to_parameter_mode(config: Config, target_dir, dry: bool = True):
     for name, old_task in old_chain.tasks.items():
         print()
         new_task = new_chain[name]
-        print(name)
+        print(f'{name}  -  {new_task.name_for_persistence}')
+        if verbose:
+            print(f'  parameters: `{new_task.params.repr}`')
+            print(f' input tasks: `{"###".join(f"{n}={it}" for n, it in sorted(new_task.get_config().input_tasks.items()))}`')
 
         if issubclass(old_task.data_class, InMemoryData):
             print('   not persisting')
@@ -21,7 +24,7 @@ def migrate_to_parameter_mode(config: Config, target_dir, dry: bool = True):
             print('   no data found')
             continue
 
-        print(f'    original: `{old_task.data_path}`')
+        print(f'\n    original: `{old_task.data_path}`')
         print(f'      target: `{new_task.data_path}`')
 
         if new_task.has_data:

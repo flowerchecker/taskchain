@@ -262,7 +262,11 @@ class Task(object, metaclass=MetaTask):
 
     def _init_persistence(self, data):
         if self._config is not None and not data.is_persisting:
-            data.init_persistence(self.path, self._config.get_name_for_persistence(self))
+            data.init_persistence(self.path, self.name_for_persistence)
+
+    @property
+    def name_for_persistence(self):
+        return self._config.get_name_for_persistence(self)
 
     @property
     def run_info(self) -> Dict:
