@@ -25,8 +25,8 @@ class Chain(dict):
 
     log_handler = log_handler
 
-    @staticmethod
-    def set_log_level(level):
+    @classmethod
+    def set_log_level(cls, level):
         Chain.log_handler.setLevel(level)
 
     def __init__(self, config: Config,
