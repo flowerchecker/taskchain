@@ -102,6 +102,11 @@ class MetaDoubleModuleTask(MetaTask):
 class Task(object, metaclass=MetaTask):
 
     def __init__(self, config: Config = None):
+        """
+
+        Args:
+            config: config with parameters for this task
+        """
         self._config: Config = config
         self._data: Union[None, Data, DirData] = None
         self._input_tasks: Union[None, Dict[str, 'Task']] = None

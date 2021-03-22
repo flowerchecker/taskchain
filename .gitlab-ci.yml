@@ -1,5 +1,11 @@
 image: python:3.8
 
+before_script:
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - python setup.py install
+
 test:
   stage: test
   only:
@@ -12,9 +18,15 @@ test:
       - .cache/pip
       - venv/
   script:
-    - pip install virtualenv
-    - virtualenv venv
-    - source venv/bin/activate
-
-    - python setup.py install
     - pytest
+
+pages:
+  stage: deploy
+  script:
+    - pip install mkdocs mkdocs-material mkdocstrings pymdown-extensions
+    - mkdocs build --strict --verbose
+  artifacts:
+    paths:
+      - site
+  only:
+    - master

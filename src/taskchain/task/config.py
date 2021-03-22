@@ -37,14 +37,16 @@ class Config(dict):
                  part: str = None,
                  ):
         """
-        :param base_dir: dir with task data, required for task data persistence
-        :param filepath: json or yaml with config data
-        :param global_vars: data to fill placeholders inf config data such as `{DATA_DIR}`
-        :param context: config which amend or overwrite data of this config
-        :param name: specify name of config directly, required when not using filepath
-        :param namespace: used by chains, allow work with same tasks with multiple configs in one chain
-        :param data: alternative for `filepath`, inject data directly
-        :param part: for multi config files, name of file part
+
+        Args:
+            base_dir: dir with task data, required for task data persistence
+            filepath: json or yaml with config data
+            global_vars: data to fill placeholders inf config data such as `{DATA_DIR}`
+            context: config which amend or overwrite data of this config
+            name: specify name of config directly, required when not using filepath
+            namespace: used by chains, allow work with same tasks with multiple configs in one chain
+            data: alternative for `filepath`, inject data directly
+            part: for multi config files, name of file part
         """
         super().__init__()
 

@@ -1,0 +1,26 @@
+site_name: TaskChain
+theme:
+  name: material
+
+nav:
+  - Overview: index.md
+  - Installation: install.md
+  - Usage: usage.md
+  - Code Reference:
+      - Task: code/task.md
+      - Chain: code/chain.md
+      - Config: code/config.md
+      - Parameters: code/parameters.md
+      - Utils: code/utils.md
+
+
+markdown_extensions:
+  - admonition
+  - pymdownx.tabbed
+  - pymdownx.superfences
+
+plugins:
+  - search
+  - mkdocstrings:
+      watch:
+        - src/taskchain
