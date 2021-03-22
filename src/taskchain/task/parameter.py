@@ -168,10 +168,10 @@ class AutoParameterObject(ParameterObject):
         for i, (arg, parameter) in enumerate(parameters.items()):
             if arg in ignore_persistence_args:
                 continue
-            if hasattr(self, arg):
-                value = getattr(self, arg)
-            elif hasattr(self, '_' + arg):
+            if hasattr(self, '_' + arg):
                 value = getattr(self, '_' + arg)
+            elif hasattr(self, arg):
+                value = getattr(self, arg)
             else:
                 raise AttributeError(f'Value of __init__ argument `{arg}` not found for class `{fullname(self.__class__)}`, '
                                      f'make sure that value is saved in `self.{arg}` or `self._{arg}`')
