@@ -24,9 +24,9 @@ pages:
   stage: deploy
   script:
     - pip install mkdocs mkdocs-material mkdocstrings pymdown-extensions
-    - mkdocs build --verbose
+    - mkdocs build --verbose --site-dir public
   artifacts:
     paths:
-      - site
+      - public
   only:
     - master
