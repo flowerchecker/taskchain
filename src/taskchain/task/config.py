@@ -1,15 +1,16 @@
 from __future__ import annotations
-
-import json
 from collections import defaultdict
 from pathlib import Path
-from typing import Union, Dict, Iterable, Any
-
-import yaml
-
 from taskchain.task.parameter import ParameterObject
 from taskchain.utils.clazz import find_and_instancelize_clazz
 from taskchain.utils.data import search_and_replace_placeholders
+from typing import Union, Dict, Iterable, Any
+import json
+import logging
+import yaml
+
+
+LOGGER = logging.getLogger()
 
 
 class Config(dict):
@@ -200,7 +201,9 @@ class Config(dict):
             if isinstance(value, dict) and 'class' in value:
                 obj = find_and_instancelize_clazz(value)
                 if not isinstance(obj, ParameterObject):
-                    raise ValueError(f'Object `{obj}` in config `{self}` is not instance of ParameterObject')
+                    LOGGER.warning(f'Object `{obj}` in config `{self}` is not instance of ParameterObject')
+                if not hasattr(obj, 'repr'):
+                    raise Exception(f'Object `{obj}` does not implement `repr` property')
                 self._data[key] = obj
 
     def chain(self, parameter_mode=True, **kwargs):
