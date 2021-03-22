@@ -1,6 +1,7 @@
 import abc
 from inspect import signature
 from pathlib import Path
+from taskchain.utils.clazz import fullname
 from typing import Union, Any, Iterable, List
 
 
@@ -172,7 +173,7 @@ class AutoParameterObject(ParameterObject):
             elif hasattr(self, '_' + arg):
                 value = getattr(self, '_' + arg)
             else:
-                raise AttributeError(f'Value of __init__ argument `{arg}` not found, '
+                raise AttributeError(f'Value of __init__ argument `{arg}` not found for class `{fullname(self.__class__)}`, '
                                      f'make sure that value is saved in `self.{arg}` or `self._{arg}`')
             args[arg] = value
             if arg in dont_persist_default_value_args and args[arg] == parameter.default:
