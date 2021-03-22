@@ -142,7 +142,7 @@ class ParameterRegistry:
         return None
 
 
-class ParameterObject:
+class ParameterObject(abc.ABC):
 
     @abc.abstractmethod
     def repr(self) -> str:
