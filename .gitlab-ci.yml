@@ -24,7 +24,7 @@ pages:
   stage: deploy
   script:
     - pip install mkdocs mkdocs-material mkdocstrings pymdown-extensions
-    - mkdocs build --strict --verbose
+    - mkdocs build --verbose
   artifacts:
     paths:
       - site
