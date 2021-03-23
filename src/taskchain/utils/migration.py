@@ -5,10 +5,16 @@ from taskchain.task import Config, InMemoryData
 
 def migrate_to_parameter_mode(config: Config, target_dir, dry: bool = True, verbose: bool = True):
     assert config.base_dir != target_dir, 'target_dir has to be different from configs base_dir'
-    old_chain = config.chain(parameter_mode=False)
-    new_chain = Config(target_dir, config._filepath, global_vars=config.global_vars, context=config.context).chain()
+    old_chain = {
+        t.fullname: t
+        for t in config.chain(parameter_mode=False).tasks.values()
+    }
+    new_chain = {
+        t.fullname: t
+        for t in Config(target_dir, config._filepath, global_vars=config.global_vars, context=config.context).chain().tasks.values()
+    }
     print(f'Set dry=False to make copies')
-    for name, old_task in old_chain.tasks.items():
+    for name, old_task in old_chain.items():
         print()
         new_task = new_chain[name]
         print(f'{name}  -  {new_task.name_for_persistence}')
