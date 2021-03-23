@@ -1,4 +1,8 @@
 site_name: TaskChain
+site_description: Documentation and examples for TaskChain
+site_url: https://flowerchecker.gitlab.io/taskchain/
+repo_url: https://gitlab.com/flowerchecker/taskchain
+
 theme:
   name: material
 
