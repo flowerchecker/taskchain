@@ -60,9 +60,9 @@ class Config(dict):
         self._part = part
 
         if filepath is not None:
-            if '#' in str(filepath):
-                filepath, self._part = str(filepath).split('#')
-            filepath = Path(filepath)
+            if '#' in str(self._filepath):
+                self._filepath, self._part = str(self._filepath).split('#')
+            filepath = Path(self._filepath)
             name_parts = filepath.name.split('.')
             extension = name_parts[-1]
             self._name = '.'.join(name_parts[:-1])
