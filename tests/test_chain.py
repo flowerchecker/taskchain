@@ -781,3 +781,20 @@ def test_logging(tmp_path, caplog):
     chain = Config(tmp_path, name='config', data={'tasks': [R]}).chain()
     assert chain.r.value == 0
     assert len(chain.r.log) == 4 + 2
+
+
+def test_one_task_over_multiple_namespaces(tmp_path):
+    json.dump(
+        {'configs': {
+            'a': {'tasks': ['tests.tasks.a.A']},
+            'c1': {'tasks': [], 'uses': ['#a as a']},
+            'c2': {'tasks': [], 'uses': ['#a as a']},
+            'c': {'main_part': True, 'uses': ['#c1 as c1', '#c2 as c2']},
+        }},
+        (tmp_path / 'config.json').open('w')
+    )
+
+    chain = Config(filepath=tmp_path / 'config.json').chain()
+
+    assert len(chain.tasks) == 2
+    assert chain['c1::a::a'] == chain['c2::a::a']

@@ -71,7 +71,7 @@ class Chain(dict):
 
     def _prepare(self):
         self._process_config(self._base_config)
-        tasks = self._create_tasks(task_registry=None if self._parameter_mode else self._task_registry)
+        tasks = self._create_tasks(task_registry={} if self._parameter_mode else self._task_registry)
         self._process_dependencies(tasks)
 
         if self._parameter_mode:
@@ -125,9 +125,8 @@ class Chain(dict):
     def _create_tasks(self, task_registry=None) -> Dict[str, Task]:
         tasks = {}
 
-        def _register_task(_task: Task):
-            task_name = _task.fullname
-            if task_name in tasks:
+        def _register_task(_task: Task, task_name: str):
+            if task_name in tasks and tasks[task_name].get_config() != task.get_config():
                 raise ValueError(f'Conflict of task name `{task_name}` '
                                  f'with configs `{tasks[task_name].get_config()}` and `{task.get_config()}`')
             tasks[task_name] = _task
@@ -139,10 +138,10 @@ class Chain(dict):
                         if task_class.meta.get('abstract', False):
                             continue
                         task = self._create_task(task_class, config, task_registry)
-                        _register_task(task)
+                        _register_task(task, task_class.fullname(config))
                 elif issubclass(task_description, Task):
                     task = self._create_task(task_description, config, task_registry)
-                    _register_task(task)
+                    _register_task(task, task.fullname)
                 else:
                     raise ValueError(f'Unknown task description `{task_description}` in config `{config}`')
         return tasks
@@ -150,24 +149,27 @@ class Chain(dict):
     def _recreate_tasks_with_parameter_config(self, tasks: Dict[str, Task], task_registry: Dict) -> Dict[str, Task]:
         new_tasks: Dict[str, Task] = {}
 
-        def _get_task(_task):
+        def _get_task(_task_name, _task):
             if _task.fullname in new_tasks:
+                if _task_name not in _task.fullname:
+                    # this is for support of multiple names (through different namespaces paths) of one task
+                    new_tasks[_task_name] = new_tasks[_task.fullname]
                 return new_tasks[_task.fullname]
-            input_tasks = {n: _get_task(t) for n, t in _task.input_tasks.items()}
+            input_tasks = {n: _get_task(n, t) for n, t in _task.input_tasks.items()}
             config = TaskParameterConfig(_task, input_tasks)
             new_task = self._create_task(_task.__class__, config, task_registry)
             assert new_task.fullname == _task.fullname
             new_tasks[new_task.fullname] = new_task
             return new_task
 
-        for task in tasks.values():
-            _get_task(task)
+        for task_name, task in tasks.items():
+            _get_task(task_name, task)
 
         return new_tasks
 
     @staticmethod
     def _create_task(task_class: Type[Task], config: Config, task_registry: Dict = None):
-        task_name = task_class.fullname(config)
+        task_name = task_class.slugname
         if task_registry and (task_name, config.name) in task_registry:
             return task_registry[task_name, config.name]
 

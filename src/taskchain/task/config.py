@@ -141,10 +141,14 @@ class Config(dict):
     def repr_name(self) -> str:
         """ Should be unique representation of this config"""
         if self._filepath:
+            if self.namespace is None:
+                name = str(self._filepath)
+            else:
+                name = f'{self.namespace}::{self._filepath}'
             if self._part:
-                return f'{self._filepath}#{self._part}'
-            return str(self._filepath)
-        return self.name
+                return f'{name}#{self._part}'
+            return name
+        return self.fullname
 
     def __str__(self):
         return self.fullname
