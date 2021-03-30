@@ -182,7 +182,7 @@ class Task(object, metaclass=MetaTask):
 
             if input_tasks_arg is not None and parameter_arg is not None:
                 raise KeyError(f'Argument `{arg}` of run method of {self} found in both input_tasks and parameters')
-            args.append(input_tasks_arg if input_tasks_arg else parameter_arg)
+            args.append(input_tasks_arg if input_tasks_arg is not None else parameter_arg)
         return args
 
     # to run from task itself
