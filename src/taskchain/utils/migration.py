@@ -1,5 +1,5 @@
+from math import isclose
 from shutil import copyfile, copytree
-
 from taskchain.task import Config, InMemoryData
 
 
@@ -34,7 +34,11 @@ def migrate_to_parameter_mode(config: Config, target_dir, dry: bool = True, verb
         print(f'      target: `{new_task.data_path}`')
 
         if new_task.has_data:
-            assert new_task.data_path.stat().st_size == old_task.data_path.stat().st_size
+            # HACK: pd files do not have to have the same size with the same data
+            if new_task.data_path.name.endswith('.pd'):
+                assert isclose(new_task.data_path.stat().st_size, old_task.data_path.stat().st_size, rel_tol=2e-7, abs_tol=10), f'{new_task.data_path.stat().st_size} vs. {old_task.data_path.stat().st_size}'
+            else:
+                assert new_task.data_path.stat().st_size == old_task.data_path.stat().st_size
             print(f'    target already exists')
             continue
 
