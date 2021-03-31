@@ -253,9 +253,10 @@ def test_auto_parameter_object_dont_persist_default_value():
 def test_path(tmp_path):
     p = Parameter('path', dtype=Path)
 
-    p.set_value(Config(data={'path': str(tmp_path)}))
-    assert p.value == tmp_path
+    p.set_value(Config(data={'path': '/{A}' + str(tmp_path)}, global_vars={'A': 'a'}))
+    assert p.value == Path('/a' + str(tmp_path))
     assert isinstance(p.value, Path)
+    assert p.repr == f'path=\'/{{A}}{(str(tmp_path))}\''
 
 
 def test_global_vars(tmp_path):

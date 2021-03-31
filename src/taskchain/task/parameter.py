@@ -52,6 +52,8 @@ class Parameter:
         if self._value == self.NO_VALUE:
             raise ValueError(f'Value not set for parameter `{self}`')
 
+        if self.dtype is Path:
+            return Path(self._value)
         return self._value
 
     def set_value(self, config) -> Any:
@@ -63,9 +65,7 @@ class Parameter:
             value = self.default
 
         if self.dtype is not None:
-            if self.dtype is Path:
-                value = Path(value)
-            if value is not None and not isinstance(value, self.dtype):
+            if value is not None and not isinstance(value, self.dtype) and not(self.dtype is Path and isinstance(value, str)):
                 raise ValueError(f'Value `{value}` of parameter `{self}` has type {type(value)} instead of `{self.dtype}`')
 
         self._value = value
@@ -74,6 +74,8 @@ class Parameter:
     def value_repr(self):
         if isinstance(self.value, ParameterObject):
             return self.value.repr()
+        if isinstance(self.value, Path):
+            return repr(self._value)
         return repr(self.value)
 
     @property
