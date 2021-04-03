@@ -7,14 +7,17 @@ theme:
   name: material
 
 nav:
-  - Overview: index.md
-  - Installation: install.md
-  - Usage: usage.md
+  - Introduction: index.md
+  - Tasks: tasks.md
+  - Configs: configs.md
+  - Chains: chains.md
+  - Example:  example.md
+  - Utils: utils.md
   - Code Reference:
       - Task: code/task.md
-      - Chain: code/chain.md
+      - Parameter: code/parameter.md
       - Config: code/config.md
-      - Parameters: code/parameters.md
+      - Chain: code/chain.md
       - Utils: code/utils.md
 
 

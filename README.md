@@ -9,12 +9,16 @@ python setup.py develop
 ```
 
 
-## Tasks
+## Docs
+https://flowerchecker.gitlab.io/taskchain/
 
-### Meta
+#### Develop
+```bash
+mkdocs serve
+```
 
- - `data_type`
- - `task_group`
- - `name`
- - `input_tasks`
- - `input_params`
+#### Build
+Automatically build by GitLab CI
+```bash
+mkdocs build --strict --verbose
+```

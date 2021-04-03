@@ -1,3 +1,1 @@
-# Config
-
-::: taskchain.task.config.Config
+::: taskchain.task.config
