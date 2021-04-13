@@ -334,8 +334,15 @@ class TaskParameterConfig(Config):
         self.input_tasks = {name: task.get_config().get_name_for_persistence(task) for name, task in input_tasks.items()}
 
     def get_name_for_persistence(self, task: Task) -> str:
+        def _get_input_task_repr(_name, _task):
+            if outer_namespace := task.get_config().namespace:
+                # remove namespace of this task from task name
+                assert _name.startswith(outer_namespace)
+                _name = _name[len(outer_namespace) + 2:]
+            return f'{_name}={_task}'
+
         parameter_repr = task.parameters.repr
-        input_tasks_repr = '###'.join(f'{n}={it}' for n, it in sorted(self.input_tasks.items()))
+        input_tasks_repr = '###'.join(_get_input_task_repr(n, it) for n, it in sorted(self.input_tasks.items()))
         return sha256(f'{parameter_repr}$$${input_tasks_repr}'.encode()).hexdigest()[:32]
 
     @property
