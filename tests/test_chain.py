@@ -723,6 +723,41 @@ def test_context_for_namespaces(tmp_path):
     assert chain['ns2::abc'].value == 21033
 
 
+class Def(Task):
+    class Meta:
+        input_tasks = ['ns::abc', 'ns2::abc']
+
+    def run(self) -> int:
+        return self.input_tasks['ns::abc'].value + self.input_tasks['ns2::abc'].value
+
+
+def test_namespaces_use_in_persistence(tmp_path):
+    json.dump(
+        {'configs': {
+            'c1': {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1},
+            'c2': {'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2},
+            'c': {'main_part': True, 'uses': ['#c1 as ns', '#c2 as ns2'], 'tasks': ['tests.test_chain.Def']},
+        }},
+        (tmp_path / 'config.json').open('w')
+    )
+
+    chain = Config(tmp_path, filepath=tmp_path / 'config.json').chain()
+    assert chain['def'].value == 3003
+
+    json.dump(
+        {'configs': {
+            'c1': {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1},
+            'c2': {'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2},
+            'c': {'uses': ['#c1 as ns', '#c2 as ns2'], 'tasks': ['tests.test_chain.Def']},
+            'd': {'main_part': True, 'uses': ['#c as nsc']},
+        }},
+        (tmp_path / 'config2.json').open('w')
+    )
+    chain = Config(tmp_path, filepath=tmp_path / 'config2.json').chain()
+    assert chain['def'].has_data
+    assert chain['def'].value == 3003
+
+
 def test_logging(tmp_path, caplog):
     class T(Task):
 
