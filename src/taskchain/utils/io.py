@@ -35,13 +35,17 @@ class NumpyEncoder(json.JSONEncoder):
 
     def default(self, obj):
         if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        if isinstance(obj, np.int32):
+            return self.default(obj.tolist())
+        if isinstance(obj, list):
+            return [self.default(x) for x in obj]
+        if isinstance(obj, (np.int32, np.int64)):
             return int(obj)
-        if isinstance(obj, np.float32):
+        if isinstance(obj, (np.float32, np.float64)):
             return float(obj)
         if np.isnan(obj) and self.ignore_nan:
             return None
+        if isinstance(obj, (int, bool, str, float)):
+            return obj
         return json.JSONEncoder.default(self, obj)
 
 
