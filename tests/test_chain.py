@@ -833,3 +833,31 @@ def test_one_task_over_multiple_namespaces(tmp_path):
 
     assert len(chain.tasks) == 2
     assert chain['c1::a::a'] == chain['c2::a::a']
+
+
+def test_configs_with_same_names(tmp_path):
+    json.dump(
+        {'tasks': ['tests.test_chain.Abc'], 'x':1, 'y': 1},
+        (tmp_path / 'config.json').open('w')
+    )
+
+    (tmp_path / 'a').mkdir()
+    json.dump(
+        {'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2},
+        (tmp_path / 'a' / 'config.json').open('w')
+    )
+
+
+    json.dump(
+        {'uses': [
+            str(tmp_path / 'config.json') + ' as s',
+            str(tmp_path / 'a' / 'config.json') + ' as a'
+        ]},
+        (tmp_path/ 'main.json').open('w')
+    )
+
+    chain = Config(tmp_path, tmp_path/ 'main.json').chain()
+    assert len(chain.tasks) == 2
+    assert chain['s::abc'] != chain['a::abc']
+    assert chain['s::abc'].value == 1001
+    assert chain['a::abc'].value == 2002

@@ -150,6 +150,11 @@ class Config(dict):
             return name
         return self.fullname
 
+    @property
+    def repr_name_without_namespace(self) -> str:
+        """ Unique representation of this config without namespace"""
+        return self.repr_name.split('::')[-1]
+
     def __str__(self):
         return self.fullname
 

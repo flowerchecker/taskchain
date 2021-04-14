@@ -170,13 +170,13 @@ class Chain(dict):
     @staticmethod
     def _create_task(task_class: Type[Task], config: Config, task_registry: Dict = None):
         task_name = task_class.slugname
-        if task_registry and (task_name, config.name) in task_registry:
-            return task_registry[task_name, config.name]
+        if task_registry and (task_name, config.repr_name_without_namespace) in task_registry:
+            return task_registry[task_name, config.repr_name_without_namespace]
 
         task = task_class(config)
         task.logger.addHandler(Chain.log_handler)
         if task_registry is not None:
-            task_registry[task_name, config.name] = task
+            task_registry[task_name, config.repr_name_without_namespace] = task
         return task
 
     @staticmethod
@@ -348,6 +348,10 @@ class TaskParameterConfig(Config):
     @property
     def repr_name(self) -> str:
         return self.name
+
+    @property
+    def repr_name_without_namespace(self):
+        return self.repr_name
 
 
 class MultiChain:
