@@ -380,6 +380,10 @@ class MultiChain:
             if chain_name is None or chain_name in fullname:
                 return chain
 
+    @classmethod
+    def set_log_level(cls, level):
+        Chain.log_handler.setLevel(level)
+
     def items(self):
         yield from sorted(self.chains.items())
 
