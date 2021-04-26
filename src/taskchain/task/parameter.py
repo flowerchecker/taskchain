@@ -181,6 +181,7 @@ class AutoParameterObject(ParameterObject):
             if arg in dont_persist_default_value_args and args[arg] == parameter.default:
                 del args[arg]
         args_repr = ', '.join(f'{k}={repr(v)}' for k, v in sorted(args.items()))
+        assert 'object at 0x' not in args_repr, f'repr for arguments is fragile: {args_repr}'
         return f'{self.__class__.__name__}({args_repr})'
 
     @staticmethod
