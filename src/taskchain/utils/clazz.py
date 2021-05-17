@@ -32,7 +32,7 @@ class persistent:
         self.method = method
 
     def __call__(self, obj):
-        attr = f'_{self.method.__name__}'
+        attr = f'__{self.method.__name__}'
         if not hasattr(obj, attr) or getattr(obj, attr) is None:
             setattr(obj, attr, self.method(obj))
         return getattr(obj, attr)
