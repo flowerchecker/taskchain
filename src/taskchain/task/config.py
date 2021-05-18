@@ -80,7 +80,7 @@ class Config(dict):
 
         self._prepare()
 
-    def _prepare(self):
+    def _prepare(self, create_objects=True):
         if self._data and 'configs' in self._data:
             self._get_part()
             self._update_uses()
@@ -89,7 +89,8 @@ class Config(dict):
         self._validate_data()
         if self.global_vars is not None:
             self.apply_global_vars(self.global_vars)
-        self.prepare_objects()
+        if create_objects:
+            self.prepare_objects()
 
     def _get_part(self):
         assert len(self._data) == 1, 'Multipart configs should contain only field `configs`'
@@ -269,4 +270,4 @@ class Context(Config):
             del self._data['for_namespaces']
         else:
             self.for_namespaces = {}
-        super()._prepare()
+        super()._prepare(create_objects=False)
