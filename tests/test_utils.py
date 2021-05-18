@@ -29,13 +29,13 @@ def test_persistent():
 
     assert clz.method() == 7
     assert clz.calls == 1
-    assert clz._method == 7
+    assert clz.__method == 7
 
     assert clz.method() == 7
     assert clz.calls == 1
 
     assert clz.property == 5
-    assert clz._property == 5
+    assert clz.__property == 5
     assert clz.property == 5
 
 
