@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import pylab
 import yaml
+from matplotlib import pyplot as plt
 
 from taskchain.utils.io import NumpyEncoder, iter_json_file, write_jsons, ListHandler
 
@@ -237,6 +238,7 @@ class FigureData(FileData):
         pickle.dump(self.value, self.path.open('wb'))
         self.value.savefig(self._base_dir / f'{self._name}.png')
         self.value.savefig(self._base_dir / f'{self._name}.svg')
+        plt.close(self.value)
 
     def load(self) -> Any:
         self._value = pickle.load(self.path.open('rb'))
