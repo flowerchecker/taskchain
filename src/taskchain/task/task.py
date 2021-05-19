@@ -140,7 +140,7 @@ class Task(object, metaclass=MetaTask):
         if hasattr(self, '_data') and self._data is not None:
             return self._data
 
-        if len(inspect.signature(self.data_class).parameters) == 0:
+        if len(inspect.signature(self.data_class).parameters) == 0 and not inspect.isabstract(self.data_class):
             # data class is not meant to be created out of run method -> data cannot be loaded
             self._data = self.data_class()
             self._init_persistence(self._data)
