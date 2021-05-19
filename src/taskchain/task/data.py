@@ -210,6 +210,30 @@ class NumpyData(FileData):
         return self._value
 
 
+class ListOfNumpyData(Data):
+
+    @property
+    def _path(self) -> Path:
+            return self._base_dir / self._name
+
+    def save(self):
+        if self.path.exists():
+            shutil.rmtree(self.path)
+        self.path.mkdir()
+
+        for i, v in enumerate(self.value):
+            np.save(str(self.path / f'{i}.npy'), v)
+
+    def load(self) -> Any:
+        self._value = []
+        for file in sorted(self.path.glob('*.npy'), key=lambda f: int(f.name.split('.')[0])):
+            self._value.append(np.load(str(file)))
+        return self._value
+
+    def exists(self) -> bool:
+        return self.path.exists()
+
+
 class PandasData(FileData):
 
     DATA_TYPES = [pd.DataFrame, pd.Series]
