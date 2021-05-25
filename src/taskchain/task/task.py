@@ -177,10 +177,10 @@ class Task(object, metaclass=MetaTask):
             input_tasks_arg = self.input_tasks[arg].value if arg in self.input_tasks else None
             parameter_arg = self.parameters[arg] if arg in self.parameters else None
 
-            if input_tasks_arg is None and parameter_arg is None:
+            if input_tasks_arg is None and arg not in self.parameters:
                 raise KeyError(f'Argument `{arg}` of run method of {self} not found in input_tasks nor parameters')
 
-            if input_tasks_arg is not None and parameter_arg is not None:
+            if input_tasks_arg is not None and arg in self.parameters:
                 raise KeyError(f'Argument `{arg}` of run method of {self} found in both input_tasks and parameters')
             args.append(input_tasks_arg if input_tasks_arg is not None else parameter_arg)
         return args
