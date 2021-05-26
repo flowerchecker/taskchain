@@ -167,9 +167,11 @@ def instancelize_clazz(clazz, args, kwargs):
     return obj
 
 
-def find_and_instancelize_clazz(obj):
+def find_and_instancelize_clazz(obj, instancelize_clazz_fce=None):
+    if instancelize_clazz_fce is None:
+        instancelize_clazz_fce = instancelize_clazz
     if isinstance(obj, dict) and 'class' in obj:
-        return instancelize_clazz(
+        return instancelize_clazz_fce(
             obj['class'],
             find_and_instancelize_clazz(obj.get('args', [])),
             find_and_instancelize_clazz(obj.get('kwargs', {})),

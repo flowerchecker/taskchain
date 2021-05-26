@@ -2,7 +2,7 @@ from __future__ import annotations
 from collections import defaultdict
 from pathlib import Path
 from taskchain.task.parameter import ParameterObject
-from taskchain.utils.clazz import find_and_instancelize_clazz
+from taskchain.utils.clazz import find_and_instancelize_clazz, instancelize_clazz
 from taskchain.utils.data import search_and_replace_placeholders
 from typing import Union, Dict, Iterable, Any
 import json
@@ -209,14 +209,17 @@ class Config(dict):
         """ Instantiate objects described in config """
         if self._data is None:
             return
+
+        def _instancelize_clazz(clazz, args, kwargs):
+            obj = instancelize_clazz(clazz, args, kwargs)
+            if not isinstance(obj, ParameterObject):
+                LOGGER.warning(f'Object `{obj}` in config `{self}` is not instance of ParameterObject')
+            if not hasattr(obj, 'repr'):
+                raise Exception(f'Object `{obj}` does not implement `repr` property')
+            return obj
+
         for key, value in self._data.items():
-            if isinstance(value, dict) and 'class' in value:
-                obj = find_and_instancelize_clazz(value)
-                if not isinstance(obj, ParameterObject):
-                    LOGGER.warning(f'Object `{obj}` in config `{self}` is not instance of ParameterObject')
-                if not hasattr(obj, 'repr'):
-                    raise Exception(f'Object `{obj}` does not implement `repr` property')
-                self._data[key] = obj
+            self._data[key] = find_and_instancelize_clazz(value, instancelize_clazz_fce=_instancelize_clazz)
 
     def chain(self, parameter_mode=True, **kwargs):
         """ Create chain from this config """
