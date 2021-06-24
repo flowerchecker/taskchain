@@ -1,0 +1,4 @@
+tasks:
+  - movie_ratings.tasks.movies.*
+
+source_file: "{DATA_DIR}/source_data/IMDB_movies.csv"
