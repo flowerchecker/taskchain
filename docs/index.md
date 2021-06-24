@@ -1,19 +1,23 @@
 # TaskChain
 
+## What is TaskChain?
 
-!!! warning "Be aware"
-    pdasda sd
-    sdadpas das
+TaskChain is a tool for managing data processing pipelines.
+It was creating to keep order in machine learning projects.
 
-!!! example
-    === "code.py"
-    
-        ```python
-        print()
-        ```
-    
-    === "config.yaml"
-    
-        ```yaml
-        foo: bar
-        ```
+
+## Install 
+
+#### From git
+
+```bash
+git clone git@gitlab.com:flowerchecker/taskchain.git
+cd taskchain
+python setup.py install
+```
+
+
+## Main ideas
+
+
+## Typical project structure
