@@ -29,6 +29,7 @@ setuptools.setup(
         'networkx',
         'seaborn',
         'filelock',
+        'icecream',
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
