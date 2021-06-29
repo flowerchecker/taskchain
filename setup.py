@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="taskchain",
-    version="1.0.0",
+    version="1.0.1",
     author="Jiří Thran Řihák",
     author_email="jiri.rihak@plant.id",
     description="Pipeline for ML and data processing",

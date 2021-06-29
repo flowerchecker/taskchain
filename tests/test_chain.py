@@ -861,3 +861,28 @@ def test_configs_with_same_names(tmp_path):
     assert chain['s::abc'] != chain['a::abc']
     assert chain['s::abc'].value == 1001
     assert chain['a::abc'].value == 2002
+
+
+def test_create_readable_filenames(tmp_path):
+    config_data = {
+        'uses': [
+            Config(tmp_path, name='config', data={'tasks': ['tests.tasks.a.A']}),
+        ],
+        'tasks': ['tests.tasks.b.*'],
+    }
+    config2 = Config(tmp_path, name='config2', data=config_data)
+    chain = Chain(config2)
+
+    for name, task in chain.tasks.items():
+        if name == 'd':
+            continue
+        _ = task.value
+
+    chain.create_readable_filenames('named', '', dry=True)
+    assert not (tmp_path / 'c' / 'named.json').exists()
+
+    chain.create_readable_filenames('named', '')
+    assert (tmp_path / 'c' / 'named.json').exists()
+    assert not (tmp_path / 'd' / 'named.json').exists()
+
+    chain.create_readable_filenames('named', None)
