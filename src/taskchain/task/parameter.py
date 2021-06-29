@@ -52,7 +52,7 @@ class Parameter:
         if self._value == self.NO_VALUE:
             raise ValueError(f'Value not set for parameter `{self}`')
 
-        if self.dtype is Path:
+        if self.dtype is Path and self._value is not None:
             return Path(self._value)
         return self._value
 

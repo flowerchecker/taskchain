@@ -259,6 +259,13 @@ def test_path(tmp_path):
     assert p.repr == f'path=\'/{{A}}{(str(tmp_path))}\''
 
 
+def test_none_path(tmp_path):
+    p = Parameter('path', dtype=Path)
+
+    p.set_value(Config(data={'path': None}))
+    assert p.value is None
+
+
 def test_global_vars(tmp_path):
 
     ps = ParameterRegistry([
