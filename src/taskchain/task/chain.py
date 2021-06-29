@@ -2,6 +2,7 @@ import abc
 import logging
 import re
 from hashlib import sha256
+from pathlib import Path
 from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
 
 import networkx as nx
@@ -370,6 +371,15 @@ class TaskParameterConfig(Config):
 class MultiChain:
 
     logger = logging.getLogger('tasks_chain')
+
+    @classmethod
+    def from_dir(cls, data_dir: Path, dir_path: Path, **kwargs) -> 'MultiChain':
+        configs = []
+        for config_file in dir_path.iterdir():
+            configs.append(
+                Config(data_dir, config_file, **kwargs)
+            )
+        return MultiChain(configs)
 
     def __init__(self, configs: Sequence[Config], parameter_mode: bool = True):
         self._tasks: Dict[Tuple[str, str], Task] = {}
