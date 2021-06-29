@@ -123,6 +123,10 @@ class InMemoryData(Data):
         pass
 
     @property
+    def path(self) -> Union[Path, None]:
+        return None
+
+    @property
     def _path(self) -> Union[Path, None]:
         return None
 

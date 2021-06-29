@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Union, Any, get_type_hints, Type, Dict, Iterable
 
 from taskchain.task.config import Config
-from taskchain.task.data import Data, DirData
+from taskchain.task.data import Data, DirData, InMemoryData
 from taskchain.task.parameter import ParameterRegistry
 from taskchain.utils.clazz import persistent, Meta, inheritors, isinstance as custom_isinstance, fullname
 
@@ -222,10 +222,14 @@ class Task(object, metaclass=MetaTask):
 
     @property
     def has_data(self) -> bool:
+        if issubclass(self.data_class, InMemoryData):
+            return False
         return self._data_without_value.exists()
 
     @property
     def data_path(self) -> Path:
+        if issubclass(self.data_class, InMemoryData):
+            return None
         return self._data_without_value.path
 
     def reset_data(self):
