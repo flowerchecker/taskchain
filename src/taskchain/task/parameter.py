@@ -112,7 +112,9 @@ class ParameterRegistry:
         return self.get(item)
 
     def __getattr__(self, item: str):
-        return self.get(item)
+        if item in self:
+            return self.get(item)
+        return self.__getattribute__(item)
 
     def __str__(self):
         return str(self._parameters)

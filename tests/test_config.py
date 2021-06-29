@@ -75,7 +75,7 @@ def test_data(tmp_path):
         with pytest.raises(KeyError):
             _ = c.data['x']
 
-        with pytest.raises(KeyError):
+        with pytest.raises(AttributeError):
             _ = c.x
 
 
@@ -182,7 +182,7 @@ def test_multi_configs():
     assert Config(data=data, part='config1', name='c').name == 'c#config1'
     assert Config(data=data, part='config2', name='c').a == 2
     assert Config(data=data, part='config3', name='c').a == 3
-    with pytest.raises(KeyError):
+    with pytest.raises(AttributeError):
         assert Config(data=data, part='config1').b
 
     with pytest.raises(KeyError):

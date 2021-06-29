@@ -59,7 +59,9 @@ class Chain(dict):
         return self.get(item)
 
     def __getattr__(self, item):
-        return self.get(item)
+        if item in self:
+            return self.get(item)
+        return self.__getattribute__(item)
 
     def get(self, item, default=None):
         if default is not None:
@@ -67,7 +69,10 @@ class Chain(dict):
         return self.tasks.get(find_task_full_name(item, self.tasks.keys()))
 
     def __contains__(self, item):
-        return find_task_full_name(item, self.tasks.keys()) in self.tasks
+        try:
+            return find_task_full_name(item, self.tasks.keys()) in self.tasks
+        except KeyError:
+            return False
 
     def _prepare(self):
         self._process_config(self._base_config)

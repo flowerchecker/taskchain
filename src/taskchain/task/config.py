@@ -172,7 +172,9 @@ class Config(dict):
         return self.data[item]
 
     def __getattr__(self, item):
-        return self.data[item]
+        if item in self:
+            return self.data[item]
+        return self.__getattribute__(item)
 
     def get(self, item, default=None):
         return self.data.get(item, default)
