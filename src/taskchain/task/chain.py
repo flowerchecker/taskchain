@@ -55,6 +55,14 @@ class Chain(dict):
     def __repr__(self):
         return f'<chain for config `{self._base_config}`>'
 
+    def _repr_markdown_(self):
+        header = 'task | fullname | config | persistence | computed \n'
+        header += ' --- | --- | --- | --- | --- \n'
+        return header + '\n'.join(
+            f'{n.split(":")[-1]} | {n} | {str(t.get_config()).split("/")[0]} | {t.data_path} | {t.has_data}'
+            for n, t in self.tasks.items()
+        )
+
     def __getitem__(self, item):
         return self.get(item)
 

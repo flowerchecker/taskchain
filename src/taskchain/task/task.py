@@ -201,6 +201,17 @@ class Task(object, metaclass=MetaTask):
     def __repr__(self):
         return f'<task: {self}>'
 
+    def _repr_markdown_(self):
+        repr = f'**{self.slugname.split(":")[-1]}** \n' \
+               f' - fullname: `{self.fullname}` \n' \
+               f' - group: `{self.group}` \n' \
+               f' - config: `{self.get_config()}` \n'
+
+        if self.has_data:
+            repr += f' - data: `{self.data_path}` \n' \
+
+        return repr
+
     def get_config(self):
         return self._config
 
