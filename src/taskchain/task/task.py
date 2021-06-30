@@ -159,12 +159,12 @@ class Task(object, metaclass=MetaTask):
                 run_result = self.run(*self._get_run_arguments())
                 self.logger.info(f'{self} - run ended')
                 self.logger.removeHandler(data_log_handler)
+                self.process_run_result(run_result)
             except Exception as error:
                 if self._data:
                     self._data.on_run_error()
                     self._data = None
                 raise error
-            self.process_run_result(run_result)
             self._finish_run_info()
         return self._data
 
