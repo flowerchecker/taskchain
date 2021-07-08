@@ -331,7 +331,7 @@ class Chain(dict):
     def _create_softlink_to_task_data(self, task, name=None, verbose=True, dry=False, keep_existing=False):
         if name is None:
             config = task.get_config().get_original_config()
-            name = config.get('save_as')
+            name = config.get('human_readable_data_name')
             if name is None:
                 if verbose:
                     print(f'no name for task `{task}`')

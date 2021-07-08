@@ -890,7 +890,7 @@ def test_create_readable_filenames(tmp_path):
 
 def test_create_readable_filenames_base_od_config(tmp_path):
     config_data = {
-        'save_as': 'named',
+        'human_readable_data_name': 'named',
         'uses': [
             Config(tmp_path, name='config', data={'tasks': ['tests.tasks.a.A']}),
         ],
