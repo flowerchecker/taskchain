@@ -228,6 +228,10 @@ class Config(dict):
         from taskchain.task import Chain
         return Chain(self, parameter_mode=parameter_mode, **kwargs)
 
+    def get_original_config(self):
+        """ Get self of config from which this one is derived """
+        return self
+
 
 class Context(Config):
     """

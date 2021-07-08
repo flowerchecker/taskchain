@@ -363,7 +363,7 @@ class TaskParameterConfig(Config):
     def __init__(self, original_task: Task, input_tasks: Dict[str, Task]):
         super(Config, self).__init__()
 
-        original_config = original_task.get_config()
+        self.original_config = original_config = original_task.get_config()
         self.base_dir = original_config.base_dir
         self.namespace = original_config.namespace
         self.global_vars = original_config.global_vars
@@ -397,6 +397,9 @@ class TaskParameterConfig(Config):
     @property
     def repr_name_without_namespace(self):
         return self.repr_name
+
+    def get_original_config(self):
+        return self.original_config
 
 
 class MultiChain:
