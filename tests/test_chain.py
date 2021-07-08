@@ -886,3 +886,24 @@ def test_create_readable_filenames(tmp_path):
     assert not (tmp_path / 'd' / 'named.json').exists()
 
     chain.create_readable_filenames('named', None)
+
+
+def test_create_readable_filenames_base_od_config(tmp_path):
+    config_data = {
+        'save_as': 'named',
+        'uses': [
+            Config(tmp_path, name='config', data={'tasks': ['tests.tasks.a.A']}),
+        ],
+        'tasks': ['tests.tasks.b.*'],
+    }
+    config2 = Config(tmp_path, name='config2', data=config_data)
+    chain = Chain(config2)
+
+    for name, task in chain.tasks.items():
+        if name == 'd':
+            continue
+        _ = task.value
+
+    chain.create_readable_filenames()
+    assert (tmp_path / 'c' / 'named.json').exists()
+    assert not (tmp_path / 'd' / 'named.json').exists()

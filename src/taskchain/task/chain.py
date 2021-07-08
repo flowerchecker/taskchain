@@ -314,36 +314,46 @@ class Chain(dict):
             G.edge(_get_slugname(edge[0]), _get_slugname(edge[1]))
         return G
 
-    def create_readable_filenames(self, name, group, verbose=True, dry=False, keep_existing=False):
+    def create_readable_filenames(self, name=None, group=None, verbose=True, **kwargs):
         some_task_found = False
         for task_name, task in self.tasks.items():
-            if task.group != group:
+            if group is not None and task.group != group:
                 continue
             else:
                 some_task_found = True
             if not task.has_data:
                 continue
-
-            symlink_path = task.path / f'{name}{task.data_path.suffix}'
-            if symlink_path.exists():
-                if keep_existing:
-                    action_name = 'keep existing'
-                else:
-                    action_name = 'to rewrite' if dry else 'rewriting'
-            else:
-                action_name = 'to create' if dry else 'creating'
-
-            if verbose:
-                print(f'{action_name:>20}: softlink for task `{task}`: `{symlink_path}`')
-            if not dry:
-                if symlink_path.exists():
-                    if keep_existing:
-                        continue
-                    symlink_path.unlink()
-                symlink_path.symlink_to(task.data_path.relative_to(symlink_path.parent), task.data_path.is_dir())
+            self._create_softlink_to_task_data(task, name, verbose=verbose, **kwargs)
 
         if verbose and not some_task_found:
             print(f'No task found in group `{group}`')
+
+    def _create_softlink_to_task_data(self, task, name=None, verbose=True, dry=False, keep_existing=False):
+        if name is None:
+            config = task.get_config().get_original_config()
+            name = config.get('save_as')
+            if name is None:
+                if verbose:
+                    print(f'no name for task `{task}`')
+                return
+
+        symlink_path = task.path / f'{name}{task.data_path.suffix}'
+        if symlink_path.exists():
+            if keep_existing:
+                action_name = 'keep existing'
+            else:
+                action_name = 'to rewrite' if dry else 'rewriting'
+        else:
+            action_name = 'to create' if dry else 'creating'
+
+        if verbose:
+            print(f'{action_name:>20}: softlink for task `{task}`: `{symlink_path}`')
+        if not dry:
+            if symlink_path.exists():
+                if keep_existing:
+                    return
+                symlink_path.unlink()
+            symlink_path.symlink_to(task.data_path.relative_to(symlink_path.parent), task.data_path.is_dir())
 
 
 class TaskParameterConfig(Config):
