@@ -21,6 +21,7 @@ setuptools.setup(
     ],
     python_requires='>=3.8',
     install_requires=[
+        'jupyter'
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
