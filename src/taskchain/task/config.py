@@ -197,11 +197,11 @@ class Config(dict):
 
         data = self._data
         uses = data.get('uses', [])
-        if not isinstance(uses, Iterable) or isinstance(uses, str):
+        if not (isinstance(uses, Iterable) or isinstance(uses, str)):
             raise ValueError(f'`uses` of config `{self}` have to be list or str')
 
         tasks = data.get('tasks', [])
-        if not isinstance(tasks, Iterable) or isinstance(tasks, str):
+        if not (isinstance(tasks, Iterable) or isinstance(tasks, str)):
             raise ValueError(f'`tasks` of config `{self}` have to list or str')
 
     def apply_global_vars(self, global_vars):
