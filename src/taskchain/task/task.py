@@ -109,7 +109,7 @@ class Task(object, metaclass=MetaTask):
         """
         self._config: Config = config
         self._data: Union[None, Data, DirData] = None
-        self._input_tasks: Union[None, Dict[str, 'Task']] = None
+        self._input_tasks: Union[None, InputTasks] = None
         self._forced = False
 
         self.meta = self.__class__.meta
@@ -260,7 +260,7 @@ class Task(object, metaclass=MetaTask):
         return self._forced
 
     @property
-    def input_tasks(self) -> Dict[str, 'Task']:
+    def input_tasks(self) -> 'InputTasks':
         if self._input_tasks is None:
             raise ValueError(f'Input tasks for task `{self}` not initialized')
         return self._input_tasks
