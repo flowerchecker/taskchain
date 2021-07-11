@@ -57,6 +57,19 @@ class Movies(ModuleTask):
         return df
 
 
+class Movie_names(ModuleTask):
+
+    class Meta:
+        input_tasks = [Movies]
+        data_type = Dict
+
+    def run(self):
+        return dict(zip(
+            self.input_tasks['movies'].value.index,  # access input task by name
+            self.input_tasks[0].value.original_title,      # access input task by order defined in meta
+        ))
+
+
 class DurationHistogram(ModuleTask):
     class Meta:
         input_tasks = [Movies]

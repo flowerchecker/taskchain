@@ -4,3 +4,11 @@ uses: "{CONFIGS_DIR}/movies/imdb.filtered.yaml"
 
 director_minimal_movie_count: 5
 actor_minimal_movie_count: 21
+
+feature_types:
+  - year
+  - duration
+  - genre
+  - country
+  - actor
+  - director

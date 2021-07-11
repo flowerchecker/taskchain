@@ -1,7 +1,9 @@
 from typing import List, Generator
 
-from movie_ratings.tasks.movies import Directors, Movies, Actors
-from taskchain.task import ModuleTask
+import pandas as pd
+
+from movie_ratings.tasks.movies import Directors, Movies, Actors, Countries, Genres
+from taskchain.task import ModuleTask, InMemoryData
 from taskchain.task.parameter import Parameter
 
 
@@ -47,3 +49,49 @@ class SelectedActors(ModuleTask):
 
         self.save_to_run_info(f'Selected directors count: {selected_actors}')
         return selected_actors
+
+
+class AllFeatures(ModuleTask):
+
+    BASIC_FEATURES = ['year', 'duration']
+
+    class Meta:
+        input_tasks = [Movies, Genres, Countries, Actors, Directors, SelectedActors, SelectedDirectors]
+
+    def run(self, movies, selected_actors, selected_directors, genres, countries, actors, directors) -> pd.DataFrame:
+        features = movies[self.BASIC_FEATURES]
+
+        feature_types = {
+            'genre': genres,
+            'country': countries,
+            'actor': {actor: movies for actor, movies in actors.items() if actor in selected_actors},
+            'director': {director: movies for director, movies in actors.items() if director in selected_directors},
+        }
+        for feature_type, feature_movie_map in feature_types.items():
+            for feature, movies in sorted(feature_movie_map.items()):
+                feature_name = f'{feature_type}_{feature}'
+                features[feature_name] = features.index.isin(movies)
+
+        return features
+
+
+class FeatureNames(ModuleTask):
+
+    class Meta:
+        input_tasks = [AllFeatures]
+        parameters = [
+            Parameter('feature_types', dtype=list)
+        ]
+
+    def run(self, all_features, feature_types) -> List:
+        return [column for column in all_features.columns if column.split('_')[0] in feature_types]
+
+
+class Features(ModuleTask):
+
+    class Meta:
+        input_tasks = [AllFeatures, FeatureNames]
+        data_class = InMemoryData
+
+    def run(self, all_features, feature_names) -> pd.DataFrame:
+        return all_features[feature_names]
