@@ -1,5 +1,6 @@
 import asyncio
 import concurrent.futures
+from typing import Union, List
 
 from .jupyter import in_ipynb
 from tqdm import tqdm, tqdm_notebook
@@ -37,3 +38,9 @@ def parallel_map(fun, iterable, threads=2, desc='Running tasks in parallel.', to
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(_run())
     return [res for _, res in sorted(result, key=lambda ires: ires[0])]
+
+
+def list_or_str_to_list(value: Union[List, str]) -> List:
+    if isinstance(value, str):
+        return [value]
+    return value
