@@ -21,7 +21,9 @@ setuptools.setup(
     ],
     python_requires='>=3.8',
     install_requires=[
-        'jupyter'
+        'jupyter',
+        'sklearn',
+        'tensorflow',
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],

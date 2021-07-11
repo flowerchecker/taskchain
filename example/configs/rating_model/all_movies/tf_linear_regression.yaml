@@ -1,0 +1,16 @@
+tasks: movie_ratings.tasks.rating_model.*
+uses: "{CONFIGS_DIR}/features/all.yaml"
+
+test_ratio: .05
+
+model:
+  class: movie_ratings.models.tensorflow.LinearRatingModel
+  kwargs:
+    learning_params:
+      epochs: 10
+      lr_schedule:
+        - [ 1, 0.001]
+        - [ 5, 0.0001]
+        - [ 8, 0.00001]
+        - [10, 0.000001]
+    regularization: 0.00001

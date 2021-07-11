@@ -1,9 +1,13 @@
+from typing import Dict
+
 import numpy as np
 import pandas as pd
 
+from movie_ratings.models.core import RatingModel
 from movie_ratings.tasks.features import Features
 from movie_ratings.tasks.movies import Movies
 from taskchain.task import ModuleTask
+from taskchain.task.data import DirData
 from taskchain.task.parameter import Parameter
 
 
@@ -103,7 +107,38 @@ class TestY(DataSelectionTask):
         data_type = pd.Series
 
 
-class TrainedModel(ModuleTask):
+class TrainModel(ModuleTask):
 
     class Meta:
         input_tasks = [TrainX, TrainY]
+        parameters = [
+            Parameter('model')
+        ]
+
+    def run(self, model: RatingModel, train_x, train_y) -> DirData:
+        data: DirData = self.get_data_object()
+        model.train(train_x, train_y)
+        model.save(data.dir)
+        return data
+
+
+class TrainedModel(ModuleTask):
+
+    class Meta:
+        input_tasks = [TrainModel]
+        parameters = [
+            Parameter('model')
+        ]
+
+    def run(self, model, train_model) -> RatingModel:
+        model.load(train_model)
+        return model
+
+
+class TestMetrics(ModuleTask):
+
+    class Meta:
+        input_tasks = [TrainedModel, TestX, TestY]
+
+    def run(self, trained_model: RatingModel, test_x, test_y) -> Dict:
+        return trained_model.eval(test_x, test_y)
