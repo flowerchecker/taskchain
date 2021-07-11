@@ -1,0 +1,7 @@
+tasks:
+  - movie_ratings.tasks.movies.*
+
+source_file: "{DATA_DIR}/source_data/IMDB_movies.csv"
+
+from_year: 1945
+min_vote_count: 1000

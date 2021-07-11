@@ -1,0 +1,6 @@
+tasks: movie_ratings.tasks.features.*
+uses: "{CONFIGS_DIR}/movies/imdb.filtered.yaml"
+
+
+director_minimal_movie_count: 5
+actor_minimal_movie_count: 21

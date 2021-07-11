@@ -11,7 +11,7 @@ from taskchain.task.parameter import Parameter
 from taskchain.utils.iter import progress_bar
 
 
-class Movies(ModuleTask):
+class AllMovies(ModuleTask):
     """ DataFrame with all movies and their data """
 
     class Meta:
@@ -32,6 +32,28 @@ class Movies(ModuleTask):
                 return int(year[-4:])
 
         df['year'] = df.year.map(_extract_year)
+        return df
+
+
+class Movies(ModuleTask):
+    """ DataFrame with all movies and their data """
+
+    class Meta:
+        input_tasks = [AllMovies]
+        parameters = [
+            Parameter('min_vote_count', default=None, dtype=int),
+            Parameter('from_year', default=None, dtype=int),
+            Parameter('to_year', default=None, dtype=int),
+        ]
+
+    def run(self, all_movies) -> pd.DataFrame:
+        df = all_movies
+        if self.params.min_vote_count is not None:
+            df = df.query(f'votes >= {self.params.min_vote_count}')
+        if self.params.from_year is not None:
+            df = df.query(f'year >= {self.params.from_year}')
+        if self.params.to_year is not None:
+            df = df.query(f'year <= {self.params.to_year}')
         return df
 
 
@@ -110,47 +132,3 @@ class Actors(ExtractFeatureTask):
     class Meta:
         input_tasks = ExtractFeatureTask.meta.input_tasks
         column_name = 'actors'
-
-
-class SelectedDirectors(ModuleTask):
-    """ List of selected directors - with enough movies with good rating """
-
-    class Meta:
-        input_tasks = [Directors, Movies]
-        parameters = [
-            Parameter('director_minimal_movie_count'),
-            Parameter('director_minimal_movie_rating', default=7),
-        ]
-
-    def run(self, directors, movies, director_minimal_movie_count, director_minimal_movie_rating) -> Generator:
-        selected_directors_count = 0
-        for director, directors_movies in directors.items():
-            good_movies = [m for m in directors_movies
-                           if self.get_movie_rating(movies, m) >= director_minimal_movie_rating]
-            if len(good_movies) >= director_minimal_movie_count:
-                selected_directors_count += 1
-                yield director
-
-        self.save_to_run_info(f'Selected directors count: {selected_directors_count}')
-
-    def get_movie_rating(self, movies, movie):
-        return movies.loc[movie].avg_vote
-
-
-class SelectedActors(ModuleTask):
-    """ List of selected actors - with enough movies """
-
-    class Meta:
-        input_tasks = [Actors, Movies]
-        parameters = [
-            Parameter('actor_minimal_movie_count', default=20),
-        ]
-
-    def run(self, actors, movies, actor_minimal_movie_count) -> List:
-        selected_actors = []
-        for actor, actors_movies in actors.items():
-            if len(actors_movies) >= actor_minimal_movie_count:
-                selected_actors.append(actor)
-
-        self.save_to_run_info(f'Selected directors count: {selected_actors}')
-        return selected_actors
