@@ -24,7 +24,13 @@ class AllX(ModuleTask):
             # no user rating file -> we train on all movies
             return features
 
-        # TODO
+        personal_df = pd.read_csv(user_rating_file, encoding='ISO-8859-1')
+        known_movies_df = personal_df[personal_df['Const'].isin(features.index)]
+
+        self.logger.info(f'Personal movie ratings: {len(personal_df)}')
+        self.logger.info(f'Known movies: {len(known_movies_df)}')
+
+        return features.loc[known_movies_df['Const'].values]
 
 
 class AllY(ModuleTask):
@@ -40,7 +46,10 @@ class AllY(ModuleTask):
             # no user rating file -> we train on all movies and use average user rating
             return movies.avg_vote
 
-        # TODO
+        personal_df = pd.read_csv(user_rating_file, encoding='ISO-8859-1')
+        known_movies_df = personal_df[personal_df['Const'].isin(movies.index)]
+
+        return known_movies_df['Your Rating']
 
 
 class TestMoviesMask(ModuleTask):
