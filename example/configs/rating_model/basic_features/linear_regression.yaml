@@ -1,0 +1,10 @@
+tasks: movie_ratings.tasks.rating_model.*
+uses: "{CONFIGS_DIR}/features/basic.yaml"
+
+test_ratio: .05
+
+model:
+  class: movie_ratings.models.sklearn.LinearRegressionRatingModel
+  kwargs:
+    normalize: True
+    regularization: 1
