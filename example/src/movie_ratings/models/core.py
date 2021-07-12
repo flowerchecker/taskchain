@@ -1,4 +1,5 @@
 import abc
+import json
 from pathlib import Path
 from typing import Dict
 
@@ -47,3 +48,23 @@ class RatingModel(AutoParameterObject, InMemoryData, abc.ABC):
     @abc.abstractmethod
     def load(self, directory: Path):
         pass
+
+
+class BaselineRatingModel(RatingModel):
+
+    def __init__(self):
+        super().__init__()
+        self._mean = None
+
+    def _train(self, X, y):
+        self._mean = y.mean()
+
+    def _predict(self, X):
+        return self._mean
+
+    def save(self, directory: Path):
+        assert self._mean is not None
+        json.dump({'mean': self._mean}, (directory / 'model.json').open('w'))
+
+    def load(self, directory: Path):
+        self._mean = json.load((directory / 'model.json').open())['mean']
