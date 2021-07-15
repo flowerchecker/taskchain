@@ -58,10 +58,10 @@ class Chain(dict):
         return f'<chain for config `{self._base_config}`>'
 
     def _repr_markdown_(self):
-        header = 'task | fullname | config | persistence | computed \n'
+        header = 'task | fullname | config | computed | persistence\n'
         header += ' --- | --- | --- | --- | --- \n'
         return header + '\n'.join(
-            f'{n.split(":")[-1]} | {n} | {str(t.get_config()).split("/")[0]} | {t.data_path} | {t.has_data}'
+            f'{n.split(":")[-1]} | {n} | {str(t.get_config()).split("/")[0]} | {t.has_data} | {t.data_path}'
             for n, t in self.tasks.items()
         )
 
