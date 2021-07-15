@@ -2,6 +2,7 @@ site_name: TaskChain
 site_description: Documentation and examples for TaskChain
 site_url: https://flowerchecker.gitlab.io/taskchain/
 repo_url: https://gitlab.com/flowerchecker/taskchain
+code_url: https://gitlab.com/flowerchecker/taskchain/-/tree/master
 
 theme:
   name: material
@@ -28,6 +29,7 @@ markdown_extensions:
 
 plugins:
   - search
+  - macros
   - mkdocstrings:
       watch:
         - src/taskchain

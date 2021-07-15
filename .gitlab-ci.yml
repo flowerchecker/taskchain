@@ -23,7 +23,7 @@ test:
 pages:
   stage: deploy
   script:
-    - pip install mkdocs mkdocs-material mkdocstrings pymdown-extensions
+    - pip install -r docs/requirements.txt
     - mkdocs build --verbose --site-dir public
   artifacts:
     paths:
