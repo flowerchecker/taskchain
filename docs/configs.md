@@ -3,6 +3,7 @@
 
 ## Config definition
 
+### Global vars
 
 ## Parameter objects
 

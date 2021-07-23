@@ -23,13 +23,14 @@ class Parameter:
                  dont_persist_default_value: bool = False,
                  ):
         """
-        :param name: name for referencing from task
-        :param dtype:
-        :param default: value used if not provided in config, default to NO_DEFAULT meaning that param is required
-        :param name_in_config: name used for search in config, defaults to parameter name
-        :param ignore_persistence: do not use this parameter in persistence, useful params without influence on output
-        :param dont_persist_default_value: if value of parameter is same as default, do not use it in persistence
-            useful for adding new parameters without recomputation of data
+        Args:
+            name: name for referencing from task
+            dtype: expected datatype
+            default: value used if not provided in config, default to NO_DEFAULT meaning that param is required
+            name_in_config: name used for search in config, defaults to `name` argument
+            ignore_persistence: do not use this parameter in persistence, useful params without influence on output
+            dont_persist_default_value: if value of parameter is same as default, do not use it in persistence,
+                useful for adding new parameters without recomputation of data
         """
         self.name = name
         self.dtype = dtype
