@@ -12,7 +12,7 @@ from typing import Union, Any, get_type_hints, Type, Dict, Iterable
 
 from taskchain.task.config import Config
 from taskchain.task.data import Data, DirData, InMemoryData
-from taskchain.task.parameter import ParameterRegistry
+from taskchain.task.parameter import Parameter, ParameterRegistry, NO_VALUE
 from taskchain.utils.clazz import persistent, Meta, inheritors, isinstance as custom_isinstance, fullname
 
 
@@ -127,7 +127,11 @@ class Task(object, metaclass=MetaTask):
     def prepare_parameters(self, config):
         parameters = self.meta.get('parameters')
         if parameters is not None:
-            parameters = deepcopy(parameters)
+            parameters = [
+                p
+                for p in deepcopy(parameters)
+                if isinstance(p, Parameter)
+            ]
         self.params = self.parameters = ParameterRegistry(parameters)
         self.parameters.set_values(self._config)
 
@@ -174,15 +178,17 @@ class Task(object, metaclass=MetaTask):
             if parameter.default != inspect.Parameter.empty:
                 raise AttributeError('Kwargs arguments in run method not allowed')
 
-            input_tasks_arg = self.input_tasks[arg].value if arg in self.input_tasks else None
-            parameter_arg = self.parameters[arg] if arg in self.parameters else None
+            input_tasks_arg = self.input_tasks[arg] if arg in self.input_tasks else NO_VALUE
+            if isinstance(input_tasks_arg, Task):
+                input_tasks_arg = input_tasks_arg.value
+            parameter_arg = self.parameters[arg] if arg in self.parameters else NO_VALUE
 
-            if input_tasks_arg is None and arg not in self.parameters:
+            if input_tasks_arg is NO_VALUE and arg not in self.parameters:
                 raise KeyError(f'Argument `{arg}` of run method of {self} not found in input_tasks nor parameters')
 
-            if input_tasks_arg is not None and arg in self.parameters:
+            if input_tasks_arg is not NO_VALUE and arg in self.parameters:
                 raise KeyError(f'Argument `{arg}` of run method of {self} found in both input_tasks and parameters')
-            args.append(input_tasks_arg if input_tasks_arg is not None else parameter_arg)
+            args.append(input_tasks_arg if input_tasks_arg is not NO_VALUE else parameter_arg)
         return args
 
     # to run from task itself

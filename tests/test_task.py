@@ -5,7 +5,7 @@ import pytest
 
 from taskchain.task import Task, Config, ModuleTask
 from taskchain.task.data import JSONData, GeneratedData
-from taskchain.task.parameter import Parameter
+from taskchain.task.parameter import Parameter, InputTaskParameter
 
 
 class ThisIsSomethingTask(Task):
@@ -329,3 +329,97 @@ def test_run_input_arguments(tmp_path):
     chain = Config(tmp_path, name='config1', data={'tasks': [A, B, C5], 'a': 77}).chain()
     with pytest.raises(KeyError):
         _ = chain.c5.value
+
+
+def test_optional_input_tasks(tmp_path):
+
+    class A(Task):
+        class Meta:
+            parameters = [
+                Parameter('a_value', default=1),
+            ]
+
+        def run(self, a_value) -> int:
+            return a_value
+
+    class B1(Task):
+        class Meta:
+            parameters = [
+                InputTaskParameter(A, default=2),
+            ]
+
+        def run(self, a) -> int:
+            return a
+
+    class B2(Task):
+        class Meta:
+            input_tasks = [
+                InputTaskParameter(A, default=2),
+            ]
+
+        def run(self, a) -> int:
+            return a
+
+    class B3(Task):
+        class Meta:
+            input_tasks = [
+                InputTaskParameter('a', default=2),
+            ]
+
+        def run(self, a) -> int:
+            return a
+
+    class B4(Task):
+        class Meta:
+            input_tasks = [
+                InputTaskParameter(A),
+            ]
+
+        def run(self, a) -> int:
+            return a
+
+    class B5(Task):
+        class Meta:
+            parameters = [
+                InputTaskParameter(A),
+            ]
+
+        def run(self, a) -> int:
+            return a
+
+    class B6(Task):
+        class Meta:
+            name = 'b1'
+            input_tasks = []
+
+        def run(self) -> int:
+            return 2
+
+    chain = Config(tmp_path, name='config', data={'tasks': [A, B1], 'a_value': 666}).chain()
+    assert chain.b1.value == 666
+    assert list(chain.b1.run_info['input_tasks'].keys()) == ['a']
+    chain = Config(tmp_path, name='config', data={'tasks': [A, B2], 'a_value': 666}).chain()
+    assert chain.b2.value == 666
+    assert list(chain.b2.run_info['input_tasks'].keys()) == ['a']
+    chain = Config(tmp_path, name='config', data={'tasks': [A, B3], 'a_value': 666}).chain()
+    assert chain.b3.value == 666
+    assert list(chain.b3.run_info['input_tasks'].keys()) == ['a']
+
+    chain = Config(tmp_path, name='config', data={'tasks': [B1], 'a_value': 666}).chain()
+    assert chain.b1.value == 2
+    assert chain.b1.run_info['input_tasks'] == {}
+    chain = Config(tmp_path, name='config', data={'tasks': [B2], 'a_value': 666}).chain()
+    assert chain.b2.value == 2
+    assert chain.b2.run_info['input_tasks'] == {}
+    chain = Config(tmp_path, name='config', data={'tasks': [B3], 'a_value': 666}).chain()
+    assert chain.b3.value == 2
+    assert chain.b3.run_info['input_tasks'] == {}
+
+    with pytest.raises(ValueError):
+        _ = Config(tmp_path, name='config', data={'tasks': [B4], 'a_value': 666}).chain()
+    with pytest.raises(ValueError):
+        _ = Config(tmp_path, name='config', data={'tasks': [B5], 'a_value': 666}).chain()
+
+    chain1 = Config(tmp_path, name='config', data={'tasks': [B1], 'a_value': 666}).chain()
+    chain2 = Config(tmp_path, name='config', data={'tasks': [B6], 'a_value': 666}).chain()
+    assert chain1.b1.name_for_persistence == chain2.b1.name_for_persistence

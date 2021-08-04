@@ -2,6 +2,7 @@ import abc
 import logging
 import re
 from hashlib import sha256
+from itertools import chain
 from pathlib import Path
 from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
 
@@ -9,6 +10,7 @@ import networkx as nx
 
 from taskchain.task.config import Config
 from taskchain.task.task import Task, find_task_full_name, InputTasks
+from taskchain.task.parameter import AbstractParameter, InputTaskParameter
 from taskchain.utils.clazz import get_classes_by_import_string
 from taskchain.utils.iter import list_or_str_to_list
 
@@ -170,7 +172,7 @@ class Chain(dict):
                     # this is for support of multiple names (through different namespaces paths) of one task
                     new_tasks[_task_name] = new_tasks[_task.fullname]
                 return new_tasks[_task.fullname]
-            input_tasks = {n: _get_task(n, t) for n, t in _task.input_tasks.items()}
+            input_tasks = {n: _get_task(n, t) for n, t in _task.input_tasks.items() if isinstance(t, Task)}
             config = TaskParameterConfig(_task, input_tasks)
             new_task = self._create_task(_task.__class__, config, task_registry)
             assert new_task.fullname == _task.fullname
@@ -198,7 +200,16 @@ class Chain(dict):
     def _process_dependencies(tasks: Dict[str, Task]):
         for task_name, task in tasks.items():
             input_tasks = InputTasks()
-            for input_task in task.meta.get('input_tasks', []):
+            for input_task in chain(task.meta.get('input_tasks', []), task.meta.get('parameters', [])):
+                if isinstance(input_task, AbstractParameter):
+                    if not isinstance(input_task, InputTaskParameter):
+                        continue
+                    assert input_task.dont_persist_default_value
+                    assert not input_task.ignore_persistence
+                    required, default = input_task.required, input_task.default
+                    input_task = input_task.task_identifier
+                else:
+                    required, default = True, InputTaskParameter.NO_DEFAULT
                 if type(input_task) is str:
                     input_task_name = input_task
                 else:  # for reference by class
@@ -212,6 +223,9 @@ class Chain(dict):
                     if type(input_task) is str:
                         input_task_name = found_name
                 except KeyError:
+                    if not required:
+                        input_tasks[input_task_name] = default
+                        continue
                     raise ValueError(f'Input task `{input_task_name}` of task `{task}` not found')
                 input_tasks[input_task_name] = tasks[input_task_name]
             task.set_input_tasks(input_tasks)
@@ -222,6 +236,8 @@ class Chain(dict):
 
         for task in self.tasks.values():
             for input_task in task.input_tasks.values():
+                if not isinstance(input_task, Task):
+                    continue
                 G.add_edge(input_task, task)
 
         if not nx.is_directed_acyclic_graph(G):
@@ -387,7 +403,7 @@ class TaskParameterConfig(Config):
             if parameter.name_in_config in original_config:
                 self._data[parameter.name_in_config] = original_config[parameter.name_in_config]
 
-        self.input_tasks = {name: task.get_config().get_name_for_persistence(task) for name, task in input_tasks.items()}
+        self.input_tasks = {name: task.get_config().get_name_for_persistence(task) for name, task in input_tasks.items() if isinstance(task, Task)}
 
     def get_name_for_persistence(self, task: Task) -> str:
         def _get_input_task_repr(_name, _task):

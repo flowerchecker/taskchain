@@ -127,6 +127,33 @@ class Parameter(AbstractParameter):
         return value
 
 
+class InputTaskParameter(AbstractParameter):
+
+    def __init__(self,
+                 task_identifier: Union[str, type],
+                 default: Any = NO_DEFAULT,
+                 ):
+        super().__init__(
+            default=default,
+            dont_persist_default_value=True,
+        )
+        self.task_identifier = task_identifier
+        self.task = None
+
+    @property
+    def name(self) -> str:
+        if isinstance(self.task_identifier, str):
+            return self.task_identifier
+        return self.task_identifier.slugname
+
+    @property
+    def value(self) -> Any:
+        if not self.required and self.task is None:
+            return self.default
+        assert self.task is not None, f'The input task parameter ({self.task_identifier}) has to be initialized before its value is accessed.'
+        return self.task.value
+
+
 class ParameterRegistry:
 
     def __init__(self, parameters: Iterable[Parameter] = None):
