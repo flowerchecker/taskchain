@@ -9,7 +9,60 @@ class NO_DEFAULT: pass
 class NO_VALUE: pass
 
 
-class Parameter:
+class AbstractParameter(abc.ABC):
+
+    NO_DEFAULT = NO_DEFAULT
+    NO_VALUE = NO_VALUE
+
+    def __init__(self,
+                 default: Any = NO_DEFAULT,
+                 ignore_persistence: bool = False,
+                 dont_persist_default_value: bool = True,
+                 ):
+        """
+        Args:
+            default: value used if not provided in config, default to NO_DEFAULT meaning that param is required
+            ignore_persistence: do not use this parameter in persistence, useful params without influence on output
+            dont_persist_default_value: if value of parameter is same as default, do not use it in persistence,
+                useful for adding new parameters without recomputation of data
+        """
+        self.default = default
+        self.ignore_persistence = ignore_persistence
+        self.dont_persist_default_value = dont_persist_default_value
+
+    @property
+    def required(self) -> bool:
+        return self.default == self.NO_DEFAULT
+
+    @property
+    @abc.abstractmethod
+    def value(self) -> Any:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def name(self) -> str:
+        pass
+
+    def value_repr(self):
+        if isinstance(self.value, ParameterObject):
+            return self.value.repr()
+        if isinstance(self.value, Path):
+            return repr(self._value)
+        return repr(self.value)
+
+    @property
+    def repr(self) -> Union[str, None]:
+        if self.ignore_persistence:
+            return None
+
+        if self.dont_persist_default_value and self.value == self.default:
+            return None
+
+        return f'{self.name}={self.value_repr()}'
+
+
+class Parameter(AbstractParameter):
 
     NO_DEFAULT = NO_DEFAULT
     NO_VALUE = NO_VALUE
@@ -32,21 +85,22 @@ class Parameter:
             dont_persist_default_value: if value of parameter is same as default, do not use it in persistence,
                 useful for adding new parameters without recomputation of data
         """
-        self.name = name
+        super().__init__(
+            default=default,
+            ignore_persistence=ignore_persistence,
+            dont_persist_default_value=dont_persist_default_value,
+        )
+        self._name = name
         self.dtype = dtype
-        self.default = default
         self.name_in_config = name if name_in_config is None else name_in_config
-        self.ignore_persistence = ignore_persistence
-        self.dont_persist_default_value = dont_persist_default_value
-
         self._value = self.NO_VALUE
 
     def __str__(self):
         return self.name
 
     @property
-    def required(self) -> bool:
-        return self.default == self.NO_DEFAULT
+    def name(self) -> str:
+        return self._name
 
     @property
     def value(self) -> Any:
@@ -71,23 +125,6 @@ class Parameter:
 
         self._value = value
         return value
-
-    def value_repr(self):
-        if isinstance(self.value, ParameterObject):
-            return self.value.repr()
-        if isinstance(self.value, Path):
-            return repr(self._value)
-        return repr(self.value)
-
-    @property
-    def repr(self) -> Union[str, None]:
-        if self.ignore_persistence:
-            return None
-
-        if self.dont_persist_default_value and self.value == self.default:
-            return None
-
-        return f'{self.name}={self.value_repr()}'
 
 
 class ParameterRegistry:
