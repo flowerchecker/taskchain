@@ -8,6 +8,7 @@ from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
 
 import networkx as nx
 
+from taskchain.task import InMemoryData
 from taskchain.task.config import Config
 from taskchain.task.task import Task, find_task_full_name, InputTasks
 from taskchain.task.parameter import AbstractParameter, InputTaskParameter
@@ -294,41 +295,64 @@ class Chain(dict):
     def fullname(self):
         return self._base_config.name
 
-    def draw(self, node_attrs=None, edge_attrs=None, graph_attrs=None, split_by_namespaces=False):
+    def draw(self, groups_to_show=None):
         import graphviz as gv
         import seaborn as sns
 
-        node_attr = {'shape': 'plain_text', 'style': 'filled', 'width': '2'}
-        node_attr.update((node_attrs if node_attrs else {}))
+        if type(groups_to_show) is str:
+            groups_to_show = [groups_to_show]
+
+        node_attr = {'shape': 'box', 'width': '2'}
         graph_attr = {'splines': 'ortho'}
-        graph_attr.update(graph_attrs if graph_attrs else {})
         edge_attr = {}
-        edge_attr.update(edge_attrs if edge_attrs else {})
 
         groups = list({(n.get_config().namespace, n.group) for n in self.graph.nodes})
         colors = sns.color_palette('pastel', len(groups)).as_hex()
 
         G = gv.Digraph(
+            format='png',
             engine='dot',
             graph_attr=graph_attr,
             node_attr=node_attr,
             edge_attr=edge_attr
         )
 
+        def _is_node_in_groups(node):
+            if not groups_to_show:
+                return True
+            return node.group in groups_to_show
+
+        nodes = set()
+        for edge in self.graph.edges:
+            if _is_node_in_groups(edge[0]) or _is_node_in_groups(edge[1]):
+                nodes.add(edge[0])
+                nodes.add(edge[1])
+
         def _get_slugname(task: Task):
-            if split_by_namespaces:
-                return node.fullname.replace(':', '/')
             return f'{task.slugname.split(":")[-1]}#{task.get_config().get_name_for_persistence(task)}'
 
-        for node in self.graph.nodes:
+        for node in nodes:
+            color = colors[groups.index((node.get_config().namespace, node.group))]
+            style = ['filled']
+            if not (node.has_data or issubclass(node.data_class, InMemoryData)):
+                style.append('dashed')
+            attrs = {
+                'label': f"<<FONT POINT-SIZE='10'>{':'.join(node.fullname.split(':')[:-1])}</FONT> <BR/> {node.fullname.split(':')[-1]}>",
+                'fillcolor': color,
+                'color': color if issubclass(node.data_class, InMemoryData) else 'black' ,
+                'style': ','.join(style),
+            }
+            if not _is_node_in_groups(node):
+                attrs['shape'] = 'note'
+
             G.node(
                 _get_slugname(node),
-                label=node.fullname.split(':')[-1],
-                color=colors[groups.index((node.get_config().namespace, node.group))]
+                **attrs,
             )
 
         for edge in self.graph.edges:
-            G.edge(_get_slugname(edge[0]), _get_slugname(edge[1]))
+            if edge[0] in nodes and edge[1] in nodes:
+                G.edge(_get_slugname(edge[0]), _get_slugname(edge[1]))
         return G
 
     def create_readable_filenames(self, name=None, group=None, verbose=True, **kwargs):
