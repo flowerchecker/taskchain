@@ -1,5 +1,6 @@
 from __future__ import annotations
 from collections import defaultdict
+from copy import deepcopy
 from pathlib import Path
 from taskchain.task.parameter import ParameterObject
 from taskchain.utils.clazz import find_and_instancelize_clazz, instancelize_clazz
@@ -184,11 +185,11 @@ class Config(dict):
 
     def apply_context(self, context: Context):
         """ Amend or rewrite data of config by data from context"""
-        self._data.update(context.data)
+        self._data.update(deepcopy(context.data))
         if self.namespace:
             for namespace, data in context.for_namespaces.items():
                 if self.namespace == namespace:
-                    self._data.update(data)
+                    self._data.update(deepcopy(data))
 
     def _validate_data(self):
         """ Check correct format of data """

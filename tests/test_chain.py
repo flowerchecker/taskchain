@@ -653,6 +653,24 @@ def test_context(tmp_path):
     assert chain._configs['config2'].b == 2
     assert chain._configs['config1'].a == 3
 
+def test_context_independency(tmp_path):
+    config_data = {
+        'uses': [
+            Config(tmp_path, name='config1', data={'a': [{}]}),
+        ],
+        'a': [],
+    }
+    chain = Config(tmp_path, name='config2', data=config_data).chain()
+    assert len(chain._configs['config1'].a) == 1
+    assert len(chain._configs['config2'].a) == 0
+
+    context = {'a': [{}, {}]}
+    chain = Config(tmp_path, name='config2', data=config_data, context=context).chain()
+    assert len(chain._configs['config1'].a) == 2
+    assert len(chain._configs['config2'].a) == 2
+    assert id(context) != id(chain._configs['config1'].a)
+    assert id(chain._configs['config2'].a) != id(chain._configs['config1'].a)
+
 
 def test_context_with_files(tmp_path):
     json.dump({'a': 2}, (tmp_path / 'config1.json').open('w'))
