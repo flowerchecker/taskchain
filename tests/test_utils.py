@@ -4,7 +4,7 @@ import pytest
 
 from taskchain.task import Task
 from taskchain.utils.clazz import persistent, import_by_string, find_and_instancelize_clazz, repeat_on_error
-from taskchain.utils.data import traverse, search_and_apply, ReprStr
+from taskchain.utils.data import traverse, search_and_apply, ReprStr, search_and_replace_placeholders
 
 
 class Clazz:
@@ -170,3 +170,21 @@ def test_repr_str():
     assert type(s) is ReprStr
     assert str(s) == 'a'
     assert repr(s) == "'b'"
+
+
+def test_search_and_replace_placeholders():
+    r = search_and_replace_placeholders('{A}c{B}c{A}{A}', {'A': 'a', 'B': 'b'})
+    for _ in range(2):
+        assert r == 'acbcaa'
+        assert repr(r) == "'{A}c{B}c{A}{A}'"
+        assert type(r) is ReprStr
+        r = search_and_replace_placeholders(r, {})
+
+
+    r = search_and_replace_placeholders({
+        'string': '{A}.b',
+        'list': ['{A}.b', ['{A}{A}']],
+    }, {'A': 'a'})
+    assert r['string'] == 'a.b'
+    assert r['list'][0] == 'a.b'
+    assert r['list'][1][0] == 'aa'
