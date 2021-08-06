@@ -120,15 +120,13 @@ class InMemoryData(Data):
         self._log = None
 
     def init_persistence(self, base_dir: Path, name: str):
-        pass
-
-    @property
-    def path(self) -> Union[Path, None]:
-        return None
+        self._base_dir = base_dir
+        self._name = name
+        base_dir.mkdir(parents=True, exist_ok=True)
 
     @property
     def _path(self) -> Union[Path, None]:
-        return None
+        return self._base_dir / self._name
 
     def exists(self) -> bool:
         return False
@@ -138,28 +136,6 @@ class InMemoryData(Data):
 
     def load(self) -> Any:
         return self
-
-    @property
-    def run_info_path(self):
-        return None
-
-    def save_run_info(self, info: dict):
-        pass
-
-    def load_run_info(self) -> dict:
-        pass
-
-    @property
-    def log_path(self):
-        return
-
-    def get_log_handler(self):
-        self._log = []
-        return ListHandler(self._log)
-
-    @property
-    def log(self):
-        return self._log
 
     @property
     def is_logging(self):
