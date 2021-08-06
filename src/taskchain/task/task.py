@@ -10,6 +10,7 @@ from inspect import isclass
 from pathlib import Path
 from typing import Union, Any, get_type_hints, Type, Dict, Iterable
 
+import taskchain
 from taskchain.task.config import Config
 from taskchain.task.data import Data, DirData, InMemoryData
 from taskchain.task.parameter import Parameter, ParameterRegistry, NO_VALUE
@@ -309,6 +310,7 @@ class Task(object, metaclass=MetaTask):
             'parameters': {p.name: p.value_repr() for p in self.parameters.values()},
             'user': {
                 'name': getpass.getuser(),
+                'taskchain_version': taskchain.__version__,
             },
             'log': [],
         }
