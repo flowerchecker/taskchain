@@ -178,9 +178,11 @@ def find_and_instancelize_clazz(obj, instancelize_clazz_fce=None):
         )
 
     if type(obj) is list:
-        return [find_and_instancelize_clazz(i) for i in obj]
+        for i, value in enumerate(obj):
+            obj[i] = find_and_instancelize_clazz(value)
 
     if type(obj) is dict:
-        return {k: find_and_instancelize_clazz(v) for k, v in obj.items()}
+        for key, value in obj.items():
+            obj[key] = find_and_instancelize_clazz(value)
 
     return obj

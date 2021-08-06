@@ -107,17 +107,21 @@ def test_find_and_instancelize_clazz():
     assert r.a == 1
     assert r.kwa == 2
 
-    r = find_and_instancelize_clazz([class_def, class_def])
+    obj = [class_def, class_def]
+    r = find_and_instancelize_clazz(obj)
     assert r[0].a == 1
     assert r[1].a == 1
     assert r[0].kwa == 2
     assert r[1].kwa == 2
+    assert id(obj) == id(r)
 
-    r = find_and_instancelize_clazz({'a': class_def, 'b': class_def})
+    obj = {'a': class_def, 'b': class_def}
+    r = find_and_instancelize_clazz(obj)
     assert r['a'].a == 1
     assert r['b'].a == 1
     assert r['a'].kwa == 2
     assert r['b'].kwa == 2
+    assert id(obj) == id(r)
 
     class_def2 = {
         'class': 'tests.test_utils.TestObject',
