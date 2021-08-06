@@ -99,7 +99,7 @@ def test_in_memory_data(tmp_path):
     assert a.value == 1
     assert a.run_called == 1
 
-    assert not (tmp_path / 'x' / 'a').exists()
+    assert (tmp_path / 'x' / 'a').exists()
 
     a2 = A(config)
     assert a2.value == 1

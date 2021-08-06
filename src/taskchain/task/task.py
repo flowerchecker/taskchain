@@ -337,7 +337,7 @@ class Task(object, metaclass=MetaTask):
         self._run_info['time'] = datetime.timestamp(now) - self._run_info['started']
         self._run_info['started'] = str(datetime.fromtimestamp(self._run_info['started']))
 
-        if self._data:
+        if self._data and self._data.is_logging:
             self._data.save_run_info(self._run_info)
 
     @property
