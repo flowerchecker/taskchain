@@ -239,6 +239,9 @@ class Context(Config):
     Config intended for amend or rewrite other configs
     """
 
+    def __repr__(self):
+        return f'<context: {self}>'
+
     @staticmethod
     def prepare_context(context_config: Union[None, dict, str, Path, Context, Iterable]) -> Union[Context, None]:
         """ Helper function for instantiating Context from various sources"""
@@ -247,7 +250,8 @@ class Context(Config):
         if type(context_config) is str or isinstance(context_config, Path):
             return Context(filepath=context_config)
         if type(context_config) is dict:
-            return Context(data=context_config, name=f'dict_context({",".join(sorted(context_config))})')
+            value_reprs = [f'{k}:{v}' for k, v in sorted(context_config.items())]
+            return Context(data=context_config, name=f'dict_context({",".join(value_reprs)})')
         if isinstance(context_config, Context):
             return context_config
         if isinstance(context_config, Iterable):
