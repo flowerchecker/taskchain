@@ -412,6 +412,11 @@ def find_task_full_name(task_name: str, tasks: Iterable[str], determine_namespac
 
     matching_tasks = [t for t in tasks if _task_name_match(task_name, t)]
     if len(matching_tasks) > 1:
+        # if any task name is suffix of all others, it has priority
+        for cand in matching_tasks:
+            if all(t.endswith(cand) for t in matching_tasks):
+                return cand
+    if len(matching_tasks) > 1:
         raise KeyError(f'Ambiguous task name `{task_name}`. Possible matches: {matching_tasks}')
     if len(matching_tasks) == 0:
         raise KeyError(f'Task `{task_name}` not found')

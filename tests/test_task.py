@@ -6,6 +6,7 @@ import pytest
 from taskchain.task import Task, Config, ModuleTask
 from taskchain.task.data import JSONData, GeneratedData
 from taskchain.task.parameter import Parameter, InputTaskParameter
+from taskchain.task.task import find_task_full_name
 
 
 class ThisIsSomethingTask(Task):
@@ -423,3 +424,10 @@ def test_optional_input_tasks(tmp_path):
     chain1 = Config(tmp_path, name='config', data={'tasks': [B1], 'a_value': 666}).chain()
     chain2 = Config(tmp_path, name='config', data={'tasks': [B6], 'a_value': 666}).chain()
     assert chain1.b1.name_for_persistence == chain2.b1.name_for_persistence
+
+
+def test_find_task_full_name():
+    assert find_task_full_name('a', ['n1::a', 'a']) == 'a'
+    with pytest.raises(KeyError):
+        _ = find_task_full_name('a', ['n3::n1::a', 'n3::a'])
+    assert find_task_full_name('n3::a', ['n3::n1::a', 'n3::a']) == 'n3::a'
