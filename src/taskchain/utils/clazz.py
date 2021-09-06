@@ -186,3 +186,23 @@ def find_and_instancelize_clazz(obj, instancelize_clazz_fce=None):
             obj[key] = find_and_instancelize_clazz(value)
 
     return obj
+
+
+def object_to_definition(obj):
+    result = {
+        'class': fullname(obj.__class__),
+    }
+    result['kwargs'] = kwargs = {}
+    parameters = inspect.signature(obj.__init__).parameters
+    for name, parameter in parameters.items():
+        if hasattr(obj, '_' + name):
+            value = getattr(obj, '_' + name)
+        elif hasattr(obj, name):
+            value = getattr(obj, name)
+        else:
+            raise AttributeError(f'Value of __init__ argument `{name}` not found for class `{fullname(obj.__class__)}`, '
+                                 f'make sure that value is saved in `self.{name}` or `self._{name}`')
+        if all(not isinstance(value, type_) for type_ in {int, float, bool, str, list, set, dict}):
+            value = object_to_definition(value)
+        kwargs[name] = value
+    return result
