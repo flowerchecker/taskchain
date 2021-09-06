@@ -167,7 +167,7 @@ class JSONData(FileData):
         return 'json'
 
     def save(self):
-        json.dump(self.value, self.path.open('w'), indent=2, sort_keys=True, cls=NumpyEncoder)
+        json.dump(self.value, self.path.open('w'), indent=2, sort_keys=True, cls=NumpyEncoder, ensure_ascii=False)
 
     def load(self) -> Any:
         self._value = json.load(self.path.open())
