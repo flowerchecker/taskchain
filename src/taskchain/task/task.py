@@ -81,7 +81,7 @@ class MetaTask(type):
                     raise AttributeError(f'Multiple data handlers for type {self.data_type}: {cls} and {c}')
 
         if cls is None:
-            raise AttributeError(f'Missing data handler for type {self.data_type}')
+            raise AttributeError(f'{fullname(self)}: Missing data handler for type {self.data_type}')
 
         return cls
 
@@ -282,7 +282,7 @@ class Task(object, metaclass=MetaTask):
         elif isinstance(run_result, self.data_type) or custom_isinstance(run_result, self.data_type) or fullname(self.data_type) == 'typing.Generator':
             self._data.set_value(run_result)
         else:
-            raise ValueError(f'Invalid result data type: {type(run_result)} instead of {self.data_type}')
+            raise ValueError(f'{fullname(self.__class__)}: Invalid result data type: {type(run_result)} instead of {self.data_type}')
 
         if self._data.is_persisting:
             self._data.save()
