@@ -3,8 +3,8 @@ from typing import List, Generator
 import pandas as pd
 
 from movie_ratings.tasks.movies import Directors, Movies, Actors, Countries, Genres
-from taskchain.task import ModuleTask, InMemoryData
-from taskchain.task.parameter import Parameter
+from taskchain import ModuleTask, InMemoryData
+from taskchain import Parameter
 
 
 class SelectedDirectors(ModuleTask):

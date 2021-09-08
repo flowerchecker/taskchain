@@ -11,9 +11,9 @@ from pathlib import Path
 from typing import Union, Any, get_type_hints, Type, Dict, Iterable, get_origin
 
 import taskchain
-from taskchain.task.config import Config
-from taskchain.task.data import Data, DirData, InMemoryData
-from taskchain.task.parameter import Parameter, ParameterRegistry, NO_VALUE
+from .config import Config
+from .data import Data, DirData, InMemoryData
+from .parameter import Parameter, ParameterRegistry, NO_VALUE
 from taskchain.utils.clazz import persistent, Meta, inheritors, isinstance as custom_isinstance, fullname
 
 
@@ -321,7 +321,7 @@ class Task(object, metaclass=MetaTask):
                 'context': self._config.context.name if self._config.context is not None else None,
             }
 
-            from taskchain.task.chain import TaskParameterConfig
+            from .chain import TaskParameterConfig
             if isinstance(self._config, TaskParameterConfig):
                 self._run_info['input_tasks'] = self._config.input_tasks
         self._run_info['started'] = datetime.timestamp(datetime.now())

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from taskchain.task import Config
+from taskchain import Config
 from taskchain.task.parameter import Parameter, ParameterRegistry, AutoParameterObject, ParameterObject
 
 

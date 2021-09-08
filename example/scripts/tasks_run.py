@@ -1,4 +1,4 @@
-from taskchain.task import Config
+from taskchain import Config
 
 from movie_ratings import config
 

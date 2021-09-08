@@ -2,7 +2,7 @@ from types import ModuleType
 
 import pytest
 
-from taskchain.task import Task
+from taskchain import Task
 from taskchain.utils.clazz import persistent, import_by_string, find_and_instancelize_clazz, repeat_on_error
 from taskchain.utils.data import traverse, search_and_apply, ReprStr, search_and_replace_placeholders
 

@@ -6,9 +6,9 @@ import pandas as pd
 from movie_ratings.models.core import RatingModel
 from movie_ratings.tasks.features import Features
 from movie_ratings.tasks.movies import Movies
-from taskchain.task import ModuleTask
-from taskchain.task.data import DirData
-from taskchain.task.parameter import Parameter
+from taskchain import ModuleTask
+from taskchain import DirData
+from taskchain import Parameter
 
 
 class AllX(ModuleTask):

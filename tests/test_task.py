@@ -3,7 +3,7 @@ from typing import Dict, List
 
 import pytest
 
-from taskchain.task import Task, Config, ModuleTask
+from taskchain import Task, Config, ModuleTask
 from taskchain.task.data import JSONData, GeneratedData
 from taskchain.task.parameter import Parameter, InputTaskParameter
 from taskchain.task.task import find_task_full_name

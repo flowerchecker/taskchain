@@ -8,10 +8,10 @@ from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
 
 import networkx as nx
 
-from taskchain.task import InMemoryData
-from taskchain.task.config import Config
-from taskchain.task.task import Task, find_task_full_name, InputTasks
-from taskchain.task.parameter import AbstractParameter, InputTaskParameter
+from .data import InMemoryData
+from .config import Config
+from .task import Task, find_task_full_name, InputTasks
+from .parameter import AbstractParameter, InputTaskParameter
 from taskchain.utils.clazz import get_classes_by_import_string
 from taskchain.utils.iter import list_or_str_to_list
 

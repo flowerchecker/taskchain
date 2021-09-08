@@ -2,7 +2,7 @@ from __future__ import annotations
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
-from taskchain.task.parameter import ParameterObject
+from .parameter import ParameterObject
 from taskchain.utils.clazz import find_and_instancelize_clazz, instancelize_clazz
 from taskchain.utils.data import search_and_replace_placeholders
 from typing import Union, Dict, Iterable, Any
@@ -228,7 +228,7 @@ class Config(dict):
 
     def chain(self, parameter_mode=True, **kwargs):
         """ Create chain from this config """
-        from taskchain.task import Chain
+        from .chain import Chain
         return Chain(self, parameter_mode=parameter_mode, **kwargs)
 
     def get_original_config(self):

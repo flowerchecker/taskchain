@@ -1,5 +1,5 @@
-from taskchain.task import Task
-from taskchain.task.parameter import Parameter
+from taskchain import Task
+from taskchain import Parameter
 
 
 class ATask(Task):

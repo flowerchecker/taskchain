@@ -37,7 +37,7 @@ Therefore, a config defines:
     === "code.py"
     
         ```python
-        from taskchain.task import Config
+        from taskchain import Config
         
         config = Config(
             '/path/to/task_data', 
@@ -122,7 +122,7 @@ which are later replaced by values provided in `Config` object in instantiation 
     
         ```python
         from pathlib import Path
-        from taskchain.task import Config
+        from taskchain import Config
         
         CONFIGS_DIR = Path('/path/to/configs')
 
@@ -145,7 +145,7 @@ This allows following typical construction:
     
         ```python
         from pathlib import Path
-        from taskchain.task import Config
+        from taskchain import Config
         
         from project import project_config
         

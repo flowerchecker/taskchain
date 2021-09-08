@@ -3,8 +3,8 @@ import json
 import pytest
 import yaml
 
-from taskchain.task import Config
-from taskchain.task.config import Context
+from taskchain import Config
+from taskchain import Context
 from taskchain.task.parameter import ParameterObject
 
 

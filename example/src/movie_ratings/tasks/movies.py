@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from taskchain.task import ModuleTask
-from taskchain.task.parameter import Parameter
+from taskchain import ModuleTask
+from taskchain import Parameter
 from taskchain.utils.iter import progress_bar
 
 

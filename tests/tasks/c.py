@@ -1,4 +1,4 @@
-from taskchain.task import Task
+from taskchain import Task
 
 
 # X    N

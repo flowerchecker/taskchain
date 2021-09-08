@@ -6,7 +6,7 @@ from typing import Dict
 import pandas as pd
 from sklearn import metrics
 
-from taskchain.task import InMemoryData
+from taskchain import InMemoryData
 from taskchain.task.parameter import AutoParameterObject
 
 

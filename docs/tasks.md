@@ -7,7 +7,7 @@ has to be class inheriting `taskchain.task.Task`.
 
 !!! example
     ```python
-    from taskchain.task import Task, Parameter
+    from taskchain import Task, Parameter
     import pandas as pd
 
     class MyTask(Task):
