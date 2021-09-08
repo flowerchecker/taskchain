@@ -1,3 +1,4 @@
+from collections import Generator
 from pathlib import Path
 
 from taskchain.task import Task, Config, InMemoryData, JSONData
@@ -172,6 +173,7 @@ def test_numpy_data(tmp_path):
     data.save()
 
     assert (tmp_path / 'test.npy').exists()
+    assert data.is_data_type_accepted(np.ndarray)
 
     data2 = NumpyData()
     data2.init_persistence(tmp_path, 'test')
@@ -187,6 +189,8 @@ def test_pandas_data(tmp_path):
     data.save()
 
     assert (tmp_path / 'test.pd').exists()
+    assert data.is_data_type_accepted(pd.DataFrame)
+    assert data.is_data_type_accepted(pd.Series)
 
     data2 = PandasData()
     data2.init_persistence(tmp_path, 'test')
@@ -204,6 +208,7 @@ def test_generator_data(tmp_path):
     data.save()
 
     assert (tmp_path / 'test.jsonl').exists()
+    assert data.is_data_type_accepted(Generator)
 
     data2 = GeneratedData()
     data2.init_persistence(tmp_path, 'test')

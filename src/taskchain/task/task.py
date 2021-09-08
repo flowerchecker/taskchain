@@ -8,7 +8,7 @@ from copy import deepcopy
 from datetime import datetime
 from inspect import isclass
 from pathlib import Path
-from typing import Union, Any, get_type_hints, Type, Dict, Iterable
+from typing import Union, Any, get_type_hints, Type, Dict, Iterable, get_origin
 
 import taskchain
 from taskchain.task.config import Config
@@ -62,7 +62,7 @@ class MetaTask(type):
         else:
             data_type = return_data_type
 
-        return data_type
+        return get_origin(data_type) if get_origin(data_type) else data_type
 
     @property
     def data_class(self) -> Type[Data]:

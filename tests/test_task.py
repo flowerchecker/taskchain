@@ -1,5 +1,5 @@
-from collections import defaultdict
-from typing import Generator, Dict, List
+from collections import defaultdict, Generator
+from typing import Dict, List
 
 import pytest
 
@@ -124,7 +124,7 @@ def test_result_type():
         B()
 
     c = C()
-    assert c.data_type == Dict
+    assert c.data_type == dict
     assert c.data_class == JSONData
     assert type(c.data) == JSONData
 
@@ -143,6 +143,28 @@ def test_result_type():
     assert f.data_class == CustomData
     assert type(f.data) == CustomData
     assert f.value == 1
+
+
+def test_advanced_return_types():
+    class T(Task):
+        def run(self) -> dict:
+            return {'a': 1}
+
+    task = T()
+    assert task.data_type == dict
+    assert task.data_class == JSONData
+    assert type(task.data) == JSONData
+    assert task.value == {'a': 1}
+
+    class T2(Task):
+        def run(self) -> Dict[str, int]:
+            return {'a': 1}
+
+    task = T2()
+    assert task.data_type == dict
+    assert task.data_class == JSONData
+    assert type(task.data) == JSONData
+    assert task.value == {'a': 1}
 
 
 def test_forcing(tmp_path):

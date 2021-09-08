@@ -3,8 +3,9 @@ import json
 import logging
 import pickle
 import shutil
+from collections import Generator
 from pathlib import Path
-from typing import Any, List, Dict, Generator, Union
+from typing import Any, Dict, Union
 
 import h5py
 import numpy as np
@@ -13,7 +14,7 @@ import pylab
 import yaml
 from matplotlib import pyplot as plt
 
-from taskchain.utils.io import NumpyEncoder, iter_json_file, write_jsons, ListHandler
+from taskchain.utils.io import NumpyEncoder, iter_json_file, write_jsons
 
 
 class Data:
@@ -160,7 +161,7 @@ class FileData(Data, abc.ABC):
 
 class JSONData(FileData):
 
-    DATA_TYPES = [str, int, float, bool, Dict, List]
+    DATA_TYPES = [str, int, float, bool, dict, list]
 
     @property
     def extension(self) -> Union[str, None]:
