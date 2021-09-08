@@ -228,6 +228,7 @@ def test_multi_chain(tmp_path):
 
         class Meta:
             input_tasks = [PTask]
+            parameters = [Parameter('a', default=1)]
 
         def run(self) -> bool:
             return False
@@ -239,7 +240,7 @@ def test_multi_chain(tmp_path):
     }
     common_config = Config(tmp_path, name='common_config', data=config_data)
     config1 = Config(tmp_path, name='config1', data={'tasks': [ZTask], 'uses': [common_config]})
-    config2 = Config(tmp_path, name='config2', data={'tasks': [ZTask], 'uses': [common_config]})
+    config2 = Config(tmp_path, name='config2', data={'tasks': [ZTask], 'uses': [common_config], 'a': 2})
 
     mc = MultiChain([config1, config2])
     assert len(mc.chains) == 2
@@ -925,3 +926,55 @@ def test_create_readable_filenames_base_od_config(tmp_path):
     chain.create_readable_filenames()
     assert (tmp_path / 'c' / 'named.json').exists()
     assert not (tmp_path / 'd' / 'named.json').exists()
+
+
+def test_multichain_with_contexts(tmp_path):
+    json.dump(
+        {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 0},
+        (tmp_path / 'config.json').open('w')
+    )
+    config1 = Config(tmp_path, tmp_path / 'config.json', context={'y': 1})
+    config2 = Config(tmp_path, tmp_path / 'config.json', context={'y': 2})
+    with pytest.raises(AssertionError):
+        MultiChain([config1, config2])
+
+    config1 = Config(tmp_path, tmp_path / 'config.json', name='config1', context={'y': 1})
+    config2 = Config(tmp_path, tmp_path / 'config.json', name='config2', context={'y': 2})
+
+    chains = MultiChain([config1, config2])
+    assert len(chains) == 2
+    assert len(chains._tasks) == 2
+    assert chains['config1'].abc.value == 1001
+    assert chains['config2'].abc.value == 1002
+
+
+class Ghi(Task):
+    class Meta:
+        input_tasks = [Abc]
+
+    def run(self, abc) -> int:
+        return abc
+
+
+def test_multichain_with_contexts_and_uses(tmp_path):
+    json.dump(
+        {'configs': {
+            'c': {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 0},
+            'g': {'main_part': True, 'uses': ['#c'], 'tasks': ['tests.test_chain.Ghi']},
+        }},
+        (tmp_path / 'config.json').open('w')
+    )
+
+    # config1 = Config(tmp_path, tmp_path / 'config.json', name='config1')
+    # config2 = Config(tmp_path, tmp_path / 'config.json', name='config2')
+    # chains = MultiChain([config1, config2])
+    # assert len(chains._tasks) == 2
+
+    config1 = Config(tmp_path, tmp_path / 'config.json', name='config1', context={'y': 1})
+    config2 = Config(tmp_path, tmp_path / 'config.json', name='config2', context={'y': 2})
+    chains = MultiChain([config1, config2])
+    assert len(chains._tasks) == 4
+    assert chains['config1#g'].abc.value == 1001
+    assert chains['config2#g'].abc.value == 1002
+    assert chains['config1#g'].ghi.value == 1001
+    assert chains['config2#g'].ghi.value == 1002

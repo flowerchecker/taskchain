@@ -187,14 +187,18 @@ class Chain(dict):
 
     @staticmethod
     def _create_task(task_class: Type[Task], config: Config, task_registry: Dict = None):
-        task_name = task_class.slugname
-        if task_registry and (task_name, config.repr_name_without_namespace) in task_registry:
-            return task_registry[task_name, config.repr_name_without_namespace]
-
         task = task_class(config)
         task.logger.addHandler(Chain.log_handler)
+
+        if isinstance(config, TaskParameterConfig):
+            key = task.slugname, task.name_for_persistence
+        else:
+            key = task.slugname, config.repr_name_without_namespace
+        if task_registry and key in task_registry:
+            del task
+            return task_registry[key]
         if task_registry is not None:
-            task_registry[task_name, config.repr_name_without_namespace] = task
+            task_registry[key] = task
         return task
 
     @staticmethod
@@ -476,6 +480,7 @@ class MultiChain:
 
     def _prepare(self):
         for config in self._base_configs:
+            assert config.name not in self.chains, f'Multiple configs with same name `{config.name}`'
             self.chains[config.name] = Chain(config, self._tasks, parameter_mode=self.parameter_mode)
 
     def __getitem__(self, chain_name: str):
@@ -505,6 +510,9 @@ class MultiChain:
     def values(self):
         for _, val in sorted(self.chains.items()):
             yield val
+
+    def __len__(self):
+        return len(self.chains)
 
     def __repr__(self):
         return 'multichain:\n - ' + '\n - '.join(map(repr, self.values()))
