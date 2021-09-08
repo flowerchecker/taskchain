@@ -192,10 +192,3 @@ This allows following typical construction:
 ### Contexts
 
 ### Multi-config files
-
-
-## Reserved config parameter names
-
-- `tasks`
-- `uses`
-

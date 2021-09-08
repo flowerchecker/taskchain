@@ -1,6 +1,8 @@
 import abc
 from inspect import signature
 from pathlib import Path
+
+import taskchain.task.config
 from taskchain.utils.clazz import fullname
 from typing import Union, Any, Iterable, List
 
@@ -90,6 +92,7 @@ class Parameter(AbstractParameter):
             ignore_persistence=ignore_persistence,
             dont_persist_default_value=dont_persist_default_value,
         )
+        assert name not in taskchain.task.config.Config.RESERVED_PARAMETER_NAMES
         self._name = name
         self.dtype = dtype
         self.name_in_config = name if name_in_config is None else name_in_config

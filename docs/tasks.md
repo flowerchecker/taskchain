@@ -123,6 +123,16 @@ or directly from class's `ParameterRegistry`: `self.params.my_param_name` or `se
     value provided by the parameter has type of `Path`.
 
 
+#### Reserved config parameter names
+
+Following names have special meaning in configs and cannot be used as parameters name
+
+- `tasks`
+- `uses`
+- `human_readable_data_name`
+- `configs`
+
+
 ## Input tasks
 
 Input tasks are connection between tasks. 

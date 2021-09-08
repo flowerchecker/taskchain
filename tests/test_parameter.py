@@ -280,3 +280,9 @@ def test_global_vars(tmp_path):
 
     ps.set_values(Config(tmp_path, data={'a': '{A}/{B}.{B}', 'b': '{B}'}, global_vars={'A': '1', 'B': '2'}, name='config'))
     assert ps['a'] == '1/2.2'
+
+
+def test_reserved_names():
+    for name in ['tasks', 'uses', 'configs']:
+        with pytest.raises(AssertionError):
+            Parameter(name)
