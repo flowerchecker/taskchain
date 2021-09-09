@@ -12,6 +12,9 @@ python setup.py develop
 
 ## Chengelog
 
+#### 1.1.0
+- release to PIP
+
 #### 1.0.3
 - more types can be used for `run` method, e.g. `dict` or `Dict[str, int]`
 - forbid some names of parameters with special meaning in configs (`uses`, `tasks`, ...)
