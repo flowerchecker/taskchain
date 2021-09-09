@@ -5,6 +5,13 @@
 ## Install
 
 ```bash
+pip install taskchain
+```
+
+#### From source
+```bash
+git clone https://github.com/thran/taskchain
+cd taskchain
 python setup.py install
 # or
 python setup.py develop
