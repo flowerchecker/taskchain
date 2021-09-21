@@ -65,7 +65,7 @@ class Chain(dict):
         header += ' --- | --- | --- | --- | --- \n'
         return header + '\n'.join(
             f'{n.split(":")[-1]} | {n} | {str(t.get_config()).split("/")[0]} | {t.has_data} | {t.data_path}'
-            for n, t in self.tasks.items()
+            for n, t in sorted(self.tasks.items())
         )
 
     def __getitem__(self, item):
