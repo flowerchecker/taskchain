@@ -176,8 +176,7 @@ class Chain(dict):
             input_tasks = {n: _get_task(n, t) for n, t in _task.input_tasks.items() if isinstance(t, Task)}
             config = TaskParameterConfig(_task, input_tasks)
             new_task = self._create_task(_task.__class__, config, task_registry)
-            assert new_task.fullname == _task.fullname, f'{new_task.fullname} vs. {_task.fullname}'
-            new_tasks[new_task.fullname] = new_task
+            new_tasks[_task.fullname] = new_task
             return new_task
 
         for task_name, task in tasks.items():
