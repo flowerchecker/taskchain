@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
 
 import networkx as nx
+import pandas as pd
 
 from .data import InMemoryData
 from .config import Config
@@ -61,12 +62,24 @@ class Chain(dict):
         return f'<chain for config `{self._base_config}`>'
 
     def _repr_markdown_(self):
-        header = 'task | fullname | config | computed | persistence\n'
-        header += ' --- | --- | --- | --- | --- \n'
-        return header + '\n'.join(
-            f'{n.split(":")[-1]} | {n} | {str(t.get_config()).split("/")[0]} | {t.has_data} | {t.data_path}'
-            for n, t in sorted(self.tasks.items())
-        )
+        return self.tasks_df[['name', 'group', 'namespace', 'computed']].to_markdown()
+
+    @property
+    def tasks_df(self):
+        rows = {}
+        for name, task in self.tasks.items():
+            rows[name] = {
+                'name': task.slugname.split(':')[-1],
+                'group': task.group,
+                'namespace': task.get_config().namespace,
+                'computed': task.has_data if task.data_path else None,
+                'data_path': task.data_path,
+                'parameters': list(task.parameters.keys()),
+                'input_tasks': list(task.input_tasks.keys()),
+                'config': str(task.get_config()).split("/")[0],
+            }
+
+        return pd.DataFrame.from_dict(rows, orient='index').sort_values(['namespace', 'group'], na_position='first')
 
     def __getitem__(self, item):
         return self.get(item)

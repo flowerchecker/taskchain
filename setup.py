@@ -34,6 +34,7 @@ setuptools.setup(
         'seaborn',
         'filelock',
         'icecream',
+        'tabulate',
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],

@@ -19,6 +19,10 @@ python setup.py develop
 
 ## Chengelog
 
+#### 1.1.1
+- improve chain representation in jupyter
+- add `tasks_df` parameter to chains
+
 #### 1.1.0
 - release to PIP
 

@@ -978,3 +978,8 @@ def test_multichain_with_contexts_and_uses(tmp_path):
     assert chains['config2#g'].abc.value == 1002
     assert chains['config1#g'].ghi.value == 1001
     assert chains['config2#g'].ghi.value == 1002
+
+
+def test_task_dataframe(tmp_path):
+    chain = Config(tmp_path, name='config', data={'tasks': ['tests.tasks.c.*']}).chain()
+    assert len(chain.tasks) == len(chain.tasks_df)
