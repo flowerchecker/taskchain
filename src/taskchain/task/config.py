@@ -27,7 +27,7 @@ class Config(dict):
     ```
     """
 
-    RESERVED_PARAMETER_NAMES = ['tasks', 'uses', 'human_readable_data_name', 'configs']
+    RESERVED_PARAMETER_NAMES = ['tasks', 'uses', 'human_readable_data_name', 'configs', 'for_namespaces']
 
     def __init__(self,
                  base_dir: Union[Path, str, None] = None,

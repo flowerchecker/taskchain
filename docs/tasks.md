@@ -131,6 +131,7 @@ Following names have special meaning in configs and cannot be used as parameters
 - `uses`
 - `human_readable_data_name`
 - `configs`
+- `for_namespaces`
 
 
 ## Input tasks
