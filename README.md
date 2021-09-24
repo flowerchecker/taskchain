@@ -22,6 +22,7 @@ python setup.py develop
 #### 1.1.1
 - improve chain representation in jupyter
 - add `tasks_df` parameter to chains
+- add support for `uses` in contexts (same syntax as in configs)
 
 #### 1.1.0
 - release to PIP

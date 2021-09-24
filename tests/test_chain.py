@@ -4,7 +4,7 @@ from typing import List
 
 import pytest
 
-from taskchain import Config, Chain, Task, MultiChain, InMemoryData
+from taskchain import Config, Chain, Task, MultiChain, InMemoryData, Context
 from taskchain.task.chain import ChainObject
 from taskchain.task.parameter import Parameter, ParameterObject
 from tests.tasks.a import ATask
@@ -654,6 +654,26 @@ def test_context(tmp_path):
     assert chain._configs['config2'].b == 2
     assert chain._configs['config1'].a == 3
 
+
+def test_context_with_namespace():
+    context = Context.prepare_context({
+        'for_namespaces': {
+            'ns1': {'x': 1},
+            'ns2::ns3': {'x': 2},
+        },
+        'x': 3
+    }, namespace='ns')
+
+    assert 'ns' in context.for_namespaces
+    assert 'ns::ns1' in context.for_namespaces
+    assert 'ns::ns2::ns3' in context.for_namespaces
+
+    assert context.for_namespaces['ns::ns1']['x'] == 1
+    assert context.for_namespaces['ns::ns2::ns3']['x'] == 2
+    assert context.for_namespaces['ns']['x'] == 3
+    assert 'x' not in context
+
+
 def test_context_independency(tmp_path):
     config_data = {
         'uses': [
@@ -983,3 +1003,31 @@ def test_multichain_with_contexts_and_uses(tmp_path):
 def test_task_dataframe(tmp_path):
     chain = Config(tmp_path, name='config', data={'tasks': ['tests.tasks.c.*']}).chain()
     assert len(chain.tasks) == len(chain.tasks_df)
+
+
+def test_uses_in_context(tmp_path):
+    json.dump({'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1}, (tmp_path / 'config1.json').open('w'))
+    json.dump({'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2}, (tmp_path / 'config2.json').open('w'))
+    json.dump({'uses': [
+        f'{tmp_path}/config1.json as ns',
+        f'{tmp_path}/config2.json as ns2',
+    ]}, (tmp_path / 'config.json').open('w')
+    )
+
+    json.dump({'x': 3, 'y': 3}, (tmp_path / 'context1.json').open('w'))
+    json.dump({'x': 4, 'y': 4}, (tmp_path / 'context2.json').open('w'))
+    json.dump({'uses': [
+        f'{tmp_path}/context1.json as ns',
+        f'{tmp_path}/context2.json as ns2',
+    ]}, (tmp_path / 'context.json').open('w'))
+
+    chain = Config(
+        tmp_path,
+        str(tmp_path / 'config.json'),
+        context=tmp_path / 'context.json',
+    ).chain()
+    assert 'uses' not in chain._base_config.context
+    assert 'ns' in chain._base_config.context.for_namespaces
+    assert 'ns2' in chain._base_config.context.for_namespaces
+    assert chain['ns::abc'].value == 3003
+    assert chain['ns2::abc'].value == 4004

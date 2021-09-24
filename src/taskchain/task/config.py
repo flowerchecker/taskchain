@@ -1,15 +1,19 @@
 from __future__ import annotations
-from collections import defaultdict
-from copy import deepcopy
-from pathlib import Path
-from .parameter import ParameterObject
-from taskchain.utils.clazz import find_and_instancelize_clazz, instancelize_clazz
-from taskchain.utils.data import search_and_replace_placeholders
-from typing import Union, Dict, Iterable, Any
+
 import json
 import logging
+import re
+from collections import defaultdict
+from copy import deepcopy
+from functools import partial
+from pathlib import Path
+from typing import Union, Dict, Iterable, Any
+
 import yaml
 
+from taskchain.utils.clazz import find_and_instancelize_clazz, instancelize_clazz
+from taskchain.utils.data import search_and_replace_placeholders
+from .parameter import ParameterObject
 
 LOGGER = logging.getLogger()
 
@@ -245,22 +249,41 @@ class Context(Config):
         return f'<context: {self}>'
 
     @staticmethod
-    def prepare_context(context_config: Union[None, dict, str, Path, Context, Iterable]) -> Union[Context, None]:
+    def prepare_context(context_config: Union[None, dict, str, Path, Context, Iterable],
+                        namespace=None) -> Union[Context, None]:
         """ Helper function for instantiating Context from various sources"""
+        context = None
         if context_config is None:
             return
-        if type(context_config) is str or isinstance(context_config, Path):
-            return Context(filepath=context_config)
-        if type(context_config) is dict:
+        elif type(context_config) is str or isinstance(context_config, Path):
+            context = Context(filepath=context_config, namespace=namespace)
+        elif type(context_config) is dict:
             value_reprs = [f'{k}:{v}' for k, v in sorted(context_config.items())]
-            return Context(data=context_config, name=f'dict_context({",".join(value_reprs)})')
-        if isinstance(context_config, Context):
-            return context_config
-        if isinstance(context_config, Iterable):
-            contexts = map(Context.prepare_context, context_config)
-            return Context.merge_contexts(contexts)
+            context = Context(data=context_config, name=f'dict_context({",".join(value_reprs)})', namespace=namespace)
+        elif isinstance(context_config, Context):
+            context = context_config
+        elif isinstance(context_config, Iterable):
+            contexts = map(partial(Context.prepare_context, namespace=namespace), context_config)
+            context = Context.merge_contexts(contexts)
 
-        raise ValueError(f'Unknown context type `{type(context_config)}`')
+        if context is None:
+            raise ValueError(f'Unknown context type `{type(context_config)}`')
+
+        if 'uses' not in context:
+            return context
+
+        contexts = [context]
+        for use in context['uses']:
+            if matched := re.match(r'(.*) as (.*)', use):
+                # uses context with namespace
+                filepath = matched[1]
+                sub_namespace = f'{context.namespace}::{matched[2]}' if context.namespace else matched[2]
+            else:
+                filepath = use
+                sub_namespace = context.namespace if context.namespace else None
+            contexts.append(Context.prepare_context(filepath, sub_namespace))
+        del context._data['uses']
+        return Context.prepare_context(contexts)
 
     @staticmethod
     def merge_contexts(contexts: Iterable[Context]) -> Context:
@@ -286,4 +309,9 @@ class Context(Config):
             del self._data['for_namespaces']
         else:
             self.for_namespaces = {}
+
+        if self.namespace is not None:
+            self.for_namespaces = {f'{self.namespace}::{k}': v for k, v in self.for_namespaces.items()}
+            self.for_namespaces[self.namespace] = self._data
+            self._data = {}
         super()._prepare(create_objects=False)
