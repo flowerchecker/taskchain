@@ -168,7 +168,7 @@ Saving and loading of values is handled by inheritors of `taskchain.task.Data` c
 Witch class is used is determined automatically by return data type of `run` method 
 or by `data_class` attribute of `Meta`.
 
-These `Data` classes determined automatically:
+These `Data` classes are determined automatically:
 
 - **JSONData** persists `str`, `int`, `float`, `bool`, `dict`, `list` types into `.json` files
 - **NumpyData** persists `np.ndarray` type into `.npy` file
