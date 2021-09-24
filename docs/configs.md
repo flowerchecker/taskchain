@@ -189,6 +189,97 @@ This allows following typical construction:
 
 ## Advanced topics 
 
-### Contexts
 
 ### Multi-config files
+
+
+### Contexts
+
+Context is mechanism witch allows rewrite parameter values in configs in the time of their instantiation.
+Under the hood Context is special case of Config which is used in specific way. 
+
+!!! Example
+
+
+    ```python
+    config = Config(
+        '/path/to/task_data', 
+        CONFIGS_DIR / 'config.yaml',
+        context={'verbose': True, 'batch_size': 32}
+    )
+    ```
+
+This can be useful for
+
+- ad-hock experiment
+- hyper-parameter optimization
+- tuning parameters, which are not used in persistence, e.g. `batch_size` 
+- consider long data processing chain consisting of multiple dependent pipelines each witch own config file. 
+  When we get new input data, it usually leads to recreating all configs which are very similar 
+  (only `input_data` parameter is changed and config paths in `uses`).
+  Other approach is omit `input_data` parameter value in config provide it as context, 
+  which allows run pipeline with same configuration on multiple inputs easily.
+
+
+#### What can be context
+
+- **dict** of parameters and their values
+- **file path** with json on yaml file - this is analogous to context files
+- Context object
+- **list of previous** - in that case context are merged together. 
+  In case of parameter conflict later has higher priority.
+
+!!! Warning
+
+    Parameters in context are applied globaly, i.e. on all configs in chain. 
+    Be cearful with parameters of the same name in different pipelines.
+
+#### Namespaces
+
+In the case of more complicated chains which uses namespaces you can run to problems, 
+when one pipeline is in chain multiple times with different configuration (under different namespaces).
+For these cases, context can have `for_namespaces` field. It's valued should be dict witch namespaces as keys
+and parameters to overwrite in this namespace.
+
+!!! Example "Context YAML file using `for_namespace`"
+
+    ```yaml
+    for_namespaces:
+        train:
+            input_data: '/path/to/data1'
+            other_param: 42
+        test:
+            input_data: '/path/to/data2'
+
+    batch_size: 32
+    ```
+
+#### Uses
+
+It is possible to join multiple context in one file with `uses` field. 
+Syntax is the same as in configs, but meaning slight different. 
+In contexts files in `uses` are just merged to the main context.
+Is `... as namespace` format is used, loaded context is applied only for given namespace.
+Following example is equivalent to the previous one.
+
+!!! Example "Context YAML files using `uses`"
+
+    === "context.yaml"
+
+    ```yaml
+    uses:
+        - /path/to/train.context.yaml as train
+        - /path/to/test.context.yaml as test
+
+    batch_size: 32
+    ```
+    === "train.context.yaml"
+    ```yaml
+    input_data: '/path/to/data1'
+    other_param: 42
+    ```
+
+    === "test.context.yaml"
+    ```yaml
+    input_data: '/path/to/data2'
+    ```
