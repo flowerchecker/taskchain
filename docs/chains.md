@@ -31,7 +31,7 @@ Nodes are tasks, edges dependencies.
 
 - **color** is based on tasks' group
 - **border**
-    - **node** - is not persisting data (`InMemoryData`) 
+    - **none** - is not persisting data (`InMemoryData`) 
     - **dashed** - data not computed 
     - **solid** - data computed 
 
