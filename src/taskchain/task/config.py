@@ -263,7 +263,7 @@ class Context(Config):
         elif isinstance(context_config, Context):
             context = context_config
         elif isinstance(context_config, Iterable):
-            contexts = map(partial(Context.prepare_context, namespace=namespace), context_config)
+            contexts = map(partial(Context.prepare_context, namespace=namespace, global_vars=global_vars), context_config)
             context = Context.merge_contexts(contexts)
 
         if context is None:
@@ -284,7 +284,7 @@ class Context(Config):
             else:
                 filepath = use
                 sub_namespace = context.namespace if context.namespace else None
-            contexts.append(Context.prepare_context(filepath, sub_namespace))
+            contexts.append(Context.prepare_context(filepath, sub_namespace, global_vars=global_vars))
         del context._data['uses']
         return Context.prepare_context(contexts)
 
