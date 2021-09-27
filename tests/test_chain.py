@@ -917,17 +917,14 @@ def test_create_readable_filenames(tmp_path):
             continue
         _ = task.value
 
-    chain.create_readable_filenames('named', '', dry=True)
-    assert not (tmp_path / 'c' / 'named.json').exists()
-
-    chain.create_readable_filenames('named', '')
+    chain.create_readable_filenames(name='named', groups='')
     assert (tmp_path / 'c' / 'named.json').exists()
     assert not (tmp_path / 'd' / 'named.json').exists()
 
     chain.create_readable_filenames('named', None)
 
 
-def test_create_readable_filenames_base_od_config(tmp_path):
+def test_create_readable_filenames_base_on_config_parameter(tmp_path):
     config_data = {
         'human_readable_data_name': 'named',
         'uses': [
@@ -944,8 +941,30 @@ def test_create_readable_filenames_base_od_config(tmp_path):
         _ = task.value
 
     chain.create_readable_filenames()
+    assert (tmp_path / 'a' / 'config.json').exists()
     assert (tmp_path / 'c' / 'named.json').exists()
     assert not (tmp_path / 'd' / 'named.json').exists()
+
+
+def test_create_readable_filenames_base_on_config_name(tmp_path):
+    config_data = {
+        'uses': [
+            Config(tmp_path, name='config', data={'tasks': ['tests.tasks.a.A']}),
+        ],
+        'tasks': ['tests.tasks.b.*'],
+    }
+    config2 = Config(tmp_path, name='config', data=config_data)
+    chain = Chain(config2)
+
+    for name, task in chain.tasks.items():
+        if name == 'd':
+            continue
+        _ = task.value
+
+    chain.create_readable_filenames()
+    chain.create_readable_filenames()
+    assert (tmp_path / 'c' / 'config.json').exists()
+    assert not (tmp_path / 'd' / 'config.json').exists()
 
 
 def test_multichain_with_contexts(tmp_path):

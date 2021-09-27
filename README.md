@@ -23,6 +23,9 @@ python setup.py develop
 - improve chain representation in jupyter
 - add `tasks_df` parameter to chains
 - add support for `uses` in contexts (same syntax as in configs)
+- improve create_readable_filenames
+  - use config name as default name
+  - better verbose mode
 
 #### 1.1.0
 - release to PIP

@@ -4,7 +4,24 @@
 ## Chain instantiation
 
 
-## Tun tasks and data access
+## Run tasks and data access
+
+
+### Saved files
+
+`/path/to/tasks/group_name/task_name/hash_`
+
+### Human readable files
+
+Persisted data are nicely structured in directories based on tasks' names and groups, 
+but names of files are unreadable hashes.
+Data are mostly access through TaskChain, but sometimes it is useful access data directly, e.g. copy out final output. 
+To simplify direct access chain offers method `create_readable_filenames` 
+which creates human-readable symlinks for all tasks in chain. e.g.:
+
+`/path/to/tasks/group_name/task_name/nice_name.pd -> /path/to/tasks/group_name/task_name/a4c5d45a6....pd`
+
+[See more details](/code/chain#taskchain.task.chain.Chain.create_readable_filenames)
 
 
 ## Recomputing data
@@ -17,7 +34,7 @@
 ### `run` info
 
 
-## Visualization
+## Working with chains
 
 ### `draw`
 
