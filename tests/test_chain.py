@@ -1018,13 +1018,14 @@ def test_uses_in_context(tmp_path):
     json.dump({'x': 4, 'y': 4}, (tmp_path / 'context2.json').open('w'))
     json.dump({'uses': [
         f'{tmp_path}/context1.json as ns',
-        f'{tmp_path}/context2.json as ns2',
+        '{tmp_path}/context2.json as ns2',
     ]}, (tmp_path / 'context.json').open('w'))
 
     chain = Config(
         tmp_path,
         str(tmp_path / 'config.json'),
         context=tmp_path / 'context.json',
+        global_vars={'tmp_path': tmp_path}
     ).chain()
     assert 'uses' not in chain._base_config.context
     assert 'ns' in chain._base_config.context.for_namespaces

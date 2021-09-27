@@ -61,7 +61,7 @@ class Config(dict):
         self._name = None
         self.namespace = namespace
         self._data = None
-        self.context = Context.prepare_context(context)
+        self.context = Context.prepare_context(context, global_vars=global_vars)
         self.global_vars = global_vars
         self._filepath = filepath
         self._part = part
@@ -250,7 +250,7 @@ class Context(Config):
 
     @staticmethod
     def prepare_context(context_config: Union[None, dict, str, Path, Context, Iterable],
-                        namespace=None) -> Union[Context, None]:
+                        namespace=None, global_vars=None) -> Union[Context, None]:
         """ Helper function for instantiating Context from various sources"""
         context = None
         if context_config is None:
@@ -271,6 +271,9 @@ class Context(Config):
 
         if 'uses' not in context:
             return context
+
+        if global_vars is not None:
+            search_and_replace_placeholders(context['uses'], global_vars)
 
         contexts = [context]
         for use in context['uses']:
