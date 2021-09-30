@@ -8,10 +8,14 @@ It was created to reduce chaos in machine learning projects.
 
 ## Install 
 
-#### From git
+```bash
+pip install taskchain
+```
+
+#### From source
 
 ```bash
-git clone git@gitlab.com:flowerchecker/taskchain.git
+git clone https://github.com/thran/taskchain
 cd taskchain
 python setup.py install
 ```
@@ -21,10 +25,10 @@ python setup.py install
 
 - **[task](/tasks)** - one step in computation (data transformation) represented by python class.
         Every task can define two type of inputs:
-    - **input tasks** - other task on which the task depends and take their outputs (data)
+    - **[input tasks](/tasks#input-tasks)** - other task on which the task depends and take their outputs (data)
     - **[parameter](/tasks#parameters)** - additional values which influence computation 
 
-- **pipeline** - *group of tasks* which are closely connected and together represent more complex computation,
+- **pipeline** - *[group of tasks](/tasks/#task-names-and-groups)* which are closely connected and together represent more complex computation,
         e.g., project can be split to pipeline for data preparation, 
         pipeline for feature extraction and model training and evaluation.
         Pipelines are only virtual concept and they not have a strict representation in the framework.

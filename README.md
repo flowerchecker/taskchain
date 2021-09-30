@@ -2,6 +2,10 @@
 
 [Documentation](https://flowerchecker.gitlab.io/taskchain/)
 
+## Docs
+https://flowerchecker.gitlab.io/taskchain/
+
+
 ## Install
 
 ```bash
@@ -29,6 +33,7 @@ python setup.py develop
 - `force` method of both Chain and Task now supports `delete_data` parameter which delete persisted data 
   - it defaults to `False`
   - be careful with this
+- add [Makefile](Makefile)
 
 #### 1.1.0
 - release to PIP
