@@ -45,16 +45,29 @@ python setup.py develop
   - use `from taskchain import Task, Config, Chain` or `import taskchain as tc; tc.Task`
 - MultiChain are now more robust, you can use them with configs with context, and it will work correctly 
 
-## Docs
-https://flowerchecker.gitlab.io/taskchain/
+## Development
 
-#### Develop
+#### Release new version to PIP
+
+```bash
+pip install bumpversion twine
+
+make version-patch
+# OR
+make version-minor
+
+make publish
+```
+
+#### Develop docs
+run server which dynamically serves docs web.
 ```bash
 mkdocs serve
 ```
 
-#### Build
-Automatically build by GitLab CI
+#### Build docs
+
+Create documentation as static files. Used automatically by GitLab CI.
 ```bash
 mkdocs build --strict --verbose
 ```
