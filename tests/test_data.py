@@ -165,6 +165,10 @@ def test_dir_data(tmp_path):
     assert c.value == tmp_path / 'c' / 'test'
     assert c2.run_called == 0
 
+    assert (c.value / 'c').exists()
+    c2.data.delete()
+    assert not (c.value / 'c').exists()
+
 
 def test_numpy_data(tmp_path):
     data = NumpyData()
@@ -180,12 +184,14 @@ def test_numpy_data(tmp_path):
     data2.load()
 
     assert data2.value.shape == (10, 10)
+    data.delete()
+    assert not (tmp_path / 'test.npy').exists()
 
 
 def test_pandas_data(tmp_path):
     data = PandasData()
     data.init_persistence(tmp_path, 'test')
-    data.set_value(pd.DataFrame([[0, 1],[2, 3]]))
+    data.set_value(pd.DataFrame([[0, 1], [2, 3]]))
     data.save()
 
     assert (tmp_path / 'test.pd').exists()
@@ -197,11 +203,14 @@ def test_pandas_data(tmp_path):
     data2.load()
 
     assert data2.value.shape == (2, 2)
+    data.delete()
+    assert not (tmp_path / 'test.pd').exists()
 
 
 def test_generator_data(tmp_path):
     data = GeneratedData()
     data.init_persistence(tmp_path, 'test')
+
     def _gen():
         yield from range(10)
     data.set_value(_gen())
@@ -215,6 +224,8 @@ def test_generator_data(tmp_path):
     data2.load()
 
     assert data2.value == list(range(10))
+    data.delete()
+    assert not (tmp_path / 'test.jsonl').exists()
 
 
 def test_continues_data(tmp_path):
@@ -258,11 +269,11 @@ def test_continues_data(tmp_path):
     assert (d2.value / '1').exists()
     assert not (d2.value / '2').exists()
 
-    D(config).value
+    _ = D(config).value
     assert (d2.value / '2').exists()
 
     d3 = D(config)
-    d3.value
+    _ = d3.value
     assert (d3.value / '3').exists()
     assert not (d3.value / '4').exists()
     assert (tmp_path / 'd' / 'test').exists()
@@ -270,9 +281,12 @@ def test_continues_data(tmp_path):
     assert d3.value == tmp_path / 'd' / 'test'
 
     d4 = D(config)
-    d4.value
+    _ = d4.value
     assert d4.run_called == 0
     assert not (d4.value / '4').exists()
+
+    d4.data.delete()
+    assert not (tmp_path / 'test.npy').exists()
 
 
 def test_run_info(tmp_path):

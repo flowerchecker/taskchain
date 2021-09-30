@@ -52,6 +52,10 @@ class Data:
     def load(self) -> Any:
         pass
 
+    @abc.abstractmethod
+    def delete(self):
+        pass
+
     def on_run_error(self):
         pass
 
@@ -135,6 +139,9 @@ class InMemoryData(Data):
     def save(self):
         pass
 
+    def delete(self):
+        pass
+
     def load(self) -> Any:
         return self
 
@@ -157,6 +164,9 @@ class FileData(Data, abc.ABC):
 
     def exists(self) -> bool:
         return self.path.exists()
+
+    def delete(self):
+        self.path.unlink()
 
 
 class JSONData(FileData):
@@ -210,6 +220,9 @@ class ListOfNumpyData(Data):
         for file in sorted(self.path.glob('*.npy'), key=lambda f: int(f.name.split('.')[0])):
             self._value.append(np.load(str(file)))
         return self._value
+
+    def delete(self):
+        shutil.rmtree(str(self.path))
 
     def exists(self) -> bool:
         return self.path.exists()
@@ -317,6 +330,9 @@ class DirData(Data):
         self._dir = self._value = self.path
         return self._value
 
+    def delete(self):
+        shutil.rmtree(str(self.path))
+
 
 class ContinuesData(Data):
 
@@ -351,6 +367,10 @@ class ContinuesData(Data):
     def load(self) -> Any:
         self._dir = self._value = self.path
         return self._value
+
+    def delete(self):
+        shutil.rmtree(str(self.path))
+        shutil.rmtree(str(self.tmp_path))
 
     def finished(self):
         shutil.rmtree(str(self.path), ignore_errors=True)
