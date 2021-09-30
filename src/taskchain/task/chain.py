@@ -294,7 +294,17 @@ class Chain(dict):
             ancestors.add(task)
         return ancestors
 
-    def force(self, tasks: Union[str, Task, Iterable[Union[str, Task]]], recompute=False):
+    def force(self, tasks: Union[str, Task, Iterable[Union[str, Task]]], recompute=False, delete_data=False):
+        """
+        Force recomputation of of given tasks and all dependant tasks.
+        If either additional argument is used, recomputation must be done manually,
+        e.g. by calling `chain.my_task.value` for each task.
+
+        Args:
+            tasks: task as objects or names or list of them
+            recompute: automatically recompute all forced tasks
+            delete_data: also delete persisted data of forced tasks
+        """
         if type(tasks) is str or isinstance(tasks, Task):
             tasks = [tasks]
         forced_tasks = set()
@@ -302,7 +312,7 @@ class Chain(dict):
             forced_tasks |= self.dependent_tasks(task, include_self=True)
 
         for task in forced_tasks:
-            task.force()
+            task.force(delete_data=delete_data)
 
         if recompute:
             for task in list(forced_tasks)[::-1]:
@@ -513,9 +523,9 @@ class MultiChain:
             raise ValueError(f'Unknown chain name `{chain_name}`')
         return self.chains[chain_name]
 
-    def force(self, tasks: Union[str, Iterable[Union[str, Task]]]):
+    def force(self, tasks: Union[str, Iterable[Union[str, Task]]], **kwargs):
         for chain in self.chains.values():
-            chain.force(tasks)
+            chain.force(tasks, **kwargs)
 
     def latest(self, chain_name: str=None):
         for fullname, chain in sorted(self.chains.items(), reverse=True):

@@ -254,7 +254,12 @@ class Task(object, metaclass=MetaTask):
         self._data = None
         return self
 
-    def force(self):
+    def force(self, delete_data=False):
+        if delete_data:
+            data = self._data_without_value
+            if data.exists():
+                data.delete()
+
         self._forced = True
         self._data = None
         return self

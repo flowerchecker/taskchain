@@ -26,6 +26,9 @@ python setup.py develop
 - improve create_readable_filenames
   - use config name as default name
   - better verbose mode
+- `force` method of both Chain and Task now supports `delete_data` parameter which delete persisted data 
+  - it defaults to `False`
+  - be careful with this
 
 #### 1.1.0
 - release to PIP

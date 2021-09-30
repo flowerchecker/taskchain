@@ -4,7 +4,7 @@ from typing import Dict, List
 import pytest
 
 from taskchain import Task, Config, ModuleTask
-from taskchain.task.data import JSONData, GeneratedData
+from taskchain.task.data import JSONData, GeneratedData, InMemoryData
 from taskchain.task.parameter import Parameter, InputTaskParameter
 from taskchain.task.task import find_task_full_name
 
@@ -205,6 +205,14 @@ def test_forcing(tmp_path):
     a.force()
     _ = a.value
     assert a.run_called == 1
+    _ = a.value
+    assert a.run_called == 1
+
+    a = A(config)
+    assert (tmp_path / 'a' / 'config.json').exists()
+    a.force(delete_data=True)
+    a.force(delete_data=True)
+    assert not (tmp_path / 'a' / 'config.json').exists()
     _ = a.value
     assert a.run_called == 1
 
@@ -453,3 +461,36 @@ def test_find_task_full_name():
     with pytest.raises(KeyError):
         _ = find_task_full_name('a', ['n3::n1::a', 'n3::a'])
     assert find_task_full_name('n3::a', ['n3::n1::a', 'n3::a']) == 'n3::a'
+
+
+def test_in_memory_data(tmp_path):
+    class A(Task):
+        class Meta:
+            data_class = InMemoryData
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.run_called = 0
+
+        def run(self) -> int:
+            self.run_called += 1
+            return 42
+
+    config = Config(tmp_path, name='config')
+    a = A(config)
+    assert a.run_called == 0
+    assert a.value == 42
+    assert a.run_called == 1
+    assert a.data_path is None
+    assert not a.has_data
+
+    a = A(config)
+    assert a.run_called == 0
+    assert a.value == 42
+    assert a.run_called == 1
+    assert a.force()
+    assert a.value == 42
+    assert a.run_called == 2
+    assert a.force(delete_data=True)
+    assert a.value == 42
+    assert a.run_called == 3

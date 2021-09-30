@@ -213,12 +213,51 @@ def test_forcing(tmp_path):
     chain.force('x')
     assert chain.tasks['x'].is_forced
 
+    _ = chain.tasks['p'].value
     assert not chain.tasks['p'].is_forced
+    assert chain.tasks['p'].has_data
     chain.force('m')
     assert chain.tasks['m'].is_forced
     assert chain.tasks['o'].is_forced
     assert chain.tasks['p'].is_forced
+    assert chain.tasks['p'].has_data
     assert not chain.tasks['n'].is_forced
+
+
+def test_forcing_with_delete_data(tmp_path):
+    config_data = {
+        'tasks': [
+            'tests.tasks.c.*',
+        ]
+    }
+    config = Config(tmp_path, name='config', data=config_data)
+    chain = Chain(config)
+
+    assert chain.p.value is False
+    assert chain.m.value is False
+    assert chain.p.has_data
+    assert chain.m.has_data
+    chain.force('m', delete_data=True)
+    assert not chain.p.has_data
+    assert not chain.m.has_data
+
+
+def test_forcing_with_recomputation(tmp_path):
+    config_data = {
+        'tasks': [
+            'tests.tasks.c.*',
+        ]
+    }
+    config = Config(tmp_path, name='config', data=config_data)
+    chain = Chain(config)
+
+    assert chain.p.value is False
+    assert chain.m.value is False
+    assert chain.p.has_data
+    assert chain.m.has_data
+    chain.force('m', delete_data=True, recompute=True)
+    assert chain.p.has_data
+    assert chain.m.has_data
 
 
 def test_multi_chain(tmp_path):
