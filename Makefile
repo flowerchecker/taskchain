@@ -5,6 +5,9 @@ install:
 develop:
 	python setup.py develop
 
+test:
+	python setup.py test
+
 version-patch:
 	bump2version patch
 
