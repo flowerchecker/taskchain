@@ -67,6 +67,13 @@ This description corresponds exactly to python import system.
 To import all tasks from pipeline (defined in single file) at once you can use wildcard `*` in last 
 place of description: `'my_project.tasks.pipeline.*'`.
 
+
+#### Task exclusion
+
+For more flexibility, you can also exclude tasks with special parameter `excluded_tasks`
+with same syntax as `tasks` parameter.
+
+
 ### Config dependencies
 
 More complicated chains are split to multiple pipelines with corresponding configs.
