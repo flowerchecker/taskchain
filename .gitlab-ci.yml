@@ -18,13 +18,13 @@ test:
       - .cache/pip
       - venv/
   script:
-    - pytest
+    - make test
 
 pages:
   stage: deploy
   script:
     - pip install -r docs/requirements.txt
-    - make docs-install
+    - make docs-build
   artifacts:
     paths:
       - public
