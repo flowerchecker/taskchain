@@ -1,4 +1,5 @@
-from collections import defaultdict, Generator
+from collections import defaultdict
+from collections.abc import Generator
 from typing import Dict, List
 
 import pytest

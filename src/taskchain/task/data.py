@@ -3,7 +3,7 @@ import json
 import logging
 import pickle
 import shutil
-from collections import Generator
+from collections.abc import Generator
 from pathlib import Path
 from typing import Any, Dict, Union
 

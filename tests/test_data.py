@@ -1,4 +1,4 @@
-from collections import Generator
+from collections.abc import Generator
 from pathlib import Path
 
 from taskchain import Task, Config, InMemoryData, JSONData
