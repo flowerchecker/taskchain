@@ -4,7 +4,7 @@ before_script:
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
-  - python setup.py install
+  - make install
 
 test:
   stage: test
@@ -24,7 +24,7 @@ pages:
   stage: deploy
   script:
     - pip install -r docs/requirements.txt
-    - mkdocs build --verbose --site-dir public
+    - make docs-install
   artifacts:
     paths:
       - public

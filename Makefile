@@ -24,4 +24,4 @@ docs-develop:
 	mkdocs serve
 
 docs-build:
-	mkdocs build --strict --verbose
+	mkdocs build --strict --verbose public
