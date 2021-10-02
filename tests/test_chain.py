@@ -45,6 +45,17 @@ def test_task_creation(tmp_path):
     assert len(chain.tasks) == 1
 
 
+def test_task_exclusion(tmp_path):
+    config_data = {
+        'tasks': ['tests.tasks.a.*'],
+        'excluded_tasks': ['tests.tasks.a.B'],
+    }
+    config = Config(tmp_path, name='config', data=config_data)
+    chain = Chain(config)
+
+    assert len(chain.tasks) == 1
+
+
 def test_task_creation_with_uses(tmp_path):
     config_data = {
         'uses': [

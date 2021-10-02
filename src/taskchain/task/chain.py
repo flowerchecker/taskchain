@@ -158,24 +158,34 @@ class Chain(dict):
         tasks = {}
 
         def _register_task(_task: Task, task_name: str):
-            if task_name in tasks and tasks[task_name].get_config() != task.get_config():
+            if task_name in tasks and tasks[task_name].get_config() != _task.get_config():
                 raise ValueError(f'Conflict of task name `{task_name}` '
-                                 f'with configs `{tasks[task_name].get_config()}` and `{task.get_config()}`')
+                                 f'with configs `{tasks[task_name].get_config()}` and `{_task.get_config()}`')
             tasks[task_name] = _task
 
         for config in self._configs.values():
-            for task_description in list_or_str_to_list(config.get('tasks', [])):
-                if type(task_description) is str:
-                    for task_class in get_classes_by_import_string(task_description, Task):
-                        if task_class.meta.get('abstract', False):
-                            continue
-                        task = self._create_task(task_class, config, task_registry)
-                        _register_task(task, task_class.fullname(config))
-                elif issubclass(task_description, Task):
-                    task = self._create_task(task_description, config, task_registry)
-                    _register_task(task, task.fullname)
-                else:
-                    raise ValueError(f'Unknown task description `{task_description}` in config `{config}`')
+            excluded_tasks = set()
+            for field_name, exclude in [('excluded_tasks', True), ('tasks', False)]:
+
+                def _process_task(_task_class):
+                    if exclude:
+                        excluded_tasks.add(_task_class)
+                        return
+                    if _task_class in excluded_tasks:
+                        return
+                    task = self._create_task(_task_class, config, task_registry)
+                    _register_task(task, _task_class.fullname(config))
+
+                for task_description in list_or_str_to_list(config.get(field_name, [])):
+                    if type(task_description) is str:
+                        for task_class in get_classes_by_import_string(task_description, Task):
+                            if task_class.meta.get('abstract', False):
+                                continue
+                            _process_task(task_class)
+                    elif issubclass(task_description, Task):
+                        _process_task(task_description)
+                    else:
+                        raise ValueError(f'Unknown task description `{task_description}` in config `{config}`')
         return tasks
 
     def _recreate_tasks_with_parameter_config(self, tasks: Dict[str, Task], task_registry: Dict) -> Dict[str, Task]:

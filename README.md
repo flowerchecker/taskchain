@@ -23,6 +23,9 @@ python setup.py develop
 
 ## Chengelog
 
+#### 1.1.2
+- add support for task exclusion, just use `exluded_tasks` in your config
+
 #### 1.1.1
 - improve chain representation in jupyter
 - add `tasks_df` parameter to chains
