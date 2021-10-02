@@ -326,8 +326,7 @@ class Chain(dict):
         import graphviz as gv
         import seaborn as sns
 
-        if type(groups_to_show) is str:
-            groups_to_show = [groups_to_show]
+        groups_to_show = list_or_str_to_list(groups_to_show)
 
         node_attr = {'shape': 'box', 'width': '2'}
         graph_attr = {'splines': 'ortho'}
@@ -398,8 +397,7 @@ class Chain(dict):
             keep_existing: rewrite link if link already exists
         """
         symlink_actions = defaultdict(list)
-        if type(groups) is str:
-            groups = [groups]
+        groups = list_or_str_to_list(groups)
 
         for task_name, task in self.tasks.items():
             if groups is not None and task.group not in groups:

@@ -40,7 +40,7 @@ def parallel_map(fun, iterable, threads=2, desc='Running tasks in parallel.', to
     return [res for _, res in sorted(result, key=lambda ires: ires[0])]
 
 
-def list_or_str_to_list(value: Union[List, str]) -> List:
+def list_or_str_to_list(value: Union[None, List, str]) -> List:
     if isinstance(value, str):
         return [value]
     return value
