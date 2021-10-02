@@ -33,3 +33,5 @@ plugins:
   - mkdocstrings:
       watch:
         - src/taskchain
+
+extra_css: [extra.css]
