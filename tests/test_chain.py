@@ -5,8 +5,8 @@ from typing import List
 import pytest
 
 from taskchain import Config, Chain, Task, MultiChain, InMemoryData, Context
-from taskchain.task.chain import ChainObject
-from taskchain.task.parameter import Parameter, ParameterObject
+from taskchain.chain import ChainObject
+from taskchain.parameter import Parameter, ParameterObject
 from tests.tasks.a import ATask
 
 

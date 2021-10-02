@@ -5,7 +5,7 @@ import yaml
 
 from taskchain import Config
 from taskchain import Context
-from taskchain.task.parameter import ParameterObject
+from taskchain.parameter import ParameterObject
 
 
 def test_name(tmp_path):

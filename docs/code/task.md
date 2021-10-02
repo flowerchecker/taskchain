@@ -1,1 +1,1 @@
-::: taskchain.task.task.Task
+::: taskchain.task.Task

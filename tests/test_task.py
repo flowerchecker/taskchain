@@ -5,9 +5,9 @@ from typing import Dict, List
 import pytest
 
 from taskchain import Task, Config, ModuleTask
-from taskchain.task.data import JSONData, GeneratedData, InMemoryData
-from taskchain.task.parameter import Parameter, InputTaskParameter
-from taskchain.task.task import find_task_full_name
+from taskchain.data import JSONData, GeneratedData, InMemoryData
+from taskchain.parameter import Parameter, InputTaskParameter
+from taskchain.task import find_task_full_name
 
 
 class ThisIsSomethingTask(Task):

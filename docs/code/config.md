@@ -1,1 +1,1 @@
-::: taskchain.task.config
+::: taskchain.config

@@ -2,7 +2,7 @@ from collections.abc import Generator
 from pathlib import Path
 
 from taskchain import Task, Config, InMemoryData, JSONData
-from taskchain.task.data import DirData, NumpyData, PandasData, ContinuesData, GeneratedData
+from taskchain.data import DirData, NumpyData, PandasData, ContinuesData, GeneratedData
 
 import numpy as np
 import pandas as pd

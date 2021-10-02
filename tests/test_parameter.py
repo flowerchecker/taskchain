@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from taskchain import Config
-from taskchain.task.parameter import Parameter, ParameterRegistry, AutoParameterObject, ParameterObject
+from taskchain.parameter import Parameter, ParameterRegistry, AutoParameterObject, ParameterObject
 
 
 def test_value():

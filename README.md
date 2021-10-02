@@ -23,7 +23,8 @@ python setup.py develop
 
 ## Chengelog
 
-#### 1.1.2
+#### 1.2.0
+- remove redundant module `taskchain.task`
 - add support for task exclusion, just use `exluded_tasks` in your config
 
 #### 1.1.1
