@@ -14,12 +14,14 @@ nav:
   - Chains: chains.md
   - Example:  example.md
   - Utils: utils.md
+  - Testing: testing.md
   - Code Reference:
       - Task: code/task.md
       - Parameter: code/parameter.md
       - Config: code/config.md
       - Chain: code/chain.md
       - Utils: code/utils.md
+      - Testing: code/testing.md
 
 
 markdown_extensions:
