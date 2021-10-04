@@ -1101,3 +1101,34 @@ def test_uses_in_context(tmp_path):
     assert 'ns2' in chain._base_config.context.for_namespaces
     assert chain['ns::abc'].value == 3003
     assert chain['ns2::abc'].value == 4004
+
+
+def test_uses_in_context_recursively(tmp_path):
+    json.dump({'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1}, (tmp_path / 'config1.json').open('w'))
+    json.dump({'tasks': ['tests.test_chain.Abc'], 'uses': f'{tmp_path / "config1.json"} as ns_inner', 'x': 2, 'y': 2},
+              (tmp_path / 'config2.json').open('w'))
+    json.dump({'uses': [
+        f'{tmp_path}/config2.json as ns',
+    ]}, (tmp_path / 'config.json').open('w')
+    )
+
+    json.dump({'x': 3, 'y': 3, 'tasks': 'anything'}, (tmp_path / 'context1.json').open('w'))
+    json.dump({'x': 4, 'y': 4, 'uses': f'{tmp_path / "context1.json"} as ns_inner'},
+              (tmp_path / 'context2.json').open('w'))
+    json.dump({'uses': [
+        '{tmp_path}/context2.json as ns',
+    ]}, (tmp_path / 'context.json').open('w'))
+
+    chain = Config(
+        tmp_path,
+        str(tmp_path / 'config.json'),
+        context=tmp_path / 'context.json',
+        global_vars={'tmp_path': tmp_path}
+    ).chain()
+    assert 'uses' not in chain._base_config.context
+    assert all('uses' not in v for v in chain._base_config.context.for_namespaces.values())
+    assert 'ns' in chain._base_config.context.for_namespaces
+    assert 'ns::ns_inner' in chain._base_config.context.for_namespaces
+    assert 'tasks' not in chain._base_config.context.for_namespaces['ns::ns_inner']
+    assert chain['ns::abc'].value == 4004
+    assert chain['ns::ns_inner::abc'].value == 3003

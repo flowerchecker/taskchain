@@ -11,9 +11,10 @@ from typing import Union, Dict, Iterable, Any
 
 import yaml
 
-from taskchain.utils.clazz import find_and_instancelize_clazz, instancelize_clazz
-from taskchain.utils.data import search_and_replace_placeholders
 from .parameter import ParameterObject
+from .utils.clazz import find_and_instancelize_clazz, instancelize_clazz
+from .utils.data import search_and_replace_placeholders
+from .utils.iter import list_or_str_to_list
 
 LOGGER = logging.getLogger()
 
@@ -270,14 +271,15 @@ class Context(Config):
         if context is None:
             raise ValueError(f'Unknown context type `{type(context_config)}`')
 
-        if 'uses' not in context:
+        current_context_data = context.for_namespaces[namespace] if namespace else context
+        if 'uses' not in current_context_data:
             return context
 
         if global_vars is not None:
-            search_and_replace_placeholders(context['uses'], global_vars)
+            search_and_replace_placeholders(current_context_data['uses'], global_vars)
 
         contexts = [context]
-        for use in context['uses']:
+        for use in list_or_str_to_list(current_context_data['uses']):
             if matched := re.match(r'(.*) as (.*)', use):
                 # uses context with namespace
                 filepath = matched[1]
@@ -286,7 +288,10 @@ class Context(Config):
                 filepath = use
                 sub_namespace = context.namespace if context.namespace else None
             contexts.append(Context.prepare_context(filepath, sub_namespace, global_vars=global_vars))
-        del context._data['uses']
+        if namespace:
+            del context.for_namespaces[namespace]['uses']
+        else:
+            del context._data['uses']
         return Context.prepare_context(contexts)
 
     @staticmethod
@@ -310,12 +315,14 @@ class Context(Config):
     def _prepare(self):
         if 'for_namespaces' in self._data:
             self.for_namespaces = self._data['for_namespaces']
-            del self._data['for_namespaces']
         else:
             self.for_namespaces = {}
 
         if self.namespace is not None:
             self.for_namespaces = {f'{self.namespace}::{k}': v for k, v in self.for_namespaces.items()}
-            self.for_namespaces[self.namespace] = self._data
+            self.for_namespaces[self.namespace] = {
+                k: v for k, v in self._data.items()
+                if k not in Context.RESERVED_PARAMETER_NAMES or k == 'uses'
+            }
             self._data = {}
         super()._prepare(create_objects=False)
