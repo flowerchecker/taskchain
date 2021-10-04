@@ -21,11 +21,12 @@ python setup.py install
 python setup.py develop
 ```
 
-## Chengelog
+## Changelog
 
 #### 1.2.0
 - remove redundant module `taskchain.task`
 - add support for task exclusion, just use `exluded_tasks` in your config
+- add tools for testing, check `taskchain.utils.testing`
 
 #### 1.1.1
 - improve chain representation in jupyter
