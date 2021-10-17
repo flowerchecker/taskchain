@@ -1,3 +1,7 @@
 .md-typeset code {
     color: #e01e5a
 }
+
+.md-typeset .highlight code {
+    color: #36464e
+}
