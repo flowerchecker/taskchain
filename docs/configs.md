@@ -186,12 +186,119 @@ This allows following typical construction:
 
 ## Parameter objects
 
+Sometimes configuration using only json like parameter values is not enough, or it is not practical.
+For these cases, you can include use definition of object instance as parameter value to your config. 
+
+Object instance is defined by class and `args` and `kwargs` passed to constructor.
+Class has to be derived class of `taskchain.paramater.ParameterObject`, i.e. has
+to define `repr` method which should return unique string representation of object.
+This value is then used by taskchain to keep track of changes in configs. 
+
+Common pattern is that there is base class which define interface which is used in tasks
+and parameter objets are instances of child classes. 
+Good example is `Model` class which define abstract methods
+`train`, `predict`, `save` and`load`. Children of this base class 
+(e.g. `NeuralModel`, `LinearRegressionModel`, ...) implement these methods, are configurable 
+by their constructor and are used in configs. [Here](../example/src/movie_ratings/models) is example of this pattern.
+
+Definition of object instance in config is dict containing key `class` where values
+is fully-qualified name of class. 
+Additionally, dict can contain `args` with a list and `kwargs` with dict.
+
+
+!!! Example "Definition of object in config"
+
+    ```python
+        model:
+            class: my_project.models.LinearRegressionModel
+            kwargs:
+                normalize: True
+                regularization: 1
+    ```
+
+In last example, config provide parameter `model` with value `LinearRegressionModel(normalize=True, regularization=1)`.
+
+In config, objects can be defined inside other structures, such as list, dict or definitions of other objects.
+I.e. you can define parameter witch is list of objects.
+
 #### `AutoParameterObject`
+
+Writing of `repr` method for parameter object can repetitive and omitting
+a parameter can lead to mistakes.
+Therefore, there is `AutoParameterObject` which defines `repr` for you
+and consist of class name arguments of constructor. 
+To make it work, all arguments values of constructor has to be saved in object attributes.
+For argument named `my_argument`, `AutoParameterObject` is looking for its value at
+`self._my_argument` or `self.my_argument`.
+
+To allow more flexibility and ease adding new arguments, you can also define
+`ignore_persistence_args` or `dont_persist_default_value_args` which return 
+list of string names of arguments and have similar meaning as 
+[`Parameter` arguments](/tasks#parameters-parameters).
 
 #### `ChainObject`
 
+In case that your parameter object need to access the chain directly
+(e.g. take a task's data), you can inherit also from `taskchain.chain.ChainObject`
+and implement `init_chain(self, chain)` method which is called after chain creation
+and pass chain itself.
 
 ## Namespaces
+
+If you need to use one pipeline with different configs in one chain, or
+you just make your larger chains more structured, you can use namespaces.
+
+You can put part of your chain to a namespace and all tasks in that part 
+will be referenced not but their name `task_name` but by namespace and task name
+`namespace_name::task_name`. 
+
+Creating namespaces is really simple, in referencing other config in config definition
+(`uses` clause) just add ` as namespace_name`.
+
+!!! Example
+    === "model_config.yaml"
+    
+        ```yaml
+        tasks: my_project.tasks.model.*
+        uses: 
+            - "/path/to/data_configs/train_data.yaml as train"
+            - "/path/to/data_configs/valid_data.yaml as valid"
+            - "/path/to/data_configs/test_data.yaml as test"
+
+        model: ...
+        ```
+
+    === "model.py"
+    
+        ```python
+        ...
+
+        class TrainModel(Task):
+            class Meta:
+                parameters = [Parameter('model')]
+                input_tasks = ['train::features', 'valid::features']
+        
+            def run(self, model) -> ...:
+                train_data = self.input_tasks['train::features'].value
+                ...
+        
+        class EvalModel(Task):
+            class Meta:
+                parameters = [Parameter('model')]
+                input_tasks = [TrainModel, 'test::features]
+        
+            def run(self, model, train_model, features) -> dict:
+                ...
+        ...
+        ```
+
+Notes
+    
+- if a config is in a namespace, also configs used by this config are in the same namespace
+- namespaces can be nested, e.g. task `features` can be in nested namespace`main_model::train`
+- you can still reference task without namespace as long as there is only one task of that name
+    - this is the case of `Evalmodel` task but not `TrainModel`task in example above
+    - this applies to referencing tasks in chain, in input_tasks and `run` method arguments.
 
 
 ## Advanced topics 
@@ -273,20 +380,23 @@ Following example is equivalent to the previous one.
 
     === "context.yaml"
 
-    ```yaml
-    uses:
-        - /path/to/train.context.yaml as train
-        - /path/to/test.context.yaml as test
+        ```yaml
+        uses:
+            - /path/to/train.context.yaml as train
+            - /path/to/test.context.yaml as test
+    
+        batch_size: 32
+        ```
 
-    batch_size: 32
-    ```
     === "train.context.yaml"
-    ```yaml
-    input_data: '/path/to/data1'
-    other_param: 42
-    ```
+
+        ```yaml
+        input_data: '/path/to/data1'
+        other_param: 42
+        ```
 
     === "test.context.yaml"
-    ```yaml
-    input_data: '/path/to/data2'
-    ```
+
+        ```yaml
+        input_data: '/path/to/data2'
+        ```
