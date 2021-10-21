@@ -7,7 +7,7 @@ import pandas as pd
 from sklearn import metrics
 
 from taskchain import InMemoryData
-from taskchain.task.parameter import AutoParameterObject
+from taskchain.parameter import AutoParameterObject
 
 
 class RatingModel(AutoParameterObject, InMemoryData, abc.ABC):

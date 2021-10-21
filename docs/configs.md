@@ -1,14 +1,19 @@
 # Configs
 
 Generally, configs defines all necessary parameter values, 
-which are needed to run a pipeline and task in it.
+which are needed to run a pipeline and tasks in it.
 
 In TaskChain, configs is also entry point for creating chains
-and describes how pipelines are connected to chains.
+and describes how pipelines are connected to a chain.
 Therefore, a config defines:
-- description of task which should be part of a chain (e.g. pipeline)
+
+- description witch tasks should be part of a chain (e.g. pipeline)
 - parameter values needed by these task
 - dependencies on other configs
+
+Usual setup is one file in one config configuring on pipeline. 
+This allows effective reuse of a pipeline in multiple chains
+without need of repeating parameter values.
 
 !!! Note "What is actually config?"
     Config in TaskChain has dual meaning. 
@@ -305,6 +310,38 @@ Notes
 
 
 ### Multi-config files
+
+It is possible to save multiple configs to one file.
+This can be useful, when chain has multiple pipelines, 
+and you need one file configuration.
+
+!!! Example "Example of multi-config file"
+
+    ```yaml
+    configs:
+        data_config:
+            tasks: ...
+            input_data_file: ...
+            ...
+        model_config:
+            main_part: True
+            tasks: ...
+            uses: #data_config as data
+            model: ...
+            ...
+        other_config_name:
+            ...
+    ```
+
+Single config can be taken from this file using `part` argument: 
+```python
+config = Config('multi_config.yaml', part='data_config')
+```
+It is possible omit `part` argument if one of defined configs specify `main_part: True`.
+To access a config from another config (in `uses`) use 
+`/path/to/multi_config.yaml#data_config`
+or if you refer to a part of the same multi-config, 
+you can use only `#data_donfig` as shown in example.
 
 
 ### Contexts
