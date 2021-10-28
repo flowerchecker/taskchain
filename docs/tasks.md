@@ -211,7 +211,9 @@ Other useful `Data` classes which have to be explicitly defined in `data_class` 
             return data_object
 
     ```
-- **ContinuesData, H5Data** - TODO
+- **ContinuesData, H5Data** - 
+
+[//]: # (TODO)
 
   You can define ad hoc `Data` classes to handle other data types.
 
@@ -226,3 +228,5 @@ TODO example
 ## Advanced topics
 
 ### Tasks inheritance
+
+[//]: # (TODO)

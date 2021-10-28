@@ -15,7 +15,7 @@ Usual setup is one file in one config configuring on pipeline.
 This allows effective reuse of a pipeline in multiple chains
 without need of repeating parameter values.
 
-!!! Note "What is actually config?"
+!!! Note "What actually is config?"
     Config in TaskChain has dual meaning. 
     First, config as YAML file containing information described above.
     Second, config as an instance of `taskchain.task.Config` which usually is based
@@ -302,8 +302,8 @@ Notes
 - if a config is in a namespace, also configs used by this config are in the same namespace
 - namespaces can be nested, e.g. task `features` can be in nested namespace`main_model::train`
 - you can still reference task without namespace as long as there is only one task of that name
-    - this is the case of `Evalmodel` task but not `TrainModel`task in example above
-    - this applies to referencing tasks in chain, in input_tasks and `run` method arguments.
+    - this is the case of `input_tasks` of `Evalmodel` task but not `TrainModel`task in example above
+    - this applies to referencing tasks in chain, in `input_tasks` and `run` method arguments.
 
 
 ## Advanced topics 
@@ -335,7 +335,7 @@ and you need one file configuration.
 
 Single config can be taken from this file using `part` argument: 
 ```python
-config = Config('multi_config.yaml', part='data_config')
+config = Config('/path/to/task_data', 'multi_config.yaml', part='data_config')
 ```
 It is possible omit `part` argument if one of defined configs specify `main_part: True`.
 To access a config from another config (in `uses`) use 
