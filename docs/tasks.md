@@ -211,22 +211,166 @@ Other useful `Data` classes which have to be explicitly defined in `data_class` 
             return data_object
 
     ```
-- **ContinuesData, H5Data** - 
+- **ContinuesData** - 
+for task with large run time, e.g. training of large models, 
+it is possible to make computation on multiple runs. 
+This allows to save partial results and when computation is interrupted
+next call of run method starts from last checkpoint.
 
-[//]: # (TODO)
+!!! Example
+    ```python
+    class TrainModel(Task):
+        class Meta:
+            ...
 
-  You can define ad hoc `Data` classes to handle other data types.
+        def run(self) -> ContinuesData:
+            data: ContinuesData = self.get_data_object()
+            working_dir = data.dir
+    
+            self.prepare_model()
+            
+            checkpoint_path = working_dir / 'checkpoint'
+            if checkpoint_path.exists():
+                self.load_checkpoint(checkpoint_path)
+            
+            self.train(
+                save_path=working_dir / 'trained_model'
+                checkpoint_path=checkpoint_path
+            ) # training saves checkpoints periodically and trained model at the end
+    
+            data.finished()
+            return data
+    ```
+
+- **H5Data** - special case of `ContinuesData` which allows to compute large data files.
+
+!!! Example
+    ```python
+    class Embeddings(Task):
+    
+        class Meta:
+            ...
+
+        def run(self) -> H5Data:
+            data: H5Data = self.get_data_object()
+    
+            with data.data_file() as data_file:
+                h5_emb_dataset = data.dataset('embedding', data_file, maxshape=(None, embedding_size), dtype=np.float32)
+                progress = h5_emb_dataset.len()
+
+                for i, row in enumerate(my_dataset[progress:]):
+                    if i % 1000 == 0:
+                        gc.collect()
+                    emb = self.get_embedding(row)
+                    data.append_data(h5_emb_dataset, [emb], dataset_len=progress)
+                    data_file.flush()
+                    progress += batch_size
+            data.finished()
+            return data
+    ```
+
+You can define ad hoc `Data` classes to handle other data types.
 
 ### Returning `Data` object directly
 
 In some cases it is convenient to return (by `run` method) `Data` object directly.
 `DirData` is one example. 
-Other example is custom object which inherits from `InMemoryData`.
-TODO example
+Other use case is custom object which inherits from `InMemoryData`.
+See `TrainedModel` task in [example project]({{ config.code_url }}/example/src/movie_ratings/tasks/rating_model.py)
+which returns [`RatingModel`]({{ config.code_url }}/example/src/movie_ratings/models/core.py) directly.
+This is the way to easily expose a important object to other tasks in the pipeline.
 
+
+## Logging
+
+TaskChain offer two ways to save addition information about computation mainly for debug purposes.
+
+### Run info
+
+After `run` method finishes computation and result value is saved to disk
+`Data` object also save additional information about computation.
+It is possible add any json-like information to this info.
+```python
+class MyTask(Task):
+    ...
+    def run(self):
+        ...
+        self.save_to_run_info('some important information')
+        self.save_to_run_info({'records_processes': 42, 'errors': 0})
+```
+
+The run info is saved as YAML and is available under `task_object.run_info` in json-like form.
+
+!!! Example "hash.run_info.yaml"
+    ```yaml
+    task:
+      class: Movies
+      module: movie_ratings.tasks.movies
+      name: movies:movies
+    config:
+      context: null
+      name: imdb.filtered/movies:movies
+      namespace: null
+    input_tasks:
+      movies:all_movies: 436f7a5e06e540716b275a5f84499a78
+    log: 
+      - some important information
+      - records_processes: 42
+        errors': 0
+    parameters:
+      from_year: '1945'
+      min_vote_count: '1000'
+      to_year: None
+    started: '2021-07-11 11:34:01.520866'
+    ended: '2021-07-11 11:34:01.850913'
+    time: 0.3300471305847168
+    user:
+      name: your_system_name
+    ```
+
+### logger
+
+Each task has its own standard python logger, 
+which can be used from `run` method.
+```python
+class MyTask(Task):
+    ...
+    def run(self):
+        ...
+        self.logger.debug('not so important information')
+```
+
+This logger has two handlers
+    
+- File handler managed by `Data` object which saves log along value produced by task. 
+  Logging level of this handler is set to `DEBUG`.
+- Other handler is managed by chain object and log to console. 
+  Logging level of this handler is set to `WARNING` and can be changed from chain by `chain.set_log_level('DEBUG')`.
 
 ## Advanced topics
 
 ### Tasks inheritance
 
-[//]: # (TODO)
+Tasks are classes and can be inherited. 
+This simplifies cases when pipeline contains task with similar functionality.
+
+You can inherit a task and change his behaviour by
+
+- changing `Meta` class
+  - you can change input tasks and then computation will be done with different input.
+    In this case, it is not possible have input task in `run` arguments, 
+    and they can access by `self.input_tasks[0].value`. 
+    This way the task name, which is changing, is avoided. 
+  - you can override some methods used by `run` method
+  - you can add custom attribute to `Meta` class and access it by `self.meta.my_attribute`
+    and make computation based on its value.
+
+It is possible declare in `Meta` class `abstract = True`. 
+In that case, task will be not recognized by `project.tasks.pipeline.*` in config 
+and will not be part of your pipeline. 
+This can be useful for tasks, which will be inherited from.
+
+**Example** of task inheritance can be found in example project
+
+- [movies pipeline]({{ config.code_url }}/example/src/movie_ratings/tasks/movies.py) - search for `ExtractFeatureTask`. 
+- [model pipeline]({{ config.code_url }}/example/src/movie_ratings/tasks/rating_model.py) - search for `DataSelectionTask`. 

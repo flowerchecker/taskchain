@@ -172,6 +172,11 @@ Here is general location of data computed by a task
   - `hash` is computed based on hashes of all input tasks and all parameter values. 
     I.e. it is unique and determined fully by all inputs going to computation of these data.
 
+### Log files
+
+Along the file with computed value, there is `{hash}.run_info.yaml` with run info 
+and `{hash}.log` with task's log output. See more [here](/tasks/#logging).
+
 ### Human readable files
 
 Persisted data are nicely structured in directories based on tasks' names and groups, 
@@ -186,12 +191,6 @@ which creates human-readable symlinks for all tasks in chain. e.g.:
 
 
 ## Logging
-
-[//]: # (TODO)
-
-### `run` log
-
-### `run` info
 
 
 ## Advanced topics
