@@ -49,6 +49,11 @@ Value returned by `run` method is checked by TaskChain if matches defined type.
 !!! Tip
     The method can have **arguments**. TaskChain try to match and fill these arguments by values of parameters and input task.
 
+!!! Warning
+    Avoid expensive computation or loading data in `__init__`. 
+    TaskChain can create task object multiple time and often task is not used at all.
+    Put all expensive operation to `run` method. You can use [`@persistent` decorator](/utils/#persistent-decorator). 
+
 
 ### Task names and groups
 
