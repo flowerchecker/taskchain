@@ -173,7 +173,8 @@ These `Data` classes are determined automatically:
 - **JSONData** persists `str`, `int`, `float`, `bool`, `dict`, `list` types into `.json` files
 - **NumpyData** persists `np.ndarray` type into `.npy` file
 - **PandasData** persists `pd.DataFrame` or `pd.Series` type into `.pd` file
-- **FigureData** persists `plt.Figure` type into pickle but also saves plot as `.png` and `.svg` for easy sharing
+- **FigureData** persists `plt.Figure` type into pickle but also saves plot as `.png` and `.svg` for easy sharing.
+  Use `pylab` or `seaborn` as usual and just return `plt.gcf()`. 
 - **GeneratedData** is used if return type is `Generator`. It is assumed that generated values are JSON-like.
     Values are saved to `.jsonl` file - JSON lines.
 

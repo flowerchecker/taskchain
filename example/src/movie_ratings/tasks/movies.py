@@ -78,10 +78,9 @@ class DurationHistogram(ModuleTask):
         ]
 
     def run(self, movies, max_duration_in_histogram) -> plt.Figure:
-        figure = plt.Figure()
         sns.distplot(movies.duration)
         plt.xlim(0, max_duration_in_histogram)
-        return figure
+        return plt.gcf()
 
 
 class YearHistogram(ModuleTask):
@@ -89,12 +88,11 @@ class YearHistogram(ModuleTask):
         input_tasks = [Movies]
 
     def run(self, movies) -> plt.Figure:
-        figure = plt.Figure()
         max_year = movies.year.max()
         min_year = movies.year.min()
         sns.distplot(movies.year, bins=max_year - min_year + 1)
         plt.xlim(min_year, max_year)
-        return figure
+        return plt.gcf()
 
 
 class ExtractFeatureTask(ModuleTask):
