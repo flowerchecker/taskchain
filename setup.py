@@ -35,6 +35,7 @@ setuptools.setup(
         'filelock',
         'icecream',
         'tabulate',
+        'pyparsing<3,>=2.0.2'       # TODO remove - temporary fix for version conflict from package `packaging`
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
