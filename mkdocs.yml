@@ -12,7 +12,7 @@ nav:
   - Tasks: tasks.md
   - Configs: configs.md
   - Chains: chains.md
-  - Example:  example.md
+  - Example project:  example.md
   - Utils: utils.md
   - Testing: testing.md
   - Code Reference:
