@@ -331,6 +331,7 @@ class Task(object, metaclass=MetaTask):
             self._data = run_result
             self._init_persistence(self._data)
         elif isinstance(run_result, self.data_type) or custom_isinstance(run_result, self.data_type) or fullname(self.data_type) == 'typing.Generator':
+            assert self._data is not None, f'{fullname(self.__class__)}: attribute "_data" cannot be None'
             self._data.set_value(run_result)
         else:
             raise ValueError(f'{fullname(self.__class__)}: Invalid result data type: {type(run_result)} instead of {self.data_type}')
