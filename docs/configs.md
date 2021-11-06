@@ -239,7 +239,7 @@ For argument named `my_argument`, `AutoParameterObject` is looking for its value
 To allow more flexibility and ease adding new arguments, you can also define
 `ignore_persistence_args` or `dont_persist_default_value_args` which return 
 list of string names of arguments and have similar meaning as 
-[`Parameter` arguments](/tasks#parameters-parameters).
+[`Parameter` arguments]({{config.base_url}}/tasks#parameters-parameters).
 
 #### `ChainObject`
 

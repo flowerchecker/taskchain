@@ -12,7 +12,7 @@ from typing import Union, Dict, Iterable, Any
 import yaml
 
 from .parameter import ParameterObject
-from .utils.clazz import find_and_instancelize_clazz, instancelize_clazz
+from .utils.clazz import find_and_instantiate_clazz, instantiate_clazz
 from .utils.data import search_and_replace_placeholders
 from .utils.iter import list_or_str_to_list
 
@@ -222,7 +222,7 @@ class Config(dict):
             return
 
         def _instancelize_clazz(clazz, args, kwargs):
-            obj = instancelize_clazz(clazz, args, kwargs)
+            obj = instantiate_clazz(clazz, args, kwargs)
             if not isinstance(obj, ParameterObject):
                 LOGGER.warning(f'Object `{obj}` in config `{self}` is not instance of ParameterObject')
             if not hasattr(obj, 'repr'):
@@ -230,7 +230,7 @@ class Config(dict):
             return obj
 
         for key, value in self._data.items():
-            self._data[key] = find_and_instancelize_clazz(value, instancelize_clazz_fce=_instancelize_clazz)
+            self._data[key] = find_and_instantiate_clazz(value, instancelize_clazz_fce=_instancelize_clazz)
 
     def chain(self, parameter_mode=True, **kwargs):
         """ Create chain from this config """

@@ -12,7 +12,7 @@ import pandas as pd
 
 from .data import InMemoryData
 from .config import Config
-from .task import Task, find_task_full_name, InputTasks
+from .task import Task, _find_task_full_name, InputTasks
 from .parameter import AbstractParameter, InputTaskParameter
 from taskchain.utils.clazz import get_classes_by_import_string
 from taskchain.utils.iter import list_or_str_to_list
@@ -22,6 +22,10 @@ log_handler.setLevel(logging.WARNING)
 
 
 class ChainObject:
+    """
+    If ParameterObject inherits this class, chain call `init_chain` on initialization and allow
+    object to access whole chain.
+    """
 
     @abc.abstractmethod
     def init_chain(self, chain):
@@ -29,11 +33,15 @@ class ChainObject:
 
 
 class Chain(dict):
+    """
+    Chain takes a config, recursively load prerequisite configs, initialize tasks connect them to DAG vie input tasks.
+    """
 
     log_handler = log_handler
 
     @classmethod
     def set_log_level(cls, level):
+        """ Set log level to log handler responsible for console output of task loggers. """
         Chain.log_handler.setLevel(level)
 
     def __init__(self, config: Config,
@@ -63,10 +71,12 @@ class Chain(dict):
         return f'<chain for config `{self._base_config}`>'
 
     def _repr_markdown_(self):
+        """ Nice display in jupyter notebooks. """
         return self.tasks_df[['name', 'group', 'namespace', 'computed']].to_markdown()
 
     @property
-    def tasks_df(self):
+    def tasks_df(self) -> pd.DataFrame:
+        """ Dataframe with rows ass all tasks in chain. """
         rows = {}
         for name, task in self.tasks.items():
             rows[name] = {
@@ -83,25 +93,29 @@ class Chain(dict):
         return pd.DataFrame.from_dict(rows, orient='index').sort_values(['namespace', 'group'], na_position='first')
 
     def __getitem__(self, item):
+        """ Get task by name in dict-like fashion. """
         return self.get(item)
 
     def __getattr__(self, item):
+        """ Get task by name as atribute. """
         if item in self:
             return self.get(item)
         return self.__getattribute__(item)
 
     def get(self, item, default=None):
+        """ Get task by name. """
         if default is not None:
             raise ValueError('Default task is not allowed')
-        return self.tasks.get(find_task_full_name(item, self.tasks.keys()))
+        return self.tasks.get(_find_task_full_name(item, self.tasks.keys()))
 
     def __contains__(self, item):
         try:
-            return find_task_full_name(item, self.tasks.keys()) in self.tasks
+            return _find_task_full_name(item, self.tasks.keys()) in self.tasks
         except KeyError:
             return False
 
     def _prepare(self):
+        """ Initialize chain. """
         self._process_config(self._base_config)
         tasks = self._create_tasks(task_registry={} if self._parameter_mode else self._task_registry)
         self._process_dependencies(tasks)
@@ -116,6 +130,7 @@ class Chain(dict):
         self._init_objects()
 
     def _process_config(self, config: Config):
+        """ Look for prerequisite configs, instantiate them and process them recursively. """
         if config.repr_name in self._configs:
             return
         self._configs[config.repr_name] = config
@@ -155,6 +170,7 @@ class Chain(dict):
             self._process_config(used_config)
 
     def _create_tasks(self, task_registry=None) -> Dict[str, Task]:
+        """ Look to configs and instantiate their tasks. """
         tasks = {}
 
         def _register_task(_task: Task, task_name: str):
@@ -164,6 +180,7 @@ class Chain(dict):
             tasks[task_name] = _task
 
         for config in self._configs.values():
+            # first find excluded tasks, then register all other tasks
             excluded_tasks = set()
             for field_name, exclude in [('excluded_tasks', True), ('tasks', False)]:
 
@@ -183,12 +200,19 @@ class Chain(dict):
                                 continue
                             _process_task(task_class)
                     elif issubclass(task_description, Task):
+                        # mainly for testing
                         _process_task(task_description)
                     else:
                         raise ValueError(f'Unknown task description `{task_description}` in config `{config}`')
         return tasks
 
     def _recreate_tasks_with_parameter_config(self, tasks: Dict[str, Task], task_registry: Dict) -> Dict[str, Task]:
+        """
+        Helper function for parameter mode.
+        Take tasks and instantiate them again but with TaskParameterConfig
+        which contain only parameters needed for the tasks and knows all input tasks (new ones)
+        so it can create hash for persistence of task data.
+        """
         new_tasks: Dict[str, Task] = {}
 
         def _get_task(_task_name, _task):
@@ -197,6 +221,7 @@ class Chain(dict):
                     # this is for support of multiple names (through different namespaces paths) of one task
                     new_tasks[_task_name] = new_tasks[_task.fullname]
                 return new_tasks[_task.fullname]
+            # this triggers recursion
             input_tasks = {n: _get_task(n, t) for n, t in _task.input_tasks.items() if isinstance(t, Task)}
             config = TaskParameterConfig(_task, input_tasks)
             new_task = self._create_task(_task.__class__, config, task_registry)
@@ -210,6 +235,10 @@ class Chain(dict):
 
     @staticmethod
     def _create_task(task_class: Type[Task], config: Config, task_registry: Dict = None):
+        """
+        Instantiate task object and save to task registry.
+        If task is in registry already, return it.
+        """
         task = task_class(config)
         task.logger.addHandler(Chain.log_handler)
 
@@ -226,6 +255,7 @@ class Chain(dict):
 
     @staticmethod
     def _process_dependencies(tasks: Dict[str, Task]):
+        """ Process input tasks and inject input task object to tasks. """
         for task_name, task in tasks.items():
             input_tasks = InputTasks()
             for input_task in chain(task.meta.get('input_tasks', []), task.meta.get('parameters', [])):
@@ -247,7 +277,7 @@ class Chain(dict):
                 if input_task_name in input_tasks.keys():
                     raise ValueError(f'Multiple input tasks with same name `{input_task_name}`')
                 try:
-                    found_name = find_task_full_name(input_task_name, tasks, determine_namespace=False)
+                    found_name = _find_task_full_name(input_task_name, tasks, determine_namespace=False)
                     if type(input_task) is str:
                         input_task_name = found_name
                 except KeyError:
@@ -259,6 +289,7 @@ class Chain(dict):
             task.set_input_tasks(input_tasks)
 
     def _build_graph(self):
+        """ Go through task and their input tasks and build nx.DiGraph"""
         self.graph = G = nx.DiGraph()
         G.add_nodes_from(self.tasks.values())
 
@@ -285,12 +316,14 @@ class Chain(dict):
         return self.get(task)
 
     def is_task_dependent_on(self, task: Union[str, Task], dependency_task: Union[str, Task]) -> bool:
+        """ Check whether a task is dependant on dependency task. """
         task = self.get_task(task)
         dependency_task = self.get_task(dependency_task)
 
         return nx.has_path(self.graph, dependency_task, task)
 
     def dependent_tasks(self, task: Union[str, Task], include_self: bool = False) -> Set[Task]:
+        """ Get all tasks which depend ald given task. """
         task = self.get_task(task)
         descendants = nx.descendants(self.graph, task)
         if include_self:
@@ -298,6 +331,7 @@ class Chain(dict):
         return descendants
 
     def required_tasks(self, task: Union[str, Task], include_self: bool = False) -> Set[Task]:
+        """ Get all task which are required fot given task. """
         task = self.get_task(task)
         ancestors = nx.ancestors(self.graph, task)
         if include_self:
@@ -333,6 +367,17 @@ class Chain(dict):
         return self._base_config.name
 
     def draw(self, groups_to_show=None):
+        """
+        Draw graph of tasks. Color is based on tasks' group.
+        Border is based on data state:
+
+        - **none** - is not persisting data (`InMemoryData`)
+        - **dashed** - data not computed
+        - **solid** - data computed
+
+        Args:
+            groups_to_show (str or list[str]): limit drawn tasks to given groups and their neighbours
+        """
         import graphviz as gv
         import seaborn as sns
 
@@ -449,8 +494,10 @@ class TaskParameterConfig(Config):
     Helper config used in parameter mode.
 
     It takes
+
      - instance of Task and create config with only parameters which are used by this task
      - input tasks (already with TaskParameterConfig)
+
     From this data creates unique hash used in persistence
 
     Note: These configs creates a kind of blockchain. Each config is block,
@@ -501,11 +548,27 @@ class TaskParameterConfig(Config):
 
 
 class MultiChain:
+    """
+    Hold multiple chains which share task object,
+    i.e. it can be more memory efficient then dict of chains.
+    Otherwise behaves as dict of chains.
+    """
 
     logger = logging.getLogger('tasks_chain')
 
     @classmethod
     def from_dir(cls, data_dir: Path, dir_path: Path, **kwargs) -> 'MultiChain':
+        """
+        Create MultiConfig from directory of configs.
+
+        Args:
+            data_dir: tasks data persistence path
+            dir_path: directory with configs
+            **kwargs: other arguments passed to Config, e.g. global_vars
+
+        Returns:
+            MultiChain based on all configs in dir
+        """
         configs = []
         for config_file in dir_path.iterdir():
             configs.append(
@@ -514,6 +577,11 @@ class MultiChain:
         return MultiChain(configs)
 
     def __init__(self, configs: Sequence[Config], parameter_mode: bool = True):
+        """
+        Args:
+            configs: list of Config objects from which Chains are created.
+            parameter_mode:
+        """
         self._tasks: Dict[Tuple[str, str], Task] = {}
         self.chains: Dict[str, Chain] = {}
         self._base_configs = configs
@@ -532,16 +600,23 @@ class MultiChain:
         return self.chains[chain_name]
 
     def force(self, tasks: Union[str, Iterable[Union[str, Task]]], **kwargs):
+        """ Pass force to all chains. """
         for chain in self.chains.values():
             chain.force(tasks, **kwargs)
 
     def latest(self, chain_name: str=None):
+        """ Get latest chain based on name (alphabetically last)
+
+        Args:
+            chain_name: return latest chain from chain with name containing `chain_name`
+        """
         for fullname, chain in sorted(self.chains.items(), reverse=True):
             if chain_name is None or chain_name in fullname:
                 return chain
 
     @classmethod
     def set_log_level(cls, level):
+        """ Pass log level to all chains. """
         Chain.log_handler.setLevel(level)
 
     def items(self):

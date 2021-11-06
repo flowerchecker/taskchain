@@ -40,7 +40,15 @@ def parallel_map(fun, iterable, threads=2, desc='Running tasks in parallel.', to
     return [res for _, res in sorted(result, key=lambda ires: ires[0])]
 
 
-def list_or_str_to_list(value: Union[None, List, str]) -> List:
+def list_or_str_to_list(value: Union[None, List[str], str]) -> List[str]:
+    """ Helper function for cases where list of string is expected but single string is also ok.
+
+    Args:
+        value:
+
+    Returns:
+        original list or original string in list
+    """
     if isinstance(value, str):
         return [value]
     return value

@@ -52,7 +52,7 @@ Value returned by `run` method is checked by TaskChain if matches defined type.
 !!! Warning
     Avoid expensive computation or loading data in `__init__`. 
     TaskChain can create task object multiple time and often task is not used at all.
-    Put all expensive operation to `run` method. You can use [`@persistent` decorator](/utils/#persistent-decorator). 
+    Put all expensive operation to `run` method. You can use [`@persistent` decorator]({{config.base_url}}/utils/#persistent-decorator). 
 
 
 ### Task names and groups

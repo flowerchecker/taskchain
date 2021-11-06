@@ -104,7 +104,7 @@ def test_cache_decorator_ignore_params():
         def __init__(self):
             self.cache = InMemoryCache()
 
-        @cached(ignore_params=['parameter_2', 'key_parameter_2'])
+        @cached(ignore_kwargs=['parameter_2', 'key_parameter_2'])
         def cached_method(self, parameter_1, parameter_2, key_parameter_1=10, key_parameter_2=20):
             return parameter_1 + key_parameter_1
 

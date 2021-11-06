@@ -215,9 +215,16 @@ class ParameterRegistry:
 
 
 class ParameterObject(abc.ABC):
+    """
+    Every class used in configs has to be inherit from this class.
+    """
 
     @abc.abstractmethod
     def repr(self) -> str:
+        """
+        Representation which should uniquely describe object,
+        i.e. be based on all arguments of __init__.
+        """
         raise NotImplemented
 
     def __repr__(self):
@@ -256,8 +263,13 @@ class AutoParameterObject(ParameterObject):
 
     @staticmethod
     def ignore_persistence_args() -> List[str]:
+        """ List of __init__ argument names which are ignored in persistence. """
         return ['verbose', 'debug']
 
     @staticmethod
     def dont_persist_default_value_args() -> List[str]:
+        """
+        List of __init__ argument names which are ignored in persistence
+        when they take default value.
+        """
         return []

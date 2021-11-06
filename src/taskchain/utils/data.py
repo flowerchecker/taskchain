@@ -3,6 +3,7 @@ from typing import Generator, Any, Callable, Type, Iterable
 
 
 def traverse(obj: Any) -> Generator:
+    """ Recursively traverse json-like objects and yield all primitive values. """
     if type(obj) in [list, tuple, set]:
         for v in obj:
             yield from traverse(v)
@@ -14,6 +15,14 @@ def traverse(obj: Any) -> Generator:
 
 
 def search_and_apply(obj: Any, fce: Callable, allowed_types: Iterable[Type] = None, filter: Callable = None):
+    """
+    Search in json-like object and apply function on given values.
+    Args:
+        obj: object to traverse
+        fce: function to apply
+        allowed_types: types for which fce should by applied
+        filter: filter function witch determines if fce should be applied
+    """
 
     def _is_valid(v):
         if allowed_types is not None and not any(isinstance(v, t) for t in allowed_types):
@@ -39,6 +48,18 @@ def search_and_apply(obj: Any, fce: Callable, allowed_types: Iterable[Type] = No
 
 
 def search_and_replace_placeholders(obj, replacements):
+    """
+    Search json-like object for placeholders ("{placeholder}") in strings and replace them.
+    String with replaced values are not `str` but `ReprStr` which behaves like normal `str`,
+    however, `__repr__` returns original value with placeholder.
+
+    Args:
+        obj: object to search
+        replacements: object with placeholders as dict keys or attributes
+
+    Returns:
+        changed object
+    """
     def _replace(match):
         placeholder = match.group(1)
         if isinstance(replacements, dict):
@@ -65,6 +86,7 @@ def search_and_replace_placeholders(obj, replacements):
 
 
 class ReprStr(str):
+    """ String witch carry additional string which is used as `__repr__`. """
     def __new__(cls, value, repr_: str):
         s = str.__new__(cls, value)
         s.repr = repr(repr_)

@@ -26,7 +26,8 @@ result = cache.get_or_compute(cache_key, _computation)
 
 Result is loaded from cache if presented or computed and saved in cache.
 
-You can also use `@cached` decorator which can handle creation of cache key automatically from arguments.
+You can also use [`@cached`]({{config.base_url}}/code/utils/#taskchain.cache.cached) 
+decorator which can handle creation of cache key automatically from arguments.
 
 ```python
 from taskchain.cache import JsonCache, cached

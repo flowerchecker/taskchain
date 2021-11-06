@@ -8,7 +8,7 @@ from copy import deepcopy
 from datetime import datetime
 from inspect import isclass
 from pathlib import Path
-from typing import Union, Any, get_type_hints, Type, Dict, Iterable, get_origin
+from typing import Union, Any, get_type_hints, Type, Dict, Iterable, get_origin, List
 
 import taskchain
 from .config import Config
@@ -101,6 +101,9 @@ class MetaDoubleModuleTask(MetaTask):
 
 
 class Task(object, metaclass=MetaTask):
+    """
+    Object representing one computation step in chains.
+    """
 
     def __init__(self, config: Config = None):
         """
@@ -123,9 +126,10 @@ class Task(object, metaclass=MetaTask):
         self.logger = logging.getLogger(f'task_{self.fullname}')
         self.logger.setLevel(logging.DEBUG)
 
-        self.prepare_parameters(config)
+        self._prepare_parameters()
 
-    def prepare_parameters(self, config):
+    def _prepare_parameters(self):
+        """ Create task's parameter registry and load their values from config """
         parameters = self.meta.get('parameters')
         if parameters is not None:
             parameters = [
@@ -138,10 +142,22 @@ class Task(object, metaclass=MetaTask):
 
     @abc.abstractmethod
     def run(self, *args):
+        """
+        Abstract method which is called by a chain when data are needed.
+        This method represents computation.
+
+        Args:
+            *args: can be names of parameters and input tasks.
+            Their values are then provided by the chain.
+        """
         pass
 
     @property
     def data(self) -> Data:
+        """
+        Get data object of this tasks.
+        This also triggers loading or computation of data same as `.value`
+        """
         if hasattr(self, '_data') and self._data is not None:
             return self._data
 
@@ -164,7 +180,7 @@ class Task(object, metaclass=MetaTask):
                 run_result = self.run(*self._get_run_arguments())
                 self.logger.info(f'{self} - run ended')
                 self.logger.removeHandler(data_log_handler)
-                self.process_run_result(run_result)
+                self._process_run_result(run_result)
             except Exception as error:
                 if self._data:
                     self._data.on_run_error()
@@ -174,6 +190,10 @@ class Task(object, metaclass=MetaTask):
         return self._data
 
     def _get_run_arguments(self):
+        """
+        Looks on arguments of `run` method and get values for them.
+        It looks to task's parameters and input tasks.
+        """
         args = []
         for arg, parameter in inspect.signature(self.run).parameters.items():
             if parameter.default != inspect.Parameter.empty:
@@ -192,14 +212,21 @@ class Task(object, metaclass=MetaTask):
             args.append(input_tasks_arg if input_tasks_arg is not NO_VALUE else parameter_arg)
         return args
 
-    # to run from task itself
     def get_data_object(self):
+        """
+        This is meant to be run only from `run` method.
+        Needed when task return Data object directly, e.g. DirData or ContinuesData.
+
+        Returns:
+            Data: object handling data persistence of this task.
+        """
         if not hasattr(self, '_data'):
             raise ValueError('Data object is not initialized, run this only from task')
         return self._data
 
     @property
     def value(self) -> Any:
+        """ Return result of computation. Load persisted data or compute them by `run` method. """
         return self.data.value
 
     def __str__(self):
@@ -220,11 +247,12 @@ class Task(object, metaclass=MetaTask):
         return repr
 
     def get_config(self):
+        """ Return config used to configure this task. """
         return self._config
 
     @property
-    @persistent
     def path(self) -> Path:
+        """ Path where all data of this task are persisted. """
         if self._config.base_dir is None:
             raise ValueError(f'Config `{self._config}` has not base dir set')
         path = self._config.base_dir / self.slugname.replace(':', '/')
@@ -232,6 +260,7 @@ class Task(object, metaclass=MetaTask):
 
     @property
     def _data_without_value(self) -> Data:
+        """ Get data object but avoid loading or computation of data. """
         if hasattr(self, '_data') and self._data is not None:
             return self._data
         data = self.data_class()
@@ -240,21 +269,32 @@ class Task(object, metaclass=MetaTask):
 
     @property
     def has_data(self) -> bool:
+        """ Check if this task has data already computed and persisted. """
         if issubclass(self.data_class, InMemoryData):
             return False
         return self._data_without_value.exists()
 
     @property
     def data_path(self) -> Path:
+        """
+        Path to data.
+        Path can be not existent if data are not yet computed.
+        Returns None if task does not persisting.
+        """
         if issubclass(self.data_class, InMemoryData):
             return None
         return self._data_without_value.path
 
-    def reset_data(self):
-        self._data = None
-        return self
-
     def force(self, delete_data=False):
+        """
+        Switch task to forced state to allow data recomputation.
+        Next time value is requested persisted data are ignored and computation is triggered.
+
+        Args:
+            delete_data (bool): whether persisted data should be immediately deleted from disk.
+        Returns:
+            Task: allows chaining `task.force().value`
+        """
         if delete_data:
             data = self._data_without_value
             if data.exists():
@@ -264,15 +304,15 @@ class Task(object, metaclass=MetaTask):
         self._data = None
         return self
 
-    def stop_forcing(self):
-        self._forced = False
-
     @property
     def is_forced(self):
         return self._forced
 
     @property
     def input_tasks(self) -> 'InputTasks':
+        """
+        Get task's registry which allows access input tasks by name or index.
+        """
         if self._input_tasks is None:
             raise ValueError(f'Input tasks for task `{self}` not initialized')
         return self._input_tasks
@@ -280,7 +320,13 @@ class Task(object, metaclass=MetaTask):
     def set_input_tasks(self, task_map: 'InputTasks'):
         self._input_tasks = task_map
 
-    def process_run_result(self, run_result: Any):
+    def _process_run_result(self, run_result: Any):
+        """
+        Handle result of computation by processing then by data object.
+
+        Args:
+            run_result: return value of run method
+        """
         if isclass(self.data_type) and issubclass(self.data_type, Data) and isinstance(run_result, self.data_type):
             self._data = run_result
             self._init_persistence(self._data)
@@ -298,10 +344,18 @@ class Task(object, metaclass=MetaTask):
 
     @property
     def name_for_persistence(self):
+        """
+        Get unique string representation of this object used in persistence.
+        This value is provided by config.
+
+        Returns:
+            str: hash based on input tasks and parameters in parameter mode, name of config otherwise
+        """
         return self._config.get_name_for_persistence(self)
 
     @property
     def run_info(self) -> Dict:
+        """ Info about last call of `run` method. """
         data = self._data_without_value
         return data.load_run_info()
 
@@ -332,6 +386,12 @@ class Task(object, metaclass=MetaTask):
         self._run_info['started'] = datetime.timestamp(datetime.now())
 
     def save_to_run_info(self, record):
+        """
+        Save information to run info. Should be called from `run` method.
+
+        Args:
+            record: any json-like object
+        """
         if isinstance(record, defaultdict):
             record = dict(record)
         self._run_info['log'].append(record)
@@ -346,7 +406,8 @@ class Task(object, metaclass=MetaTask):
             self._data.save_run_info(self._run_info)
 
     @property
-    def log(self):
+    def log(self) -> Union[None, List[str]]:
+        """ Log (from `self.logger`) from last run as list of rows. """
         data = self._data_without_value
         if data:
             return data.log
@@ -354,20 +415,27 @@ class Task(object, metaclass=MetaTask):
 
 
 class ModuleTask(Task, metaclass=MetaModuleTask):
-
-    @abc.abstractmethod
-    def run(self):
-        pass
+    """
+    Task which group is based on python module name (file with the task)
+    """
 
 
 class DoubleModuleTask(Task, metaclass=MetaDoubleModuleTask):
-
-    @abc.abstractmethod
-    def run(self):
-        pass
+    """
+    Task which groups are based on python module name (file with the task) and package (dir with that file).
+    Full name of the task: `package_name:module_name:task_name`
+    """
 
 
 class InputTasks(dict):
+    """
+    Registry of input tasks.
+    Main feature of this class is that it allow access task in multiple ways:
+
+    - by full name of the task (including namespace and groups)
+    - by shorter name without namespace or groups as long as it is unambiguous
+    - by index, order is given by order in `Meta`
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -382,20 +450,21 @@ class InputTasks(dict):
         return self.get(item)
 
     def get(self, item, default=None):
+        """"""
         if type(item) is int:
             return self.task_list[item]
         if default is not None:
             raise ValueError('Default task is not allowed')
-        return super().get(find_task_full_name(item, self.keys()))
+        return super().get(_find_task_full_name(item, self.keys()))
 
     def __contains__(self, item):
         try:
-            return super().__contains__(find_task_full_name(item, self.keys()))
+            return super().__contains__(_find_task_full_name(item, self.keys()))
         except KeyError:
             return False
 
 
-def find_task_full_name(task_name: str, tasks: Iterable[str], determine_namespace: bool = True) -> str:
+def _find_task_full_name(task_name: str, tasks: Iterable[str], determine_namespace: bool = True) -> str:
     def _task_name_match(name, fullname):
         # remove and check namespaces
         namespace = '::'.join(name.split('::')[:-1])

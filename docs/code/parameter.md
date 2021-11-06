@@ -1,1 +1,1 @@
-::: taskchain.parameter.Parameter
+::: taskchain.parameter

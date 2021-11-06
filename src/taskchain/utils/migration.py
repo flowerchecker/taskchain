@@ -4,6 +4,15 @@ from taskchain.task import Config, InMemoryData
 
 
 def migrate_to_parameter_mode(config: Config, target_dir, dry: bool = True, verbose: bool = True):
+    """
+    Migrate a chain to parameter mode.
+
+    Args:
+        config: config defining the chain
+        target_dir: dir to migrate data to
+        dry: show only info, do not copy data
+        verbose:
+    """
     assert config.base_dir != target_dir, 'target_dir has to be different from configs base_dir'
     old_chain = {
         t.fullname: t

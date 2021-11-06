@@ -23,20 +23,20 @@ python setup.py install
 
 ## Main concepts
 
-- **[task](/tasks)** - one step in computation (data transformation) represented by python class.
+- **[task]({{config.base_url}}/tasks)** - one step in computation (data transformation) represented by python class.
         Every task can define two type of inputs:
-    - **[input tasks](/tasks#input-tasks)** - other task on which the task depends and take their outputs (data)
-    - **[parameter](/tasks#parameters)** - additional values which influence computation 
+    - **[input tasks]({{config.base_url}}/tasks#input-tasks)** - other task on which the task depends and take their outputs (data)
+    - **[parameter]({{config.base_url}}/tasks#parameters)** - additional values which influence computation 
 
-- **pipeline** - *[group of tasks](/tasks/#task-names-and-groups)* which are closely connected and together represent more complex computation,
+- **pipeline** - *[group of tasks]({{config.base_url}}/tasks/#task-names-and-groups)* which are closely connected and together represent more complex computation,
         e.g., project can be split to pipeline for data preparation, 
         pipeline for feature extraction and model training and evaluation.
         Pipelines are only virtual concept and they not have a strict representation in the framework.
 
-- **[chain](/chains)** - instance of pipeline or multiple pipelines, 
+- **[chain]({{config.base_url}}/chains)** - instance of pipeline or multiple pipelines, 
         i.e. tasks connected by their dependencies into *acyclic oriented graph* with all required parameter values  
 
-- **[config](/configs)** - description (usually YAML file) with information needed to instantiate a chain. i.e.:
+- **[config]({{config.base_url}}/configs)** - description (usually YAML file) with information needed to instantiate a chain. i.e.:
     - description of task which should be part of a chain (e.g. pipeline)
     - parameter values needed by these task
     - eventual dependencies on other configs 

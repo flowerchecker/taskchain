@@ -40,7 +40,7 @@ Whole code to create chain object typically looks like this
 Tasks are accessible from a chain by their name ether as attribute `chain.task_name` or 
 as dict key `chain['task_name']`. 
 If there are more tasks of the same name, you can use its full name with
-group or [namespace](/configs#namespaces) or both `chain['namespace::group:task_name'']`
+group or [namespace]({{config.base_url}}/configs#namespaces) or both `chain['namespace::group:task_name'']`
 
 ### List of tasks
 
@@ -132,7 +132,7 @@ chain.my_tasks.force().value
 ```
 
 If data of a task turn out to be faulty, 
-we usually want [force](/code/chain#taskchain.task.chain.Chain.force) recomputation also all dependant tasks in chain.
+we usually want [force]({{config.base_url}}/code/chain#taskchain.task.chain.Chain.force) recomputation also all dependant tasks in chain.
 
 ```python
 chain.force('my_task')
@@ -175,7 +175,7 @@ Here is general location of data computed by a task
 ### Log files
 
 Along the file with computed value, there is `{hash}.run_info.yaml` with run info 
-and `{hash}.log` with task's log output. See more [here](/tasks/#logging).
+and `{hash}.log` with task's log output. See more [here]({{config.base_url}}/tasks/#logging).
 
 ### Human readable files
 
@@ -187,7 +187,7 @@ which creates human-readable symlinks for all tasks in chain. e.g.:
 
 `/path/to/tasks/group_name/task_name/nice_name.pd -> /path/to/tasks/group_name/task_name/a4c5d45a6....pd`
 
-[See more details](/code/chain#taskchain.task.chain.Chain.create_readable_filenames)
+[See more details]({{config.base_url}}/code/chain#taskchain.task.chain.Chain.create_readable_filenames)
 
 
 ## Logging
@@ -250,3 +250,9 @@ This approach is little more comprehensible, but has some disadvantages:
     because same task with same parameters can be defined in many configs  
 - you must be careful with names of your configs, e.g. you cannot rename your configs
 - using context can and probably would break persistence
+
+
+#### Migration to parameter mode
+
+You can migrate to parameter mode later using 
+[`taskchain.utils.task.migration.migrate_to_parameter_mode`]({{config.base_url}}/code/utils/#taskchain.utils.migration.migrate_to_parameter_mode).

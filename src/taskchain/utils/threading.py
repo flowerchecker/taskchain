@@ -1,9 +1,27 @@
+from typing import Callable, Iterable
+
 from .iter import progress_bar
 import asyncio
 import concurrent.futures
 
 
-def parallel_map(fun, iterable, use_tqdm=True, threads=10, desc='Running tasks in parallel.', total=None, sort=True):
+def parallel_map(fun: Callable, iterable: Iterable, threads: int = 10, sort: bool = True,
+                 use_tqdm: bool = True, desc: str = 'Running tasks in parallel.', total: int = None):
+    """
+    Map function to iterable in multiple threads.
+
+    Args:
+        fun: function to apply
+        iterable:
+        threads: number of threads
+        sort: return values in same order as itarable
+        use_tqdm: show progressbar
+        desc: text of progressbar
+        total: size of iterable to allow show better progressbar
+
+    Returns:
+        list: of returned values by fce
+    """
 
     def _fun(i, arg):
         return i, fun(arg)
@@ -29,8 +47,15 @@ def parallel_map(fun, iterable, use_tqdm=True, threads=10, desc='Running tasks i
     ]
 
 
-def parallel_starmap(fun, iterable, use_tqdm=True, threads=10, desc='Running tasks in parallel.', total=None):
+def parallel_starmap(fun: Callable, iterable: Iterable, **kwargs):
+    """
+    Allows use `parallel_map` for function with multiple arguments.
+
+    Args:
+        fun: function with multiple arguments
+        iterable: lists or tuples of arguments
+    """
 
     def _call(d):
         return fun(*d)
-    return parallel_map(_call, iterable, use_tqdm=use_tqdm, threads=threads, desc=desc, total=total)
+    return parallel_map(_call, iterable, **kwargs)

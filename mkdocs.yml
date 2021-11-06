@@ -1,6 +1,7 @@
 site_name: TaskChain
 site_description: Documentation and examples for TaskChain
 site_url: https://flowerchecker.gitlab.io/taskchain/
+base_url: /taskchain
 repo_url: https://github.com/thran/taskchain
 code_url: https://github.com/thran/taskchain/tree/master
 
@@ -35,5 +36,10 @@ plugins:
   - mkdocstrings:
       watch:
         - src/taskchain
+      handlers:
+        python:
+          rendering:
+            show_root_toc_entry: false
+            members_order: source
 
 extra_css: [extra.css]

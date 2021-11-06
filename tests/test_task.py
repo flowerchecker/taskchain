@@ -7,7 +7,7 @@ import pytest
 from taskchain import Task, Config, ModuleTask
 from taskchain.data import JSONData, GeneratedData, InMemoryData
 from taskchain.parameter import Parameter, InputTaskParameter
-from taskchain.task import find_task_full_name
+from taskchain.task import _find_task_full_name
 
 
 class ThisIsSomethingTask(Task):
@@ -458,10 +458,10 @@ def test_optional_input_tasks(tmp_path):
 
 
 def test_find_task_full_name():
-    assert find_task_full_name('a', ['n1::a', 'a']) == 'a'
+    assert _find_task_full_name('a', ['n1::a', 'a']) == 'a'
     with pytest.raises(KeyError):
-        _ = find_task_full_name('a', ['n3::n1::a', 'n3::a'])
-    assert find_task_full_name('n3::a', ['n3::n1::a', 'n3::a']) == 'n3::a'
+        _ = _find_task_full_name('a', ['n3::n1::a', 'n3::a'])
+    assert _find_task_full_name('n3::a', ['n3::n1::a', 'n3::a']) == 'n3::a'
 
 
 def test_in_memory_data(tmp_path):

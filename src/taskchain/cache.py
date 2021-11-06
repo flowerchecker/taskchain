@@ -8,7 +8,7 @@ from hashlib import sha256
 from inspect import signature, Parameter
 from pathlib import Path
 from threading import get_ident
-from typing import Callable, Union, Any
+from typing import Callable, Union, Any, List
 
 import numpy as np
 import pandas as pd
@@ -19,36 +19,55 @@ logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 class Cache(abc.ABC):
+    """ Cache interface. """
 
     @abc.abstractmethod
-    def get_or_compute(self, key: str, computer: Callable, force: bool = False):
+    def get_or_compute(self, key: str, computer: Callable, force: bool = False) -> Any:
+        """
+        Get value for given key if cached or compute and cache it.
+
+        Args:
+            key: key under which value is cached
+            computer: function which returns value if not cached
+            force: recompute value even if it is in cache
+
+        Returns:
+            cached or computed value
+        """
         pass
 
     @abc.abstractmethod
-    def subcache(self, *args):
+    def subcache(self, *args) -> 'Cache':
+        """ Create separate sub-cache of this cache. """
         pass
 
 
 class DummyCache(Cache):
+    """ No caching. """
 
     def get_or_compute(self, key: str, computer: Callable, force: bool = False):
+        """"""
         return computer()
 
     def subcache(self, *args):
+        """"""
         return self
 
 
 class InMemoryCache(Cache):
+    """ Cache only in memory. """
 
     def __init__(self):
         self._memory = defaultdict(dict)
 
     def get_or_compute(self, key: str, computer: Callable, force: bool = False):
+        """"""
         if key not in self._memory[get_ident()] or force:
             self._memory[get_ident()][key] = computer()
         return self._memory[get_ident()][key]
 
     def subcache(self, *args):
+        """"""
         return InMemoryCache()
 
     def __len__(self):
@@ -56,6 +75,8 @@ class InMemoryCache(Cache):
 
 
 class FileCache(Cache):
+    """ General cache for saving values in files. """
+
     def __init__(self, directory: Union[str, Path]):
         self.directory = Path(directory)
         self.directory.mkdir(exist_ok=True, parents=True)
@@ -67,6 +88,7 @@ class FileCache(Cache):
         return directory / f'{key_hash[5:]}.{self.extension}'
 
     def get_or_compute(self, key, computer, force=False):
+        """"""
         filepath = self.filepath(key)
         lock = FileLock(str(filepath) + '.lock')
         with lock:
@@ -95,6 +117,7 @@ class FileCache(Cache):
         pass
 
     def subcache(self, directory: Union[str, Path]):
+        """"""
         return self.__class__(self.directory / directory)
 
     @property
@@ -104,6 +127,7 @@ class FileCache(Cache):
 
 
 class JsonCache(FileCache):
+    """ Cache json-like objects in `.json` files. """
 
     def __init__(self, directory, allow_nones=True):
         super().__init__(directory)
@@ -131,6 +155,7 @@ class JsonCache(FileCache):
 
 
 class DataFrameCache(FileCache):
+    """ Cache pandas DataFrame objects in `.pd` files. """
 
     def save_value(self, filepath: Path, key: str, value: Any):
         value.to_pickle(filepath)
@@ -144,6 +169,7 @@ class DataFrameCache(FileCache):
 
 
 class NumpyArrayCache(FileCache):
+    """ Cache numpy arrays in `.npy` files. """
 
     def save_value(self, filepath: Path, key: str, value: Any):
         np.save(filepath, value)
@@ -162,15 +188,29 @@ class CacheException(Exception):
 
 
 class cached:
+    """
+    Decorator for automatic caching of method results.
+    Decorated method is for given arguments called only once a result is cached.
+    Cache key is automatically constructed based on method arguments.
+    Cache can be defined in decorator or as attribute of object.
+    """
 
-    def __init__(self, cache_object=None, key=None, cache_attr='cache', ignore_params=None):
+    def __init__(self, cache_object: Cache = None, key: Callable = None,
+                 cache_attr: str = 'cache', ignore_kwargs: List[str] = None):
+        """
+        Args:
+            cache_object: Cache used for caching.
+            key: custom function for computing key from arguments
+            cache_attr: if `cache_object` is None, object attribute with this name is used
+            ignore_kwargs: kwargs to ignore in key construction, e.g. `verbose`
+        """
         if callable(cache_object):
             self.method = cache_object
             cache_object = None
         self.cache_object = cache_object
         self.key = key
         self.cache_attr = cache_attr
-        self.ignore_params = ignore_params if ignore_params else []
+        self.ignore_params = ignore_kwargs if ignore_kwargs else []
 
     def __call__(self, method):
         def decorated(obj, *args, force_cache=False, **kwargs):

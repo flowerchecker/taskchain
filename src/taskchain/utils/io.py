@@ -8,6 +8,16 @@ from taskchain.utils.iter import progress_bar
 
 
 def write_jsons(jsons, filename, use_tqdm=True, overwrite=True, nan_to_null=True, **kwargs):
+    """
+    Write json-like object to `.jsonl` file (json lines).
+    Args:
+        jsons (Iterable): Iterable of json-like objects.
+        filename (Path | str):
+        use_tqdm (bool): Show progress bar.
+        overwrite (bool): Overwrite existing file.
+        nan_to_null (bool): Change nan values to nulls.
+        **kwargs: other arguments to tqdm.
+    """
     filename = Path(filename)
     assert not filename.exists() or overwrite, 'File already exists'
     with filename.open('w') as f:
@@ -16,6 +26,17 @@ def write_jsons(jsons, filename, use_tqdm=True, overwrite=True, nan_to_null=True
 
 
 def iter_json_file(filename, use_tqdm=True, **kwargs):
+    """
+    Yield loaded jsons from `.jsonl` file (json lines).
+
+    Args:
+        filename (Path | str):
+        use_tqdm (bool):
+        **kwargs: additional arguments to tqdm
+
+    Returns:
+
+    """
     filename = Path(filename)
     with filename.open() as f:
         for row in progress_bar(f, disable=not use_tqdm, desc=f'Reading from {f.name}', **kwargs):

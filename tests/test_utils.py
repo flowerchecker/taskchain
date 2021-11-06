@@ -3,7 +3,7 @@ from types import ModuleType
 import pytest
 
 from taskchain import Task
-from taskchain.utils.clazz import persistent, import_by_string, find_and_instancelize_clazz, repeat_on_error
+from taskchain.utils.clazz import persistent, import_by_string, find_and_instantiate_clazz, repeat_on_error
 from taskchain.utils.data import traverse, search_and_apply, ReprStr, search_and_replace_placeholders
 
 
@@ -103,12 +103,12 @@ class TestObject:
 
 def test_find_and_instancelize_clazz():
     class_def = {'class': 'tests.test_utils.TestObject', 'args': [1], 'kwargs': {'kwa': 2}}
-    r = find_and_instancelize_clazz(class_def)
+    r = find_and_instantiate_clazz(class_def)
     assert r.a == 1
     assert r.kwa == 2
 
     obj = [class_def, class_def]
-    r = find_and_instancelize_clazz(obj)
+    r = find_and_instantiate_clazz(obj)
     assert r[0].a == 1
     assert r[1].a == 1
     assert r[0].kwa == 2
@@ -116,7 +116,7 @@ def test_find_and_instancelize_clazz():
     assert id(obj) == id(r)
 
     obj = {'a': class_def, 'b': class_def}
-    r = find_and_instancelize_clazz(obj)
+    r = find_and_instantiate_clazz(obj)
     assert r['a'].a == 1
     assert r['b'].a == 1
     assert r['a'].kwa == 2
@@ -128,7 +128,7 @@ def test_find_and_instancelize_clazz():
         'args': [class_def],
         'kwargs': {'kwa': class_def}
     }
-    r = find_and_instancelize_clazz(class_def2)
+    r = find_and_instantiate_clazz(class_def2)
     assert r.a.a == 1
     assert r.kwa.a == 1
     assert r.a.kwa == 2

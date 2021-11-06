@@ -27,6 +27,12 @@ class Meta(dict):
 
 
 class persistent:
+    """
+    Method decorator.
+    Has to be used on decorator without arguments.
+    Saves result in `self.__method_name`
+    and next time does not call decorated method and only return saved value.
+    """
 
     def __init__(self, method):
         self.method = method
@@ -42,8 +48,15 @@ class persistent:
 
 
 class repeat_on_error:
+    """ Method decorator which calls method again on error. """
 
-    def __init__(self, retries=10, waiting_time=1, wait_extension=1):
+    def __init__(self, retries: int = 10, waiting_time: int = 1, wait_extension: float = 1.):
+        """
+        Args:
+            retries: how many times try to call again
+            waiting_time: how many seconds wait before first retry
+            wait_extension: how many times increase waiting time after each retry
+        """
         if callable(retries):
             self.method = retries
             retries = 10
@@ -70,6 +83,7 @@ class repeat_on_error:
 
 
 def inheritors(cls, include_self=True):
+    """ Get all classes inheriting of given class. """
     subclasses = {cls} if include_self else set()
     work = [cls]
     while work:
@@ -128,6 +142,10 @@ def isinstance(obj, clazz):
 
 
 def import_by_string(string: str) -> Union[ModuleType, List[type], type]:
+    """
+    Get member (class, function or module) by import string.
+    String can contain `*` as last part then list of all members in the module is return.
+    """
     parts = string.split('.')
     try:
         return importlib.import_module('.'.join(parts))
@@ -151,6 +169,10 @@ def import_by_string(string: str) -> Union[ModuleType, List[type], type]:
 
 
 def get_classes_by_import_string(string: str, cls: Type[object] = object):
+    """
+    Get all classes inheriting given class and are described by given import string.
+    Wildcard `*` can be used to import all classes in described module.
+    """
     members = import_by_string(string)
     if type(members) is not list:
         members = [members]
@@ -161,34 +183,41 @@ def get_classes_by_import_string(string: str, cls: Type[object] = object):
     return classes
 
 
-def instancelize_clazz(clazz, args, kwargs):
+def instantiate_clazz(clazz, args, kwargs):
+    """ Instantiate class from import string and arguments. """
     cls = import_by_string(clazz)
     obj = cls(*args, **kwargs)
     return obj
 
 
-def find_and_instancelize_clazz(obj, instancelize_clazz_fce=None):
+def find_and_instantiate_clazz(obj, instancelize_clazz_fce=None):
+    """
+    Got through json-like object and find all classes definitions and instantiate them.
+    Class definition is dict with `class` key and optionally `args` and `kwargs` keys.
+    """
+
     if instancelize_clazz_fce is None:
-        instancelize_clazz_fce = instancelize_clazz
+        instancelize_clazz_fce = instantiate_clazz
     if isinstance(obj, dict) and 'class' in obj:
         return instancelize_clazz_fce(
             obj['class'],
-            find_and_instancelize_clazz(obj.get('args', [])),
-            find_and_instancelize_clazz(obj.get('kwargs', {})),
+            find_and_instantiate_clazz(obj.get('args', [])),
+            find_and_instantiate_clazz(obj.get('kwargs', {})),
         )
 
     if type(obj) is list:
         for i, value in enumerate(obj):
-            obj[i] = find_and_instancelize_clazz(value)
+            obj[i] = find_and_instantiate_clazz(value)
 
     if type(obj) is dict:
         for key, value in obj.items():
-            obj[key] = find_and_instancelize_clazz(value)
+            obj[key] = find_and_instantiate_clazz(value)
 
     return obj
 
 
 def object_to_definition(obj):
+    """ Get config definition from class instance. Kind of reverse of `find_and_instantiate_clazz`. """
     result = {
         'class': fullname(obj.__class__),
     }
