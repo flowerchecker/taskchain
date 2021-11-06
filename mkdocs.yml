@@ -16,6 +16,7 @@ nav:
   - Example project:  example.md
   - Utils: utils.md
   - Testing: testing.md
+  - CheatSheet: cheatsheet.md
   - Code Reference:
       - Task: code/task.md
       - Parameter: code/parameter.md
