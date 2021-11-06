@@ -44,7 +44,7 @@ result = my.cached_method(42)
 There are multiple `Cache` classes prepared
 
 - `DummyCache` - no caching
-- `InMemoryCache` - values are cached only in memory, all types allowed
+- `InMemoryCache` - values are cached only in memory, all types are allowed
 - `JsonCache` - saves json-like objects to json
 - `DataFrameCache`
 - `NumpyArrayCache`
@@ -53,15 +53,15 @@ There are multiple `Cache` classes prepared
 
 ## `@persistent` decorator
 
-This decorator can be used on class methods without arguments.
-Result of this method is cached in `self.__method_name` attribute after first call.
-On other calls cached value is return. 
+This decorator can be used on class methods **without arguments**.
+Result of this method is stored in `self.__method_name` attribute after first call.
+On other calls stored value is returned. 
 
 !!! Tip
     You can also combine `@persistent` with `@property` decorator, 
-    just `@property` is before `@persistent`.
+    just make sure that `@property` is before `@persistent`.
 
-This can be useful lazy behaviour of your classes.
+This can be useful in implementation of lazy behaviour of your classes.
 
 !!! Example
     === "lazy solution"
@@ -87,7 +87,7 @@ This can be useful lazy behaviour of your classes.
 
 ## `parallel_map`
 
-You can use `parallel_map` for easy application of threading.
+You can use `parallel_map` for easy utilization of threading.
 
 
 ```python
@@ -104,7 +104,7 @@ def download_urls(urls: list, threads=2):
 ## `@repeat_on_error` decorator
 
 This decorator is useful for calling api or downloading data from internet. 
-It only tries to run a method again if error occurs.
+It tries to run a method again if error occurs.
 
 ```python
 from taskchain.utils.clazz import repeat_on_error

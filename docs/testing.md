@@ -41,9 +41,9 @@ Helper function `create_test_task` create tasks and mocks the context.
 
     ```
 
-## Testing of a part of achain
+## Testing of a part of a chain
 
-You can also test more task together. 
+You can also test more tasks together. 
 Class `TestChain` creates chain where some tasks are mocked, 
 i.e. their values are not computed but provided on creation of test chain.
 

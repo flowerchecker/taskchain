@@ -28,7 +28,7 @@ parameter: value
 
 parameter_object:
   class: path.to.class
-  argas:
+  args:
     - arg1
     - arg2
   kwargs:
@@ -49,7 +49,8 @@ chain = Config(
     global_vars=config,
 ).chain()
 chain.set_log_level('DEBUG')
-chain.tasks_df    # all tasks
+
+chain.tasks_df
 chain.draw()
 chain.force('my_task', delete_data=True)
 ```

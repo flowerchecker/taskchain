@@ -5,3 +5,11 @@
 .md-typeset .highlight code {
     color: #36464e
 }
+
+.admonition {
+    font-size: .8rem !important;
+}
+
+ul li {
+    margin-bottom: 0 !important;
+}

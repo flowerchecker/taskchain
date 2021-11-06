@@ -7,8 +7,8 @@ and try to show its main features and constructions.
 This project allows quick hands-on experience 
 and can serve as template for new projects. You can start by running [this notebook]({{config.code_url}}/example/scripts/introduction.ipynb). 
 
-Keep in mind, that goal of project is showcase of various features,
-so chosen solutions for given problems in not always optimal.
+Keep in mind, that goal of the project is showcase of various features,
+so chosen solutions for given problems are not always optimal.
 
 
 ## Install
@@ -35,7 +35,7 @@ Project is to split to 3 pipelines
 [configs]({{config.code_url}}/example/configs/movies),
 [notebook]({{config.code_url}}/example/scripts/movies.ipynb)
 
-This pipeline has the following function
+This pipeline has the following functions
 
 - load movies data
 - filter them
@@ -48,8 +48,8 @@ This pipeline has the following function
 [configs]({{config.code_url}}/example/configs/features),
 [notebook]({{config.code_url}}/example/scripts/features.ipynb)
 
-This pipeline build on movie pipeline and has the following function
-
+This pipeline build on movie pipeline and has the following functions
+    
 - select the most relevant actors and directors (to use them as features)
 - prepare all features - year, duration, and features based on movie's genres, countries, actors and directors (binary features) 
 - select requested feature types
@@ -60,7 +60,7 @@ This pipeline build on movie pipeline and has the following function
 [configs]({{config.code_url}}/example/configs/rating_model),
 [notebook]({{config.code_url}}/example/scripts/rating_model.ipynb)
 
-This pipeline build on features pipeline and has the following function
+This pipeline build on features pipeline and has the following functions
 
 - create training and eval data from features
 - train a mode - models are defined [here]({{config.code_url}}/example/src/movie_ratings/models)

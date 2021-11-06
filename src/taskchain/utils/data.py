@@ -21,7 +21,7 @@ def search_and_apply(obj: Any, fce: Callable, allowed_types: Iterable[Type] = No
         obj: object to traverse
         fce: function to apply
         allowed_types: types for which fce should by applied
-        filter: filter function witch determines if fce should be applied
+        filter: filter function which determines if fce should be applied
     """
 
     def _is_valid(v):
@@ -86,7 +86,7 @@ def search_and_replace_placeholders(obj, replacements):
 
 
 class ReprStr(str):
-    """ String witch carry additional string which is used as `__repr__`. """
+    """ String which carry additional string which is used as `__repr__`. """
     def __new__(cls, value, repr_: str):
         s = str.__new__(cls, value)
         s.repr = repr(repr_)

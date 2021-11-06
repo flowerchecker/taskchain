@@ -2,9 +2,6 @@
 
 [Documentation](https://flowerchecker.gitlab.io/taskchain/)
 
-## Docs
-https://flowerchecker.gitlab.io/taskchain/
-
 
 ## Install
 
