@@ -64,12 +64,20 @@ make publish
 #### Develop docs
 run server which dynamically serves docs web.
 ```bash
-mkdocs serve
+make docs-develop
 ```
 
 #### Build docs
 
-Create documentation as static files. Used automatically by GitLab CI.
+Create documentation as static files. 
 ```bash
-mkdocs build --strict --verbose
+make docs-build
+```
+
+
+#### Build docs
+
+Builds documentation and deploys it to GitHub Pages
+```bash
+make make docs-publish
 ```
