@@ -1,7 +1,7 @@
 # Movie ratings - TaskChain example project
 
 ## Docs
-https://flowerchecker.gitlab.io/taskchain/example/
+https://flowerchecker.github.io/taskchain/example/
 
 ## Install
 

@@ -25,3 +25,6 @@ docs-develop:
 
 docs-build:
 	mkdocs build --verbose --site-dir public
+
+docs-publish:
+	mkdocs gh-deploy

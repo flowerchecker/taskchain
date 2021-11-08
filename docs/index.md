@@ -23,7 +23,7 @@ pip install taskchain
 #### From source
 
 ```bash
-git clone https://github.com/thran/taskchain
+git clone https://github.com/flowerchecker/taskchain
 cd taskchain
 python setup.py install
 ```

@@ -13,8 +13,8 @@ setuptools.setup(
     description='Utility for running data and ML pipelines',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/thran/taskchain',
-    download_url=f'https://github.com/thran/taskchain/archive/refs/tags/{VERSION}.tar.gz',
+    url='https://github.com/flowerchecker/taskchain',
+    download_url=f'https://github.com/flowerchecker/taskchain/archive/refs/tags/{VERSION}.tar.gz',
     packages=setuptools.find_packages('src'),
     package_dir={'': 'src'},
     classifiers=[

@@ -11,7 +11,7 @@ setuptools.setup(
     description="Example project using TaskChain",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://gitlab.org/flowerchecker/taskchain/-/tree/master/example",
+    url="https://github.com/flowerchecker/taskchain/tree/master/example",
     packages=setuptools.find_packages('src'),
     package_dir={'': 'src'},
     classifiers=[
