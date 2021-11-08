@@ -1,72 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/chains/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/chains/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/cheatsheet/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/cheatsheet/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/configs/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/configs/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/example/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/example/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/tasks/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/tasks/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/testing/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/testing/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/utils/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/utils/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/code/chain/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/code/chain/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/code/config/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/code/config/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/code/parameter/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/code/parameter/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/code/task/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/code/task/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/code/testing/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/code/testing/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://flowerchecker.gitlab.io/taskchain/code/utils/</loc>
+         <loc>https://flowerchecker.github.io/taskchain/code/utils/</loc>
          <lastmod>2021-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
