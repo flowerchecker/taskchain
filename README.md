@@ -24,6 +24,8 @@ python setup.py develop
 - remove redundant module `taskchain.task`
 - add support for task exclusion, just use `exluded_tasks` in your config
 - add tools for testing, check `taskchain.utils.testing`
+- finish documentation
+- remove some redundant methods
 
 #### 1.1.1
 - improve chain representation in jupyter
