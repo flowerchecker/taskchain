@@ -1,0 +1,2053 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation and examples for TaskChain">
+      
+      
+      
+      
+        <link rel="canonical" href="https://flowerchecker.gitlab.io/taskchain/code/chain/">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.0.6">
+    
+    
+      
+        <title>Chain - TaskChain</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.2c0c5eaf.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.7fa14f5b.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../extra.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#taskchain.chain.Chain" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TaskChain" class="md-header__button md-logo" aria-label="TaskChain" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TaskChain
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chain
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="md-header__options">
+      
+    </div>
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/flowerchecker/taskchain/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TaskChain" class="md-nav__button md-logo" aria-label="TaskChain" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    TaskChain
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/flowerchecker/taskchain/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tasks/" class="md-nav__link">
+        Tasks
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configs/" class="md-nav__link">
+        Configs
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chains/" class="md-nav__link">
+        Chains
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../example/" class="md-nav__link">
+        Example project
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../utils/" class="md-nav__link">
+        Utils
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../testing/" class="md-nav__link">
+        Testing
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cheatsheet/" class="md-nav__link">
+        CheatSheet
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" checked>
+      
+      <label class="md-nav__link" for="__nav_9">
+        Code Reference
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Code Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Code Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../task/" class="md-nav__link">
+        Task
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parameter/" class="md-nav__link">
+        Parameter
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
+        Config
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Chain
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Chain
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain" class="md-nav__link">
+    Chain
+  </a>
+  
+    <nav class="md-nav" aria-label="Chain">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.tasks_df" class="md-nav__link">
+    tasks_df
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.set_log_level" class="md-nav__link">
+    set_log_level()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.__getitem__" class="md-nav__link">
+    __getitem__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.__getattr__" class="md-nav__link">
+    __getattr__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.get" class="md-nav__link">
+    get()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.is_task_dependent_on" class="md-nav__link">
+    is_task_dependent_on()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.dependent_tasks" class="md-nav__link">
+    dependent_tasks()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.required_tasks" class="md-nav__link">
+    required_tasks()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.force" class="md-nav__link">
+    force()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.draw" class="md-nav__link">
+    draw()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.create_readable_filenames" class="md-nav__link">
+    create_readable_filenames()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.chain.ChainObject" class="md-nav__link">
+    ChainObject
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.chain.MultiChain" class="md-nav__link">
+    MultiChain
+  </a>
+  
+    <nav class="md-nav" aria-label="MultiChain">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.MultiChain.from_dir" class="md-nav__link">
+    from_dir()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.MultiChain.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.MultiChain.force" class="md-nav__link">
+    force()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.MultiChain.latest" class="md-nav__link">
+    latest()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.MultiChain.set_log_level" class="md-nav__link">
+    set_log_level()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.chain.TaskParameterConfig" class="md-nav__link">
+    TaskParameterConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="TaskParameterConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.TaskParameterConfig.repr_name" class="md-nav__link">
+    repr_name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.TaskParameterConfig.repr_name_without_namespace" class="md-nav__link">
+    repr_name_without_namespace
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.TaskParameterConfig.get_name_for_persistence" class="md-nav__link">
+    get_name_for_persistence()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.TaskParameterConfig.get_original_config" class="md-nav__link">
+    get_original_config()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
+        Utils
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        Testing
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain" class="md-nav__link">
+    Chain
+  </a>
+  
+    <nav class="md-nav" aria-label="Chain">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.tasks_df" class="md-nav__link">
+    tasks_df
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.set_log_level" class="md-nav__link">
+    set_log_level()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.__getitem__" class="md-nav__link">
+    __getitem__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.__getattr__" class="md-nav__link">
+    __getattr__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.get" class="md-nav__link">
+    get()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.is_task_dependent_on" class="md-nav__link">
+    is_task_dependent_on()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.dependent_tasks" class="md-nav__link">
+    dependent_tasks()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.required_tasks" class="md-nav__link">
+    required_tasks()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.force" class="md-nav__link">
+    force()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.draw" class="md-nav__link">
+    draw()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.Chain.create_readable_filenames" class="md-nav__link">
+    create_readable_filenames()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.chain.ChainObject" class="md-nav__link">
+    ChainObject
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.chain.MultiChain" class="md-nav__link">
+    MultiChain
+  </a>
+  
+    <nav class="md-nav" aria-label="MultiChain">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.MultiChain.from_dir" class="md-nav__link">
+    from_dir()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.MultiChain.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.MultiChain.force" class="md-nav__link">
+    force()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.MultiChain.latest" class="md-nav__link">
+    latest()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.MultiChain.set_log_level" class="md-nav__link">
+    set_log_level()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.chain.TaskParameterConfig" class="md-nav__link">
+    TaskParameterConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="TaskParameterConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.TaskParameterConfig.repr_name" class="md-nav__link">
+    repr_name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.TaskParameterConfig.repr_name_without_namespace" class="md-nav__link">
+    repr_name_without_namespace
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.TaskParameterConfig.get_name_for_persistence" class="md-nav__link">
+    get_name_for_persistence()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.chain.TaskParameterConfig.get_original_config" class="md-nav__link">
+    get_original_config()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/flowerchecker/taskchain/edit/master/docs/code/chain.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  <h1>Chain</h1>
+                
+                <div class="doc doc-object doc-module">
+
+
+    <div class="doc doc-contents first">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="taskchain.chain.Chain" class="doc doc-heading">
+        <code>
+Chain        </code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Chain takes a config, recursively load prerequisite configs, initialize tasks connect them to DAG vie input tasks.</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="taskchain.chain.Chain.tasks_df" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">tasks_df</span><span class="p">:</span> <span class="n">DataFrame</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Dataframe with rows ass all tasks in chain. </p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.Chain.set_log_level" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">set_log_level</span><span class="p">(</span><span class="n">level</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Set log level to log handler responsible for console output of task loggers. </p>
+
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">set_log_level</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Set log level to log handler responsible for console output of task loggers. &quot;&quot;&quot;</span>
+    <span class="n">Chain</span><span class="o">.</span><span class="n">log_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.Chain.__getitem__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Get task by name in dict-like fashion. </p>
+
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get task by name in dict-like fashion. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.Chain.__getattr__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Get task by name as atribute. </p>
+
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get task by name as atribute. &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.Chain.get" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Get task by name. </p>
+
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get task by name. &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Default task is not allowed&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">_find_task_full_name</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.Chain.is_task_dependent_on" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_task_dependent_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">dependency_task</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Check whether a task is dependant on dependency task. </p>
+
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">is_task_dependent_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Task</span><span class="p">],</span> <span class="n">dependency_task</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Task</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Check whether a task is dependant on dependency task. &quot;&quot;&quot;</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_task</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+    <span class="n">dependency_task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_task</span><span class="p">(</span><span class="n">dependency_task</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">has_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">dependency_task</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.Chain.dependent_tasks" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">dependent_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">include_self</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Get all tasks which depend ald given task. </p>
+
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">dependent_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Task</span><span class="p">],</span> <span class="n">include_self</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Task</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot; Get all tasks which depend ald given task. &quot;&quot;&quot;</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_task</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+    <span class="n">descendants</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">descendants</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">include_self</span><span class="p">:</span>
+        <span class="n">descendants</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">descendants</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.Chain.required_tasks" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">required_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">include_self</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Get all task which are required fot given task. </p>
+
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">required_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Task</span><span class="p">],</span> <span class="n">include_self</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Task</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot; Get all task which are required fot given task. &quot;&quot;&quot;</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_task</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+    <span class="n">ancestors</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">ancestors</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">include_self</span><span class="p">:</span>
+        <span class="n">ancestors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ancestors</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.Chain.force" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">force</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">,</span> <span class="n">recompute</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">delete_data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Force recomputation of of given tasks and all dependant tasks.
+If either additional argument is used, recomputation must be done manually,
+e.g. by calling <code>chain.my_task.value</code> for each task.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>tasks</code></td>
+        <td><code>Union[str, taskchain.task.Task, Iterable[Union[str, taskchain.task.Task]]]</code></td>
+        <td><p>task as objects or names or list of them</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>recompute</code></td>
+        <td></td>
+        <td><p>automatically recompute all forced tasks</p></td>
+        <td><code>False</code></td>
+      </tr>
+      <tr>
+        <td><code>delete_data</code></td>
+        <td></td>
+        <td><p>also delete persisted data of forced tasks</p></td>
+        <td><code>False</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">force</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Task</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Task</span><span class="p">]]],</span> <span class="n">recompute</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">delete_data</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Force recomputation of of given tasks and all dependant tasks.</span>
+<span class="sd">    If either additional argument is used, recomputation must be done manually,</span>
+<span class="sd">    e.g. by calling `chain.my_task.value` for each task.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tasks: task as objects or names or list of them</span>
+<span class="sd">        recompute: automatically recompute all forced tasks</span>
+<span class="sd">        delete_data: also delete persisted data of forced tasks</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">Task</span><span class="p">):</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">tasks</span><span class="p">]</span>
+    <span class="n">forced_tasks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
+        <span class="n">forced_tasks</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependent_tasks</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">include_self</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">forced_tasks</span><span class="p">:</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">force</span><span class="p">(</span><span class="n">delete_data</span><span class="o">=</span><span class="n">delete_data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">recompute</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">forced_tasks</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">value</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.Chain.draw" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups_to_show</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Draw graph of tasks. Color is based on tasks' group.
+Border is based on data state:</p>
+<ul>
+<li><strong>none</strong> - is not persisting data (<code>InMemoryData</code>)</li>
+<li><strong>dashed</strong> - data not computed</li>
+<li><strong>solid</strong> - data computed</li>
+</ul>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>groups_to_show</code></td>
+        <td><code>str or list[str]</code></td>
+        <td><p>limit drawn tasks to given groups and their neighbours</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups_to_show</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draw graph of tasks. Color is based on tasks&#39; group.</span>
+<span class="sd">    Border is based on data state:</span>
+
+<span class="sd">    - **none** - is not persisting data (`InMemoryData`)</span>
+<span class="sd">    - **dashed** - data not computed</span>
+<span class="sd">    - **solid** - data computed</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        groups_to_show (str or list[str]): limit drawn tasks to given groups and their neighbours</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">graphviz</span> <span class="k">as</span> <span class="nn">gv</span>
+    <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+    <span class="n">groups_to_show</span> <span class="o">=</span> <span class="n">list_or_str_to_list</span><span class="p">(</span><span class="n">groups_to_show</span><span class="p">)</span>
+
+    <span class="n">node_attr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="s1">&#39;width&#39;</span><span class="p">:</span> <span class="s1">&#39;2&#39;</span><span class="p">}</span>
+    <span class="n">graph_attr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;splines&#39;</span><span class="p">:</span> <span class="s1">&#39;ortho&#39;</span><span class="p">}</span>
+    <span class="n">edge_attr</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">groups</span> <span class="o">=</span> <span class="nb">list</span><span class="p">({(</span><span class="n">n</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span><span class="o">.</span><span class="n">namespace</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">group</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">})</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s1">&#39;pastel&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span><span class="o">.</span><span class="n">as_hex</span><span class="p">()</span>
+
+    <span class="n">G</span> <span class="o">=</span> <span class="n">gv</span><span class="o">.</span><span class="n">Digraph</span><span class="p">(</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span>
+        <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;dot&#39;</span><span class="p">,</span>
+        <span class="n">graph_attr</span><span class="o">=</span><span class="n">graph_attr</span><span class="p">,</span>
+        <span class="n">node_attr</span><span class="o">=</span><span class="n">node_attr</span><span class="p">,</span>
+        <span class="n">edge_attr</span><span class="o">=</span><span class="n">edge_attr</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_is_node_in_groups</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">groups_to_show</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">group</span> <span class="ow">in</span> <span class="n">groups_to_show</span>
+
+    <span class="n">nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_is_node_in_groups</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="n">_is_node_in_groups</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_get_slugname</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">slugname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">#</span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span><span class="o">.</span><span class="n">get_name_for_persistence</span><span class="p">(</span><span class="n">task</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">groups</span><span class="o">.</span><span class="n">index</span><span class="p">((</span><span class="n">node</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span><span class="o">.</span><span class="n">namespace</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">group</span><span class="p">))]</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;filled&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">has_data</span> <span class="ow">or</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">data_class</span><span class="p">,</span> <span class="n">InMemoryData</span><span class="p">)):</span>
+            <span class="n">style</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;&lt;&lt;FONT POINT-SIZE=&#39;10&#39;&gt;</span><span class="si">{</span><span class="s1">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">fullname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2">&lt;/FONT&gt; &lt;BR/&gt; </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">fullname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&gt;&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;fillcolor&#39;</span><span class="p">:</span> <span class="n">color</span><span class="p">,</span>
+            <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="n">color</span> <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">data_class</span><span class="p">,</span> <span class="n">InMemoryData</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;black&#39;</span> <span class="p">,</span>
+            <span class="s1">&#39;style&#39;</span><span class="p">:</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">style</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_node_in_groups</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+            <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;note&#39;</span>
+
+        <span class="n">G</span><span class="o">.</span><span class="n">node</span><span class="p">(</span>
+            <span class="n">_get_slugname</span><span class="p">(</span><span class="n">node</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">attrs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">nodes</span> <span class="ow">and</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+            <span class="n">G</span><span class="o">.</span><span class="n">edge</span><span class="p">(</span><span class="n">_get_slugname</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">_get_slugname</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">G</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.Chain.create_readable_filenames" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_readable_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">keep_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Create human readable symlink to data of tasks in the chain.
+Symlink is in same directory as data, i.e. in directory with all task's data.
+Name of link is taken from
+    - parameter
+    - task's config, parameter <code>human_readable_data_name</code>
+    - name of task's config</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>groups</code></td>
+        <td><code>optional</code></td>
+        <td><p>name of group or list of names of groups, for which should be symlinks created</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>name</code></td>
+        <td><code>optional</code></td>
+        <td><p>name of links</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>verbose</code></td>
+        <td></td>
+        <td></td>
+        <td><code>False</code></td>
+      </tr>
+      <tr>
+        <td><code>keep_existing</code></td>
+        <td></td>
+        <td><p>rewrite link if link already exists</p></td>
+        <td><code>False</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_readable_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">keep_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create human readable symlink to data of tasks in the chain.</span>
+<span class="sd">    Symlink is in same directory as data, i.e. in directory with all task&#39;s data.</span>
+<span class="sd">    Name of link is taken from</span>
+<span class="sd">        - parameter</span>
+<span class="sd">        - task&#39;s config, parameter `human_readable_data_name`</span>
+<span class="sd">        - name of task&#39;s config</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        groups (optional): name of group or list of names of groups, for which should be symlinks created</span>
+<span class="sd">        name (optional): name of links</span>
+<span class="sd">        verbose:</span>
+<span class="sd">        keep_existing: rewrite link if link already exists</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">symlink_actions</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="n">list_or_str_to_list</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">task_name</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">groups</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">task</span><span class="o">.</span><span class="n">group</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">task</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">an</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">sp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_softlink_to_task_data</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">keep_existing</span><span class="o">=</span><span class="n">keep_existing</span><span class="p">)</span>
+        <span class="n">symlink_actions</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">an</span><span class="p">,</span> <span class="n">sp</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">actions</span> <span class="ow">in</span> <span class="n">symlink_actions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">symlink_path</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;   </span><span class="si">{</span><span class="n">action_name</span><span class="si">}</span><span class="s1"> link to </span><span class="si">{</span><span class="n">symlink_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="taskchain.chain.ChainObject" class="doc doc-heading">
+        <code>
+ChainObject        </code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>If ParameterObject inherits this class, chain call <code>init_chain</code> on initialization and allow
+object to access whole chain.</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="taskchain.chain.MultiChain" class="doc doc-heading">
+        <code>
+MultiChain        </code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Hold multiple chains which share task object,
+i.e. it can be more memory efficient then dict of chains.
+Otherwise behaves as dict of chains.</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.MultiChain.from_dir" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">from_dir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">dir_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Create MultiConfig from directory of configs.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>data_dir</code></td>
+        <td><code>Path</code></td>
+        <td><p>tasks data persistence path</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>dir_path</code></td>
+        <td><code>Path</code></td>
+        <td><p>directory with configs</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>**kwargs</code></td>
+        <td></td>
+        <td><p>other arguments passed to Config, e.g. global_vars</p></td>
+        <td><code>{}</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>MultiChain</code></td>
+      <td><p>MultiChain based on all configs in dir</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">from_dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">dir_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;MultiChain&#39;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create MultiConfig from directory of configs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_dir: tasks data persistence path</span>
+<span class="sd">        dir_path: directory with configs</span>
+<span class="sd">        **kwargs: other arguments passed to Config, e.g. global_vars</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        MultiChain based on all configs in dir</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">configs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">config_file</span> <span class="ow">in</span> <span class="n">dir_path</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+        <span class="n">configs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">Config</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">config_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">MultiChain</span><span class="p">(</span><span class="n">configs</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.MultiChain.__init__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configs</span><span class="p">,</span> <span class="n">parameter_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>configs</code></td>
+        <td><code>Sequence[taskchain.config.Config]</code></td>
+        <td><p>list of Config objects from which Chains are created.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>parameter_mode</code></td>
+        <td><code>bool</code></td>
+        <td></td>
+        <td><code>True</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Config</span><span class="p">],</span> <span class="n">parameter_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        configs: list of Config objects from which Chains are created.</span>
+<span class="sd">        parameter_mode:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Task</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">chains</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Chain</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_base_configs</span> <span class="o">=</span> <span class="n">configs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">parameter_mode</span> <span class="o">=</span> <span class="n">parameter_mode</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_prepare</span><span class="p">()</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.MultiChain.force" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">force</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Pass force to all chains. </p>
+
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">force</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Task</span><span class="p">]]],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Pass force to all chains. &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chains</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">chain</span><span class="o">.</span><span class="n">force</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.MultiChain.latest" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chain_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Get latest chain based on name (alphabetically last)</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>chain_name</code></td>
+        <td><code>str</code></td>
+        <td><p>return latest chain from chain with name containing <code>chain_name</code></p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chain_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get latest chain based on name (alphabetically last)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        chain_name: return latest chain from chain with name containing `chain_name`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">fullname</span><span class="p">,</span> <span class="n">chain</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chains</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">chain_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">chain_name</span> <span class="ow">in</span> <span class="n">fullname</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">chain</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.MultiChain.set_log_level" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">set_log_level</span><span class="p">(</span><span class="n">level</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Pass log level to all chains. </p>
+
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">set_log_level</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Pass log level to all chains. &quot;&quot;&quot;</span>
+    <span class="n">Chain</span><span class="o">.</span><span class="n">log_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h2 id="taskchain.chain.TaskParameterConfig" class="doc doc-heading">
+        <code>
+TaskParameterConfig        </code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Helper config used in parameter mode.</p>
+<p>It takes</p>
+<ul>
+<li>instance of Task and create config with only parameters which are used by this task</li>
+<li>input tasks (already with TaskParameterConfig)</li>
+</ul>
+<p>From this data creates unique hash used in persistence</p>
+<p>Note: These configs creates a kind of blockchain. Each config is block,
+parameters are content of blocks and input_tasks are dependencies between blocks.
+Change in one config invalidates all dependant configs, which is property desired
+and required for correct functionality of TaskChains data persistence.</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="taskchain.chain.TaskParameterConfig.repr_name" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">repr_name</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Should be unique representation of this config</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="taskchain.chain.TaskParameterConfig.repr_name_without_namespace" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">repr_name_without_namespace</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Unique representation of this config without namespace</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.TaskParameterConfig.get_name_for_persistence" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_name_for_persistence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Used for creating filename in task data persistence, should uniquely define config </p>
+
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_name_for_persistence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_input_task_repr</span><span class="p">(</span><span class="n">_name</span><span class="p">,</span> <span class="n">_task</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">outer_namespace</span> <span class="o">:=</span> <span class="n">task</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span><span class="o">.</span><span class="n">namespace</span><span class="p">:</span>
+            <span class="c1"># remove namespace of this task from task name</span>
+            <span class="k">assert</span> <span class="n">_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">outer_namespace</span><span class="p">)</span>
+            <span class="n">_name</span> <span class="o">=</span> <span class="n">_name</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">outer_namespace</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">_task</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="n">parameter_repr</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">repr</span>
+    <span class="n">input_tasks_repr</span> <span class="o">=</span> <span class="s1">&#39;###&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_get_input_task_repr</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">it</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_tasks</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+    <span class="k">return</span> <span class="n">sha256</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">parameter_repr</span><span class="si">}</span><span class="s1">$$$</span><span class="si">{</span><span class="n">input_tasks_repr</span><span class="si">}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">32</span><span class="p">]</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="taskchain.chain.TaskParameterConfig.get_original_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_original_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Get self of config from which this one is derived </p>
+
+        <details class="quote">
+          <summary>Source code in <code>taskchain/chain.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_original_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_config</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="../config/" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Config
+            </div>
+          </div>
+        </a>
+      
+      
+        <a href="../utils/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Utils
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a1c7c35e.min.js"></script>
+      
+    
+  </body>
+</html>

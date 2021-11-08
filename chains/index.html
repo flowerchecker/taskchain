@@ -1,0 +1,1024 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation and examples for TaskChain">
+      
+      
+      
+      
+        <link rel="canonical" href="https://flowerchecker.gitlab.io/taskchain/chains/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.0.6">
+    
+    
+      
+        <title>Chains - TaskChain</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.2c0c5eaf.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.7fa14f5b.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../extra.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chains" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="TaskChain" class="md-header__button md-logo" aria-label="TaskChain" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TaskChain
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chains
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="md-header__options">
+      
+    </div>
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/flowerchecker/taskchain/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TaskChain" class="md-nav__button md-logo" aria-label="TaskChain" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    TaskChain
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/flowerchecker/taskchain/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tasks/" class="md-nav__link">
+        Tasks
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configs/" class="md-nav__link">
+        Configs
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Chains
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Chains
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#chain-creation" class="md-nav__link">
+    Chain creation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessing-tasks" class="md-nav__link">
+    Accessing tasks
+  </a>
+  
+    <nav class="md-nav" aria-label="Accessing tasks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#list-of-tasks" class="md-nav__link">
+    List of tasks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#draw-tasks-and-dependencies" class="md-nav__link">
+    Draw tasks and dependencies
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-tasks-and-data-access" class="md-nav__link">
+    Run tasks and data access
+  </a>
+  
+    <nav class="md-nav" aria-label="Run tasks and data access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recomputing-data" class="md-nav__link">
+    Recomputing data
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#saved-files" class="md-nav__link">
+    Saved files
+  </a>
+  
+    <nav class="md-nav" aria-label="Saved files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#log-files" class="md-nav__link">
+    Log files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#human-readable-files" class="md-nav__link">
+    Human readable files
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-topics" class="md-nav__link">
+    Advanced topics
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced topics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multichains" class="md-nav__link">
+    MultiChains
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disabling-parameter-mode" class="md-nav__link">
+    Disabling parameter mode
+  </a>
+  
+    <nav class="md-nav" aria-label="Disabling parameter mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#migration-to-parameter-mode" class="md-nav__link">
+    Migration to parameter mode
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example/" class="md-nav__link">
+        Example project
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
+        Utils
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        Testing
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cheatsheet/" class="md-nav__link">
+        CheatSheet
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" >
+      
+      <label class="md-nav__link" for="__nav_9">
+        Code Reference
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Code Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Code Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code/task/" class="md-nav__link">
+        Task
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code/parameter/" class="md-nav__link">
+        Parameter
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code/config/" class="md-nav__link">
+        Config
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code/chain/" class="md-nav__link">
+        Chain
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code/utils/" class="md-nav__link">
+        Utils
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code/testing/" class="md-nav__link">
+        Testing
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#chain-creation" class="md-nav__link">
+    Chain creation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessing-tasks" class="md-nav__link">
+    Accessing tasks
+  </a>
+  
+    <nav class="md-nav" aria-label="Accessing tasks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#list-of-tasks" class="md-nav__link">
+    List of tasks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#draw-tasks-and-dependencies" class="md-nav__link">
+    Draw tasks and dependencies
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-tasks-and-data-access" class="md-nav__link">
+    Run tasks and data access
+  </a>
+  
+    <nav class="md-nav" aria-label="Run tasks and data access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recomputing-data" class="md-nav__link">
+    Recomputing data
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#saved-files" class="md-nav__link">
+    Saved files
+  </a>
+  
+    <nav class="md-nav" aria-label="Saved files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#log-files" class="md-nav__link">
+    Log files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#human-readable-files" class="md-nav__link">
+    Human readable files
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-topics" class="md-nav__link">
+    Advanced topics
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced topics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multichains" class="md-nav__link">
+    MultiChains
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disabling-parameter-mode" class="md-nav__link">
+    Disabling parameter mode
+  </a>
+  
+    <nav class="md-nav" aria-label="Disabling parameter mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#migration-to-parameter-mode" class="md-nav__link">
+    Migration to parameter mode
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/flowerchecker/taskchain/edit/master/docs/chains.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="chains">Chains</h1>
+<p>Chain si where tasks are instantiated, configured, connected together
+and allow to compute and access data.</p>
+<p>Key feature of chain is that data of tasks are saved, 
+i.e. each task is computed only once. 
+Moreover, location of saved data is based only on inputs to computation 
+(input tasks and parameters) and therefore data are shared also between chains.
+In this way, the exactly same computation is never executed twice. </p>
+<h2 id="chain-creation">Chain creation</h2>
+<p>Chain is always <strong>created from a config</strong> which contains all necessary information:</p>
+<ul>
+<li>list of tasks</li>
+<li>parameter values</li>
+<li>dependencies on other configs</li>
+<li>dir, where data are saved to</li>
+</ul>
+<p>Instantiation of a chain is simple as calling <code>config.chain()</code> or <code>Chain(config)</code>.
+Whole code to create chain object typically looks like this</p>
+<div class="admonition example">
+<p class="admonition-title">Chain creation</p>
+<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">chain.py</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">taskchain</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">project</span> <span class="kn">import</span> <span class="n">project_config</span>
+
+<span class="n">chain</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+    <span class="n">project_config</span><span class="o">.</span><span class="n">TASKS_DIR</span><span class="p">,</span>
+    <span class="n">project_config</span><span class="o">.</span><span class="n">CONFIGS_DIR</span> <span class="o">/</span> <span class="s1">&#39;config.yaml&#39;</span><span class="p">,</span>
+    <span class="n">global_vars</span><span class="o">=</span><span class="n">project_config</span>
+<span class="p">)</span><span class="o">.</span><span class="n">chain</span><span class="p">()</span>
+</code></pre></div>
+</div>
+<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">project_config.py</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">REPO_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+
+<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/path/to/project_data/source_data&#39;</span><span class="p">)</span>
+<span class="n">TASKS_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/path/to/project_data/task_data&#39;</span><span class="p">)</span>
+<span class="n">CONFIGS_DIR</span> <span class="o">=</span> <span class="n">REPO_DIR</span> <span class="o">/</span> <span class="s1">&#39;configs&#39;</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="accessing-tasks">Accessing tasks</h2>
+<p>Tasks are accessible from a chain by their name ether as attribute <code>chain.task_name</code> or 
+as dict key <code>chain['task_name']</code>. 
+If there are more tasks of the same name, you can use its full name with
+group or <a href="/taskchain/configs#namespaces">namespace</a> or both <code>chain['namespace::group:task_name']</code>.</p>
+<h3 id="list-of-tasks">List of tasks</h3>
+<p><code>chain.tasks</code> contains dict of all tasks. Keys are <strong>full names</strong> and value are task objects.</p>
+<p>For better overview of all tasks in chain there is <code>chain.tasks_df</code> which contains
+pandas DataFrame with basic information about each task:</p>
+<ul>
+<li>Index is full name of the task</li>
+<li><code>name</code> </li>
+<li><code>group</code> </li>
+<li><code>namespace</code></li>
+<li><code>computed</code> - <code>True</code> when task is computed and output data are saved</li>
+<li><code>data_path</code> - path to data, if data are not computed yet, location is empty</li>
+<li><code>parameters</code> - list of names of input parameters</li>
+<li><code>input_tasks</code> - list of full names of input tasks</li>
+<li><code>config</code> - file name of config which declared this task</li>
+</ul>
+<h3 id="draw-tasks-and-dependencies">Draw tasks and dependencies</h3>
+<p>For more visual overview there is</p>
+<div class="highlight"><pre><span></span><code><span class="n">chain</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</code></pre></div>
+<p><img alt="Graph" src="../images/graph.png" /></p>
+<p>Nodes are tasks, edges dependencies.</p>
+<ul>
+<li><strong>color</strong> is based on tasks' group</li>
+<li><strong>border</strong><ul>
+<li><strong>none</strong> - is not persisting data (<code>InMemoryData</code>) </li>
+<li><strong>dashed</strong> - data not computed </li>
+<li><strong>solid</strong> - data computed </li>
+</ul>
+</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can pass <strong>name of group</strong> or list of groups as argument to show only selected tasks.
+Note, that also neighbours are shown to give context for selected group.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are additional python dependencies: <code>graphviz</code> and <code>seaborn</code>. 
+<div class="highlight"><pre><span></span><code>pip install graphviz seaborn
+</code></pre></div></p>
+</div>
+<h2 id="run-tasks-and-data-access">Run tasks and data access</h2>
+<p>Task object have attribute <code>value</code>.
+So, when <code>task.value</code> is requested one of three thinks happens</p>
+<ul>
+<li>data are not available yet - <strong><code>run</code> method of the task is called and data are saved</strong></li>
+<li>data are already computed and saved on disk - <strong>data are loaded to memory</strong></li>
+<li>data are already in memory - <strong>just return the value</strong></li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Accessing data</p>
+<div class="highlight"><pre><span></span><code><span class="n">requested_data</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">tasks_name</span><span class="o">.</span><span class="n">value</span>
+<span class="n">requested_data</span> <span class="o">=</span> <span class="n">chain</span><span class="p">[</span><span class="s1">&#39;group:task_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+</code></pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Calling run method of a task trigger <code>.value</code> on its input tasks 
+(as long as, you use input_tasks as argument of <code>run</code> method 
+or call <code>.value</code> manually in <code>run</code> method). 
+This process is rucrsive, thus single call of <code>.value</code> can trigger
+loading or computation of many tasks.</p>
+</div>
+<p>You can also access <code>Data</code> object which handle saving and loading data 
+to and from disk by <code>task.data</code></p>
+<h3 id="recomputing-data">Recomputing data</h3>
+<p>Sometimes some persisted data become invalid, e.g. due to change in tasks' logic.
+Both <code>Chain</code> and <code>Task</code> have <code>force</code> method which forces tasks to recompute their data
+instead of loading from disk.</p>
+<p>If you need recompute only one task, you can simply call 
+(note that <code>force</code> return task itself, so you can use it in chain with other commands):</p>
+<div class="highlight"><pre><span></span><code><span class="n">chain</span><span class="o">.</span><span class="n">my_tasks</span><span class="o">.</span><span class="n">force</span><span class="p">()</span><span class="o">.</span><span class="n">value</span>
+</code></pre></div>
+<p>If data of a task turn out to be faulty, 
+we usually want <a href="/taskchain/code/chain#taskchain.task.chain.Chain.force">force</a> recomputation also all dependant tasks in chain.</p>
+<div class="highlight"><pre><span></span><code><span class="n">chain</span><span class="o">.</span><span class="n">force</span><span class="p">(</span><span class="s1">&#39;my_task&#39;</span><span class="p">)</span>
+</code></pre></div>
+<p>Method takes name of a task or list of names of tasks which should be forced.
+These and all dependant tasks are marked as forced and will be recomputed when their value is requested.
+Note, that this "forced" status is lost when chain is recreated.
+If you want to be sure, that all data are recomputed, 
+use <code>recompute=True</code> argument which recompute all forced tasks
+or <code>delete_data=True</code> which delete data of all forced tasks right away.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Be careful with forcing. 
+If you not handle recomputation correctly, your chain can end in incosistent state.
+Using <code>delete_data=True</code> solves this problem 
+but can lead to deletion of "expensive" data.</p>
+</div>
+<h2 id="saved-files">Saved files</h2>
+<p>TaskChain is design to handle saving and loading data itself
+and to minimize accessing files directly.
+Here is general location of data computed by a task</p>
+<p><code>/path/to/tasks_data/group_name/task_name/{hash}.{extension}</code></p>
+<ul>
+<li><code>/path/to/tasks_data</code> is path given in creation of config.</li>
+<li><code>group_name/</code> - data are organized according to tasks groups (usually this is same as pipelines). 
+  If task is in multiple level group <code>group:subgroup</code> path is <code>group/subgroup/</code>.</li>
+<li><code>task_name/</code> ale data generated by this task are in this directory.</li>
+<li><code>{hash}.{extension}</code> is final file (or in some cases directory, e.g. <code>DirData</code>).<ul>
+<li><code>extension</code> is determined by tasks return type, see more <a href="tasks/#data-class">here</a> </li>
+<li><code>hash</code> is computed based on hashes of all input tasks and all parameter values. 
+   I.e. it is unique and determined fully by all inputs going to computation of these data.</li>
+</ul>
+</li>
+</ul>
+<h3 id="log-files">Log files</h3>
+<p>Along the file with computed value, there is <code>{hash}.run_info.yaml</code> with run info 
+and <code>{hash}.log</code> with task's log output. See more <a href="/taskchain/tasks/#logging">here</a>.</p>
+<h3 id="human-readable-files">Human readable files</h3>
+<p>Persisted data are nicely structured in directories based on tasks' names and groups, 
+but names of files are unreadable hashes.
+Data are mostly access through TaskChain, but sometimes it is useful accessed data directly, e.g. copy out final output. 
+To simplify direct access, chain offers method <code>create_readable_filenames</code> 
+which creates human-readable symlinks for all tasks in chain. e.g.:</p>
+<p><code>/path/to/tasks/group_name/task_name/nice_name.pd -&gt; /path/to/tasks/group_name/task_name/a4c5d45a6....pd</code></p>
+<p><code>nice_name</code> is name of task's config by default.</p>
+<p><a href="/taskchain/code/chain#taskchain.chain.Chain.create_readable_filenames">See more details</a>.</p>
+<h2 id="advanced-topics">Advanced topics</h2>
+<h3 id="multichains">MultiChains</h3>
+<p><code>MultiChain</code> is only envelope over multiple chains.
+Advantage over list or dict of <code>Chain</code> objects is that
+<code>MultiChain</code> create chains in such way, that they share identical tasks (with same inputs).
+TaskChain guarantee that identical tasks share data on disk but in this way 
+there is only one instance of the task, i.e. data are shared also in memory.</p>
+<p>You can create multi-chain by passing list of configs. 
+Individual chains can be accessed by config name (usually filename without extension):</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">taskchain</span> <span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">MultiChain</span><span class="p">,</span> <span class="n">Chain</span>
+
+<span class="n">config1</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s1">&#39;/path/to/tasks_data&#39;</span><span class="p">,</span> <span class="s1">&#39;/path/to/configs/config1.yaml&#39;</span><span class="p">)</span>
+<span class="n">config2</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s1">&#39;/path/to/tasks_data&#39;</span><span class="p">,</span> <span class="s1">&#39;/path/to/configs/config2.yaml&#39;</span><span class="p">)</span>
+<span class="n">chains</span> <span class="o">=</span> <span class="n">MultiChain</span><span class="p">([</span><span class="n">config1</span><span class="p">,</span> <span class="n">config2</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span>
+
+<span class="n">chain1</span> <span class="o">=</span> <span class="n">chains</span><span class="o">.</span><span class="n">config1</span>
+<span class="n">chain2</span> <span class="o">=</span> <span class="n">chains</span><span class="p">[</span><span class="s1">&#39;config2&#39;</span><span class="p">]</span>
+<span class="n">chain_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Chain</span><span class="p">]</span> <span class="o">=</span> <span class="n">chains</span><span class="o">.</span><span class="n">chains</span>
+</code></pre></div>
+<p>You can also create multi-chain from all configs in a dir</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">taskchain</span> <span class="kn">import</span> <span class="n">MultiChain</span>
+<span class="n">chains</span> <span class="o">=</span> <span class="n">MultiChain</span><span class="o">.</span><span class="n">from_dir</span><span class="p">(</span>
+    <span class="s1">&#39;/path/to/tasks_data&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;/path/to/configs&#39;</span><span class="p">,</span>
+    <span class="c1"># other kwargs passed to configs such as `global_vars`</span>
+<span class="p">)</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can use multi-chain also <strong>with contexts</strong>, e.g. one config with different contexts.
+However, you have to handle <strong>names of configs</strong> manually (add extra argument <code>name</code> to your configs)
+to avoid name colision in multi-chain.</p>
+</div>
+<h3 id="disabling-parameter-mode">Disabling parameter mode</h3>
+<p>As described above, 
+location of saved files is based only parameters and input tasks
+(which are also determined by parameters). This is called parameter mode.</p>
+<p>You can disable this mode by <code>config.chain(parameter_mode=False)</code>
+this replaces hashes in filenames by config names. 
+This approach is little more comprehensible, but has some disadvantages:</p>
+<ul>
+<li>some computations can be done more time, 
+    because same task with same parameters can be defined in many configs  </li>
+<li>you must be careful with names of your configs, e.g. you cannot rename your configs</li>
+<li>using contexts can and probably would break persistence</li>
+</ul>
+<h4 id="migration-to-parameter-mode">Migration to parameter mode</h4>
+<p>You can migrate to parameter mode later using 
+<a href="/taskchain/code/utils/#taskchain.utils.migration.migrate_to_parameter_mode"><code>taskchain.utils.task.migration.migrate_to_parameter_mode</code></a>.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="../configs/" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Configs
+            </div>
+          </div>
+        </a>
+      
+      
+        <a href="../example/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Example project
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a1c7c35e.min.js"></script>
+      
+    
+  </body>
+</html>

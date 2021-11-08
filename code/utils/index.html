@@ -1,0 +1,2483 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation and examples for TaskChain">
+      
+      
+      
+      
+        <link rel="canonical" href="https://flowerchecker.gitlab.io/taskchain/code/utils/">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.0.6">
+    
+    
+      
+        <title>Utils - TaskChain</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.2c0c5eaf.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.7fa14f5b.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../extra.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#taskchain.cache" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TaskChain" class="md-header__button md-logo" aria-label="TaskChain" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TaskChain
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Utils
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="md-header__options">
+      
+    </div>
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/flowerchecker/taskchain/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TaskChain" class="md-nav__button md-logo" aria-label="TaskChain" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    TaskChain
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/flowerchecker/taskchain/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tasks/" class="md-nav__link">
+        Tasks
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configs/" class="md-nav__link">
+        Configs
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chains/" class="md-nav__link">
+        Chains
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../example/" class="md-nav__link">
+        Example project
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../utils/" class="md-nav__link">
+        Utils
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../testing/" class="md-nav__link">
+        Testing
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cheatsheet/" class="md-nav__link">
+        CheatSheet
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" checked>
+      
+      <label class="md-nav__link" for="__nav_9">
+        Code Reference
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Code Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Code Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../task/" class="md-nav__link">
+        Task
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parameter/" class="md-nav__link">
+        Parameter
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
+        Config
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chain/" class="md-nav__link">
+        Chain
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Utils
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Utils
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.cache" class="md-nav__link">
+    cache
+  </a>
+  
+    <nav class="md-nav" aria-label="cache">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.Cache" class="md-nav__link">
+    Cache
+  </a>
+  
+    <nav class="md-nav" aria-label="Cache">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.Cache.get_or_compute" class="md-nav__link">
+    get_or_compute()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.Cache.subcache" class="md-nav__link">
+    subcache()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.DataFrameCache" class="md-nav__link">
+    DataFrameCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.DummyCache" class="md-nav__link">
+    DummyCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.FileCache" class="md-nav__link">
+    FileCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.InMemoryCache" class="md-nav__link">
+    InMemoryCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.JsonCache" class="md-nav__link">
+    JsonCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.NumpyArrayCache" class="md-nav__link">
+    NumpyArrayCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.cached" class="md-nav__link">
+    cached
+  </a>
+  
+    <nav class="md-nav" aria-label="cached">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.cached.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.utils.clazz" class="md-nav__link">
+    clazz
+  </a>
+  
+    <nav class="md-nav" aria-label="clazz">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.clazz.persistent" class="md-nav__link">
+    persistent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.clazz.repeat_on_error" class="md-nav__link">
+    repeat_on_error
+  </a>
+  
+    <nav class="md-nav" aria-label="repeat_on_error">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.clazz.repeat_on_error.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.utils.io" class="md-nav__link">
+    io
+  </a>
+  
+    <nav class="md-nav" aria-label="io">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.io.write_jsons" class="md-nav__link">
+    write_jsons()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.io.iter_json_file" class="md-nav__link">
+    iter_json_file()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.utils.iter" class="md-nav__link">
+    iter
+  </a>
+  
+    <nav class="md-nav" aria-label="iter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.iter.list_or_str_to_list" class="md-nav__link">
+    list_or_str_to_list()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.utils.migration" class="md-nav__link">
+    migration
+  </a>
+  
+    <nav class="md-nav" aria-label="migration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.migration.migrate_to_parameter_mode" class="md-nav__link">
+    migrate_to_parameter_mode()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.utils.threading" class="md-nav__link">
+    threading
+  </a>
+  
+    <nav class="md-nav" aria-label="threading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.threading.parallel_map" class="md-nav__link">
+    parallel_map()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.threading.parallel_starmap" class="md-nav__link">
+    parallel_starmap()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        Testing
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.cache" class="md-nav__link">
+    cache
+  </a>
+  
+    <nav class="md-nav" aria-label="cache">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.Cache" class="md-nav__link">
+    Cache
+  </a>
+  
+    <nav class="md-nav" aria-label="Cache">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.Cache.get_or_compute" class="md-nav__link">
+    get_or_compute()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.Cache.subcache" class="md-nav__link">
+    subcache()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.DataFrameCache" class="md-nav__link">
+    DataFrameCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.DummyCache" class="md-nav__link">
+    DummyCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.FileCache" class="md-nav__link">
+    FileCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.InMemoryCache" class="md-nav__link">
+    InMemoryCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.JsonCache" class="md-nav__link">
+    JsonCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.NumpyArrayCache" class="md-nav__link">
+    NumpyArrayCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.cached" class="md-nav__link">
+    cached
+  </a>
+  
+    <nav class="md-nav" aria-label="cached">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.cache.cached.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.utils.clazz" class="md-nav__link">
+    clazz
+  </a>
+  
+    <nav class="md-nav" aria-label="clazz">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.clazz.persistent" class="md-nav__link">
+    persistent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.clazz.repeat_on_error" class="md-nav__link">
+    repeat_on_error
+  </a>
+  
+    <nav class="md-nav" aria-label="repeat_on_error">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.clazz.repeat_on_error.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.utils.io" class="md-nav__link">
+    io
+  </a>
+  
+    <nav class="md-nav" aria-label="io">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.io.write_jsons" class="md-nav__link">
+    write_jsons()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.io.iter_json_file" class="md-nav__link">
+    iter_json_file()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.utils.iter" class="md-nav__link">
+    iter
+  </a>
+  
+    <nav class="md-nav" aria-label="iter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.iter.list_or_str_to_list" class="md-nav__link">
+    list_or_str_to_list()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.utils.migration" class="md-nav__link">
+    migration
+  </a>
+  
+    <nav class="md-nav" aria-label="migration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.migration.migrate_to_parameter_mode" class="md-nav__link">
+    migrate_to_parameter_mode()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taskchain.utils.threading" class="md-nav__link">
+    threading
+  </a>
+  
+    <nav class="md-nav" aria-label="threading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.threading.parallel_map" class="md-nav__link">
+    parallel_map()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#taskchain.utils.threading.parallel_starmap" class="md-nav__link">
+    parallel_starmap()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/flowerchecker/taskchain/edit/master/docs/code/utils.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  <h1>Utils</h1>
+                
+                <div class="doc doc-object doc-module">
+
+
+
+<h2 id="taskchain.cache" class="doc doc-heading">
+        <code>taskchain.cache</code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="taskchain.cache.Cache" class="doc doc-heading">
+        <code>
+Cache        </code>
+
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Cache interface. </p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h4 id="taskchain.cache.Cache.get_or_compute" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_or_compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">computer</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Get value for given key if cached or compute and cache it.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>key</code></td>
+        <td><code>str</code></td>
+        <td><p>key under which value is cached</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>computer</code></td>
+        <td><code>Callable</code></td>
+        <td><p>function which returns value if not cached</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>force</code></td>
+        <td><code>bool</code></td>
+        <td><p>recompute value even if it is in cache</p></td>
+        <td><code>False</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Any</code></td>
+      <td><p>cached or computed value</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/cache.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<span class="k">def</span> <span class="nf">get_or_compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">computer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get value for given key if cached or compute and cache it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        key: key under which value is cached</span>
+<span class="sd">        computer: function which returns value if not cached</span>
+<span class="sd">        force: recompute value even if it is in cache</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        cached or computed value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h4 id="taskchain.cache.Cache.subcache" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">subcache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></code>
+
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+      <p>Create separate sub-cache of this cache. </p>
+
+        <details class="quote">
+          <summary>Source code in <code>taskchain/cache.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<span class="k">def</span> <span class="nf">subcache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Cache&#39;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Create separate sub-cache of this cache. &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="taskchain.cache.DataFrameCache" class="doc doc-heading">
+        <code>
+DataFrameCache        </code>
+
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Cache pandas DataFrame objects in <code>.pd</code> files. </p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="taskchain.cache.DummyCache" class="doc doc-heading">
+        <code>
+DummyCache        </code>
+
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>No caching. </p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="taskchain.cache.FileCache" class="doc doc-heading">
+        <code>
+FileCache        </code>
+
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>General cache for saving values in files. </p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="taskchain.cache.InMemoryCache" class="doc doc-heading">
+        <code>
+InMemoryCache        </code>
+
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Cache only in memory. </p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="taskchain.cache.JsonCache" class="doc doc-heading">
+        <code>
+JsonCache        </code>
+
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Cache json-like objects in <code>.json</code> files. </p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="taskchain.cache.NumpyArrayCache" class="doc doc-heading">
+        <code>
+NumpyArrayCache        </code>
+
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Cache numpy arrays in <code>.npy</code> files. </p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="taskchain.cache.cached" class="doc doc-heading">
+        <code>
+cached        </code>
+
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Decorator for automatic caching of method results.
+Decorated method is for given arguments called only once a result is cached.
+Cache key is automatically constructed based on method arguments.
+Cache can be defined in decorator or as attribute of object.</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h4 id="taskchain.cache.cached.__init__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cache_object</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cache_attr</span><span class="o">=</span><span class="s1">&#39;cache&#39;</span><span class="p">,</span> <span class="n">ignore_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>cache_object</code></td>
+        <td><code>Cache</code></td>
+        <td><p>Cache used for caching.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>key</code></td>
+        <td><code>Callable</code></td>
+        <td><p>custom function for computing key from arguments</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>cache_attr</code></td>
+        <td><code>str</code></td>
+        <td><p>if <code>cache_object</code> is None, object attribute with this name is used</p></td>
+        <td><code>&#39;cache&#39;</code></td>
+      </tr>
+      <tr>
+        <td><code>ignore_kwargs</code></td>
+        <td><code>List[str]</code></td>
+        <td><p>kwargs to ignore in key construction, e.g. <code>verbose</code></p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/cache.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cache_object</span><span class="p">:</span> <span class="n">Cache</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">cache_attr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cache&#39;</span><span class="p">,</span> <span class="n">ignore_kwargs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        cache_object: Cache used for caching.</span>
+<span class="sd">        key: custom function for computing key from arguments</span>
+<span class="sd">        cache_attr: if `cache_object` is None, object attribute with this name is used</span>
+<span class="sd">        ignore_kwargs: kwargs to ignore in key construction, e.g. `verbose`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">cache_object</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">cache_object</span>
+        <span class="n">cache_object</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cache_object</span> <span class="o">=</span> <span class="n">cache_object</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cache_attr</span> <span class="o">=</span> <span class="n">cache_attr</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ignore_params</span> <span class="o">=</span> <span class="n">ignore_kwargs</span> <span class="k">if</span> <span class="n">ignore_kwargs</span> <span class="k">else</span> <span class="p">[]</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h2 id="taskchain.utils.clazz" class="doc doc-heading">
+        <code>taskchain.utils.clazz</code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="taskchain.utils.clazz.persistent" class="doc doc-heading">
+        <code>
+persistent        </code>
+
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Method decorator.
+Has to be used on decorator without arguments.
+Saves result in <code>self.__method_name</code>
+and next time does not call decorated method and only return saved value.</p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="taskchain.utils.clazz.repeat_on_error" class="doc doc-heading">
+        <code>
+repeat_on_error        </code>
+
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Method decorator which calls method again on error. </p>
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h4 id="taskchain.utils.clazz.repeat_on_error.__init__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">waiting_time</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">wait_extension</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-special"><code>special</code></small>
+  </span>
+
+</h4>
+
+    <div class="doc doc-contents ">
+
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>retries</code></td>
+        <td><code>int</code></td>
+        <td><p>how many times try to call again</p></td>
+        <td><code>10</code></td>
+      </tr>
+      <tr>
+        <td><code>waiting_time</code></td>
+        <td><code>int</code></td>
+        <td><p>how many seconds wait before first retry</p></td>
+        <td><code>1</code></td>
+      </tr>
+      <tr>
+        <td><code>wait_extension</code></td>
+        <td><code>float</code></td>
+        <td><p>how many times increase waiting time after each retry</p></td>
+        <td><code>1.0</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/utils/clazz.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">waiting_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">wait_extension</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        retries: how many times try to call again</span>
+<span class="sd">        waiting_time: how many seconds wait before first retry</span>
+<span class="sd">        wait_extension: how many times increase waiting time after each retry</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">retries</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">retries</span>
+        <span class="n">retries</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">retries</span> <span class="o">=</span> <span class="n">retries</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">waiting_time</span> <span class="o">=</span> <span class="n">waiting_time</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">wait_extension</span> <span class="o">=</span> <span class="n">wait_extension</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h2 id="taskchain.utils.io" class="doc doc-heading">
+        <code>taskchain.utils.io</code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="taskchain.utils.io.write_jsons" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">write_jsons</span><span class="p">(</span><span class="n">jsons</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">use_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nan_to_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Write json-like object to <code>.jsonl</code> file (json lines).</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>jsons</code></td>
+        <td><code>Iterable</code></td>
+        <td><p>Iterable of json-like objects.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>filename</code></td>
+        <td><code>Path | str</code></td>
+        <td></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>use_tqdm</code></td>
+        <td><code>bool</code></td>
+        <td><p>Show progress bar.</p></td>
+        <td><code>True</code></td>
+      </tr>
+      <tr>
+        <td><code>overwrite</code></td>
+        <td><code>bool</code></td>
+        <td><p>Overwrite existing file.</p></td>
+        <td><code>True</code></td>
+      </tr>
+      <tr>
+        <td><code>nan_to_null</code></td>
+        <td><code>bool</code></td>
+        <td><p>Change nan values to nulls.</p></td>
+        <td><code>True</code></td>
+      </tr>
+      <tr>
+        <td><code>**kwargs</code></td>
+        <td></td>
+        <td><p>other arguments to tqdm.</p></td>
+        <td><code>{}</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/utils/io.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">write_jsons</span><span class="p">(</span><span class="n">jsons</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">use_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nan_to_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write json-like object to `.jsonl` file (json lines).</span>
+<span class="sd">    Args:</span>
+<span class="sd">        jsons (Iterable): Iterable of json-like objects.</span>
+<span class="sd">        filename (Path | str):</span>
+<span class="sd">        use_tqdm (bool): Show progress bar.</span>
+<span class="sd">        overwrite (bool): Overwrite existing file.</span>
+<span class="sd">        nan_to_null (bool): Change nan values to nulls.</span>
+<span class="sd">        **kwargs: other arguments to tqdm.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">or</span> <span class="n">overwrite</span><span class="p">,</span> <span class="s1">&#39;File already exists&#39;</span>
+    <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">progress_bar</span><span class="p">(</span><span class="n">jsons</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">use_tqdm</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Writing to </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">ignore_nan</span><span class="o">=</span><span class="n">nan_to_null</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NumpyEncoder</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="taskchain.utils.io.iter_json_file" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">iter_json_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">use_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Yield loaded jsons from <code>.jsonl</code> file (json lines).</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>filename</code></td>
+        <td><code>Path | str</code></td>
+        <td></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>use_tqdm</code></td>
+        <td><code>bool</code></td>
+        <td></td>
+        <td><code>True</code></td>
+      </tr>
+      <tr>
+        <td><code>**kwargs</code></td>
+        <td></td>
+        <td><p>additional arguments to tqdm</p></td>
+        <td><code>{}</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/utils/io.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">iter_json_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">use_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Yield loaded jsons from `.jsonl` file (json lines).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (Path | str):</span>
+<span class="sd">        use_tqdm (bool):</span>
+<span class="sd">        **kwargs: additional arguments to tqdm</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">progress_bar</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">use_tqdm</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Reading from </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h2 id="taskchain.utils.iter" class="doc doc-heading">
+        <code>taskchain.utils.iter</code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="taskchain.utils.iter.list_or_str_to_list" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">list_or_str_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Helper function for cases where list of string is expected but single string is also ok.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>value</code></td>
+        <td><code>Union[NoneType, List[str], str]</code></td>
+        <td></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>List[str]</code></td>
+      <td><p>original list or original string in list</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/utils/iter.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">list_or_str_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot; Helper function for cases where list of string is expected but single string is also ok.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value:</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        original list or original string in list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">value</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h2 id="taskchain.utils.migration" class="doc doc-heading">
+        <code>taskchain.utils.migration</code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="taskchain.utils.migration.migrate_to_parameter_mode" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">migrate_to_parameter_mode</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">,</span> <span class="n">dry</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Migrate a chain to parameter mode.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>config</code></td>
+        <td><code>Config</code></td>
+        <td><p>config defining the chain</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>target_dir</code></td>
+        <td></td>
+        <td><p>dir to migrate data to</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>dry</code></td>
+        <td><code>bool</code></td>
+        <td><p>show only info, do not copy data</p></td>
+        <td><code>True</code></td>
+      </tr>
+      <tr>
+        <td><code>verbose</code></td>
+        <td><code>bool</code></td>
+        <td></td>
+        <td><code>True</code></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/utils/migration.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">migrate_to_parameter_mode</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">,</span> <span class="n">dry</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Migrate a chain to parameter mode.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config: config defining the chain</span>
+<span class="sd">        target_dir: dir to migrate data to</span>
+<span class="sd">        dry: show only info, do not copy data</span>
+<span class="sd">        verbose:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">!=</span> <span class="n">target_dir</span><span class="p">,</span> <span class="s1">&#39;target_dir has to be different from configs base_dir&#39;</span>
+    <span class="n">old_chain</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">fullname</span><span class="p">:</span> <span class="n">t</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">parameter_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="n">new_chain</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">fullname</span><span class="p">:</span> <span class="n">t</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">Config</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">_filepath</span><span class="p">,</span> <span class="n">global_vars</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">global_vars</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">chain</span><span class="p">()</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Set dry=False to make copies&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">old_task</span> <span class="ow">in</span> <span class="n">old_chain</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="n">new_task</span> <span class="o">=</span> <span class="n">new_chain</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">  -  </span><span class="si">{</span><span class="n">new_task</span><span class="o">.</span><span class="n">name_for_persistence</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  parameters: `</span><span class="si">{</span><span class="n">new_task</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">repr</span><span class="si">}</span><span class="s1">`&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39; input tasks: `</span><span class="si">{</span><span class="s2">&quot;###&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">it</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">new_task</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span><span class="o">.</span><span class="n">input_tasks</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span><span class="si">}</span><span class="s1">`&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">old_task</span><span class="o">.</span><span class="n">data_class</span><span class="p">,</span> <span class="n">InMemoryData</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   not persisting&#39;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">old_task</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   no data found&#39;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">    original: `</span><span class="si">{</span><span class="n">old_task</span><span class="o">.</span><span class="n">data_path</span><span class="si">}</span><span class="s1">`&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;      target: `</span><span class="si">{</span><span class="n">new_task</span><span class="o">.</span><span class="n">data_path</span><span class="si">}</span><span class="s1">`&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">new_task</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
+            <span class="c1"># HACK: pd files do not have to have the same size with the same data</span>
+            <span class="k">if</span> <span class="n">new_task</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.pd&#39;</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">isclose</span><span class="p">(</span><span class="n">new_task</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span><span class="p">,</span> <span class="n">old_task</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span><span class="p">,</span> <span class="n">rel_tol</span><span class="o">=</span><span class="mf">2e-7</span><span class="p">,</span> <span class="n">abs_tol</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">new_task</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span><span class="si">}</span><span class="s1"> vs. </span><span class="si">{</span><span class="n">old_task</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">new_task</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="o">==</span> <span class="n">old_task</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    target already exists&#39;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">dry</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    to copy&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    copying&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">old_task</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="n">copyfile</span><span class="p">(</span><span class="n">old_task</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="n">new_task</span><span class="o">.</span><span class="n">data_path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">copytree</span><span class="p">(</span><span class="n">old_task</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="n">new_task</span><span class="o">.</span><span class="n">data_path</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    copied&#39;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h2 id="taskchain.utils.threading" class="doc doc-heading">
+        <code>taskchain.utils.threading</code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="taskchain.utils.threading.parallel_map" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">parallel_map</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">threads</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Running tasks in parallel.&#39;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Map function to iterable in multiple threads.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>fun</code></td>
+        <td><code>Callable</code></td>
+        <td><p>function to apply</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>iterable</code></td>
+        <td><code>Iterable</code></td>
+        <td></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>threads</code></td>
+        <td><code>int</code></td>
+        <td><p>number of threads</p></td>
+        <td><code>10</code></td>
+      </tr>
+      <tr>
+        <td><code>sort</code></td>
+        <td><code>bool</code></td>
+        <td><p>return values in same order as itarable</p></td>
+        <td><code>True</code></td>
+      </tr>
+      <tr>
+        <td><code>use_tqdm</code></td>
+        <td><code>bool</code></td>
+        <td><p>show progressbar</p></td>
+        <td><code>True</code></td>
+      </tr>
+      <tr>
+        <td><code>desc</code></td>
+        <td><code>str</code></td>
+        <td><p>text of progressbar</p></td>
+        <td><code>&#39;Running tasks in parallel.&#39;</code></td>
+      </tr>
+      <tr>
+        <td><code>total</code></td>
+        <td><code>int</code></td>
+        <td><p>size of iterable to allow show better progressbar</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>list</code></td>
+      <td><p>of returned values by fce</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/utils/threading.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">parallel_map</span><span class="p">(</span><span class="n">fun</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">use_tqdm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Running tasks in parallel.&#39;</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Map function to iterable in multiple threads.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fun: function to apply</span>
+<span class="sd">        iterable:</span>
+<span class="sd">        threads: number of threads</span>
+<span class="sd">        sort: return values in same order as itarable</span>
+<span class="sd">        use_tqdm: show progressbar</span>
+<span class="sd">        desc: text of progressbar</span>
+<span class="sd">        total: size of iterable to allow show better progressbar</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: of returned values by fce</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_fun</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">i</span><span class="p">,</span> <span class="n">fun</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_run</span><span class="p">():</span>
+        <span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">threads</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+                <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+                <span class="n">futures</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
+                        <span class="n">executor</span><span class="p">,</span>
+                        <span class="n">_fun</span><span class="p">,</span>
+                        <span class="n">i</span><span class="p">,</span>
+                        <span class="n">input_value</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">input_value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="k">return</span> <span class="p">[</span><span class="k">await</span> <span class="n">output_value</span> <span class="k">for</span> <span class="n">output_value</span> <span class="ow">in</span> <span class="n">progress_bar</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">),</span> <span class="n">use_tqdm</span><span class="o">=</span><span class="n">use_tqdm</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">)]</span>
+
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">_run</span><span class="p">())</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">res</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ires</span><span class="p">:</span> <span class="n">ires</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">sort</span> <span class="k">else</span> <span class="n">result</span><span class="p">)</span>
+    <span class="p">]</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="taskchain.utils.threading.parallel_starmap" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">parallel_starmap</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Allows use <code>parallel_map</code> for function with multiple arguments.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>fun</code></td>
+        <td><code>Callable</code></td>
+        <td><p>function with multiple arguments</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>iterable</code></td>
+        <td><code>Iterable</code></td>
+        <td><p>lists or tuples of arguments</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>taskchain/utils/threading.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">parallel_starmap</span><span class="p">(</span><span class="n">fun</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Allows use `parallel_map` for function with multiple arguments.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fun: function with multiple arguments</span>
+<span class="sd">        iterable: lists or tuples of arguments</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_call</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">fun</span><span class="p">(</span><span class="o">*</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parallel_map</span><span class="p">(</span><span class="n">_call</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="../chain/" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Chain
+            </div>
+          </div>
+        </a>
+      
+      
+        <a href="../testing/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Testing
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a1c7c35e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1204 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation and examples for TaskChain">
+      
+      
+      
+      
+        <link rel="canonical" href="https://flowerchecker.gitlab.io/taskchain/configs/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.0.6">
+    
+    
+      
+        <title>Configs - TaskChain</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.2c0c5eaf.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.7fa14f5b.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../extra.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#configs" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="TaskChain" class="md-header__button md-logo" aria-label="TaskChain" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TaskChain
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Configs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="md-header__options">
+      
+    </div>
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/flowerchecker/taskchain/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TaskChain" class="md-nav__button md-logo" aria-label="TaskChain" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    TaskChain
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/flowerchecker/taskchain/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tasks/" class="md-nav__link">
+        Tasks
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Configs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Configs
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#config-definition" class="md-nav__link">
+    Config definition
+  </a>
+  
+    <nav class="md-nav" aria-label="Config definition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tasks" class="md-nav__link">
+    Tasks
+  </a>
+  
+    <nav class="md-nav" aria-label="Tasks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#task-exclusion" class="md-nav__link">
+    Task exclusion
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-dependencies" class="md-nav__link">
+    Config dependencies
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#placeholders-global-vars" class="md-nav__link">
+    Placeholders &amp; Global vars
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameter-objects" class="md-nav__link">
+    Parameter objects
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameter objects">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#autoparameterobject" class="md-nav__link">
+    AutoParameterObject
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chainobject" class="md-nav__link">
+    ChainObject
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#namespaces" class="md-nav__link">
+    Namespaces
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-topics" class="md-nav__link">
+    Advanced topics
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced topics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-config-files" class="md-nav__link">
+    Multi-config files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contexts" class="md-nav__link">
+    Contexts
+  </a>
+  
+    <nav class="md-nav" aria-label="Contexts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-can-be-context" class="md-nav__link">
+    What can be context
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespaces_1" class="md-nav__link">
+    Namespaces
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uses" class="md-nav__link">
+    Uses
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chains/" class="md-nav__link">
+        Chains
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example/" class="md-nav__link">
+        Example project
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
+        Utils
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        Testing
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cheatsheet/" class="md-nav__link">
+        CheatSheet
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" >
+      
+      <label class="md-nav__link" for="__nav_9">
+        Code Reference
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Code Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Code Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code/task/" class="md-nav__link">
+        Task
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code/parameter/" class="md-nav__link">
+        Parameter
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code/config/" class="md-nav__link">
+        Config
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code/chain/" class="md-nav__link">
+        Chain
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code/utils/" class="md-nav__link">
+        Utils
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code/testing/" class="md-nav__link">
+        Testing
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#config-definition" class="md-nav__link">
+    Config definition
+  </a>
+  
+    <nav class="md-nav" aria-label="Config definition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tasks" class="md-nav__link">
+    Tasks
+  </a>
+  
+    <nav class="md-nav" aria-label="Tasks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#task-exclusion" class="md-nav__link">
+    Task exclusion
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-dependencies" class="md-nav__link">
+    Config dependencies
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#placeholders-global-vars" class="md-nav__link">
+    Placeholders &amp; Global vars
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameter-objects" class="md-nav__link">
+    Parameter objects
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameter objects">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#autoparameterobject" class="md-nav__link">
+    AutoParameterObject
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chainobject" class="md-nav__link">
+    ChainObject
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#namespaces" class="md-nav__link">
+    Namespaces
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-topics" class="md-nav__link">
+    Advanced topics
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced topics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-config-files" class="md-nav__link">
+    Multi-config files
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contexts" class="md-nav__link">
+    Contexts
+  </a>
+  
+    <nav class="md-nav" aria-label="Contexts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-can-be-context" class="md-nav__link">
+    What can be context
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespaces_1" class="md-nav__link">
+    Namespaces
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uses" class="md-nav__link">
+    Uses
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/flowerchecker/taskchain/edit/master/docs/configs.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="configs">Configs</h1>
+<p>Generally, configs defines all necessary parameter values, 
+which are needed to run a pipeline and tasks in it.</p>
+<p>In TaskChain, config is also entry point for creating a chain
+and describes how pipelines are connected to a chain.
+Therefore, a config has to define:</p>
+<ul>
+<li>description of tasks which should be part of a chain (e.g. pipeline)</li>
+<li>parameter values needed by these tasks</li>
+<li>dependencies on other configs (pipelines)</li>
+</ul>
+<p>Usual setup is <strong>one config in one file which defines one pipeline</strong>. 
+This allows effective reuse of the pipeline in multiple chains
+without need of repeating parameter values.</p>
+<div class="admonition note">
+<p class="admonition-title">What actually is config?</p>
+<p>Config in TaskChain has dual meaning. 
+First, config as YAML file containing information described above.
+Second, config as an instance of <code>taskchain.Config</code> which is usually based
+on the config file and adds other information necessary for computation. </p>
+</div>
+<h2 id="config-definition">Config definition</h2>
+<div class="admonition example">
+<p class="admonition-title">Simple example of config</p>
+<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">config.yaml</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="nt">tasks</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_project.tasks.pipeline.*</span>
+
+<span class="nt">string_parameter</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">value</span>
+<span class="nt">int_parameter</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">123</span>
+<span class="nt">complex_parameter</span><span class="p">:</span>
+    <span class="nt">key1</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">value1</span>
+    <span class="nt">key2</span><span class="p">:</span> 
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">v1</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">v2</span>
+</code></pre></div>
+</div>
+<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">code.py</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">taskchain</span> <span class="kn">import</span> <span class="n">Config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+    <span class="s1">&#39;/path/to/task_data&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;/path/to/config.yaml&#39;</span><span class="p">,</span> 
+<span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Config is basically <strong>map from strings to arbitrary values</strong>. 
+In addition to YAML files, you can define your config also in JSON file or directly in code
+by passing dict like object to <code>Config()</code> in parameter <code>data</code>.</p>
+<p>More examples of configs can be found in <a href="https://github.com/flowerchecker/taskchain/tree/master/example/configs">example project</a>.</p>
+<p>You can access values of config object by attribute <code>config.string_parameter</code> 
+or in dict like fashion <code>config['string_parameter']</code>. Actually, config is descendant of <code>dict</code>.
+However, direct access to the values is rarely needed because parameters are handled by TaskChain.   </p>
+<h3 id="tasks">Tasks</h3>
+<p>Each config should define which tasks are configured. This is a way how a config defines a pipeline.
+The special parameter <code>tasks</code> is <strong>string or list of strings</strong> describing tasks.
+Task is described by a path to task's class: <code>'my_project.tasks.pipeline.ProcessTask'</code>.
+This description corresponds exactly to python imports.</p>
+<p>To import all tasks from pipeline (defined in single file) at once you can use wildcard <code>*</code> in last 
+place of description: <code>'my_project.tasks.pipeline.*'</code>.</p>
+<h4 id="task-exclusion">Task exclusion</h4>
+<p>For more flexibility, you can also exclude tasks with special parameter <code>excluded_tasks</code>
+with same syntax as <code>tasks</code> parameter.</p>
+<h3 id="config-dependencies">Config dependencies</h3>
+<p>More complicated chains are split to multiple pipelines with corresponding configs.
+Parameter <code>uses</code> defines how configs of these pipelines are connected together.</p>
+<p>For example, project is split to <em>data preparation pipeline</em> and <em>model pipeline</em>. 
+Config of data preparation have no prerequisites, and thus it doesn't need <code>uses</code>.
+Some tasks of the model pipeline depends on tasks of data pipeline and therefore
+model config has to depend on data config.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">model_config.yaml</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="nt">tasks</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_project.tasks.model.*</span>
+<span class="nt">uses</span><span class="p">:</span> <span class="s">&quot;/path/to/data_config.yaml&quot;</span>
+
+<span class="nt">model</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
+</div>
+<input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">data_config.yaml</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="nt">tasks</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_project.tasks.data.*</span>
+
+<span class="nt">source_file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p><code>uses</code> is <strong>string</strong> or <strong>list of strings</strong> if there are multiple dependency configs. </p>
+<h3 id="placeholders-global-vars">Placeholders &amp; Global vars</h3>
+<p>Placeholders and global variables is a mechanism which allows TaskChain projects work in multiple environments.
+The same project can be moved to different directory or machine 
+or can be run by multiple peoples with different setups.
+This is especially useful for handle paths in configs.</p>
+<p>To make configs independent on environment it is possible to use <em>placeholders</em> in them
+which are later replaced by values provided in <code>Config</code> object in instantiation in parameter <code>global_vars</code>.</p>
+<div class="admonition example">
+<p class="admonition-title">Basic usage of global vars</p>
+<div class="tabbed-set" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">config.yaml</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="nt">tasks</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_project.tasks.pipeline.*</span>
+<span class="nt">uses</span><span class="p">:</span> <span class="s">&quot;{CONFIGS_DIR}/dependency_config.yaml&quot;</span>
+
+<span class="nt">source_data</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nv">DATA_DIR</span><span class="p p-Indicator">}</span><span class="l l-Scalar l-Scalar-Plain">/data.csv</span>
+</code></pre></div>
+</div>
+<input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><label for="__tabbed_3_2">code.py</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">taskchain</span> <span class="kn">import</span> <span class="n">Config</span>
+
+<span class="n">CONFIGS_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/path/to/configs&#39;</span><span class="p">)</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+    <span class="s1">&#39;/path/to/task_data&#39;</span><span class="p">,</span> 
+    <span class="n">CONFIGS_DIR</span> <span class="o">/</span> <span class="s1">&#39;config.yaml&#39;</span><span class="p">,</span>
+    <span class="n">global_vars</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;CONFIGS_DIR&#39;</span><span class="p">:</span> <span class="n">CONFIGS_DIR</span><span class="p">,</span>
+        <span class="s1">&#39;DATA_DIR&#39;</span><span class="p">:</span> <span class="s1">&#39;/path/to/data&#39;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Parameter <code>global_var</code> can be a <code>dict</code> with placeholders as keys or an object with placeholders as attributes.
+This allows following typical construction:</p>
+<div class="admonition example">
+<p class="admonition-title">Typical usage of global vars</p>
+<div class="tabbed-set" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><label for="__tabbed_4_1">code.py</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">taskchain</span> <span class="kn">import</span> <span class="n">Config</span>
+
+<span class="kn">from</span> <span class="nn">project</span> <span class="kn">import</span> <span class="n">project_config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+    <span class="n">project_config</span><span class="o">.</span><span class="n">TASKS_DIR</span><span class="p">,</span>
+    <span class="n">project_config</span><span class="o">.</span><span class="n">CONFIGS_DIR</span> <span class="o">/</span> <span class="s1">&#39;config.yaml&#39;</span><span class="p">,</span>
+    <span class="n">global_vars</span><span class="o">=</span><span class="n">project_config</span>
+<span class="p">)</span>
+</code></pre></div>
+</div>
+<input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><label for="__tabbed_4_2">project_config.py</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">REPO_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+
+<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/path/to/project_data/source_data&#39;</span><span class="p">)</span>
+<span class="n">TASKS_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/path/to/project_data/task_data&#39;</span><span class="p">)</span>
+<span class="n">CONFIGS_DIR</span> <span class="o">=</span> <span class="n">REPO_DIR</span> <span class="o">/</span> <span class="s1">&#39;configs&#39;</span>
+</code></pre></div>
+</div>
+<input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><label for="__tabbed_4_3">config.yaml</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="nt">tasks</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_project.tasks.pipeline.*</span>
+<span class="nt">uses</span><span class="p">:</span> <span class="s">&quot;{CONFIGS_DIR}/dependency_config.yaml&quot;</span>
+
+<span class="nt">source_data</span><span class="p">:</span> <span class="p p-Indicator">{</span><span class="nv">DATA_DIR</span><span class="p p-Indicator">}</span><span class="l l-Scalar l-Scalar-Plain">/data.csv</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="parameter-objects">Parameter objects</h2>
+<p>Sometimes configuration using only json-like parameter values is not enough, or it is not practical.
+For these cases, you can include definition of a object instance as parameter value to your config. </p>
+<p>Object instance is defined by class and <code>args</code> and <code>kwargs</code> passed to constructor.
+Class has to be derived class of <code>taskchain.paramater.ParameterObject</code>, i.e. has
+to define <code>repr</code> method which should return unique string representation of object.
+This value is then used by taskchain to keep track of changes in configs, 
+and it is necessary for correct function of data persistence. </p>
+<p>Common pattern is that there is base class which defines interface which is used by tasks
+and parameter objects are instances of child classes. 
+Good example is <code>Model</code> class which define abstract methods
+<code>train</code>, <code>predict</code>, <code>save</code> and<code>load</code>. Children of this base class 
+(e.g. <code>NeuralModel</code>, <code>LinearRegressionModel</code>, ...) implement these methods, are configurable 
+by their constructor and are used in configs. <a href="https://github.com/flowerchecker/taskchain/tree/master/example/src/movie_ratings/models">Here</a> is example of this pattern.</p>
+<p>Definition of object instance in config is dict containing key <code>class</code> with fully-qualified name of class as value. 
+Additionally, dict can contain <code>args</code> with a list and <code>kwargs</code> with a dict.</p>
+<div class="admonition example">
+<p class="admonition-title">Definition of object in config</p>
+<div class="highlight"><pre><span></span><code>    <span class="n">model</span><span class="p">:</span>
+        <span class="n">class</span><span class="p">:</span> <span class="n">my_project</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LinearRegressionModel</span>
+        <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">normalize</span><span class="p">:</span> <span class="kc">True</span>
+            <span class="n">regularization</span><span class="p">:</span> <span class="mi">1</span>
+</code></pre></div>
+</div>
+<p>In last example, config provide parameter <code>model</code> with value <code>LinearRegressionModel(normalize=True, regularization=1)</code>.</p>
+<p>In config, objects can be defined inside other structures, such as list, dict or definitions of other objects.
+I.e. you can define parameter which is list of objects.</p>
+<h4 id="autoparameterobject"><code>AutoParameterObject</code></h4>
+<p>Writing of <code>repr</code> method for parameter object can repetitive and omitting
+a argument can lead to mistakes.
+Therefore, there is <code>AutoParameterObject</code> which defines <code>repr</code> for you
+and it is based on class name and arguments of <code>__init__</code> method. 
+To make it work, all arguments values of constructor has to be saved in object attributes.
+For argument named <code>my_argument</code>, <code>AutoParameterObject</code> is looking for its value at
+<code>self._my_argument</code> or <code>self.my_argument</code>.</p>
+<p>To allow more flexibility and ease adding new arguments, you can also define
+<code>ignore_persistence_args</code> or <code>dont_persist_default_value_args</code> which return 
+list of string names of arguments and have similar meaning as 
+<a href="/taskchain/tasks#parameters-arguments"><code>Parameter</code> arguments</a>.</p>
+<h4 id="chainobject"><code>ChainObject</code></h4>
+<p>In case that your parameter object need to access the chain directly
+(e.g. take a task's data), you can inherit also from <code>taskchain.chain.ChainObject</code>
+and implement <code>init_chain(self, chain)</code> method which is called after chain creation
+and pass chain itself.</p>
+<h2 id="namespaces">Namespaces</h2>
+<p>If you need to use one pipeline with different configs in one chain, or
+you just make your larger chains more structured, you can use namespaces.</p>
+<p>You can put part of your chain to a namespace and all tasks in that part 
+will be referenced not but their name <code>task_name</code> but by namespace and task name
+<code>namespace_name::task_name</code>. </p>
+<p>Creating namespaces is really simple, in referencing other config in config definition
+(<code>uses</code> clause) just add <code>as namespace_name</code>.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="tabbed-set" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><label for="__tabbed_5_1">model_config.yaml</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="nt">tasks</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_project.tasks.model.*</span>
+<span class="nt">uses</span><span class="p">:</span> 
+    <span class="p p-Indicator">-</span> <span class="s">&quot;/path/to/data_configs/train_data.yaml</span><span class="nv"> </span><span class="s">as</span><span class="nv"> </span><span class="s">train&quot;</span>
+    <span class="p p-Indicator">-</span> <span class="s">&quot;/path/to/data_configs/valid_data.yaml</span><span class="nv"> </span><span class="s">as</span><span class="nv"> </span><span class="s">valid&quot;</span>
+    <span class="p p-Indicator">-</span> <span class="s">&quot;/path/to/data_configs/test_data.yaml</span><span class="nv"> </span><span class="s">as</span><span class="nv"> </span><span class="s">test&quot;</span>
+
+<span class="nt">model</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
+</div>
+<input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><label for="__tabbed_5_2">model.py</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="o">...</span>
+
+<span class="k">class</span> <span class="nc">TrainModel</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">)]</span>
+        <span class="n">input_tasks</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;train::features&#39;</span><span class="p">,</span> <span class="s1">&#39;valid::features&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="o">...</span><span class="p">:</span>
+        <span class="n">train_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_tasks</span><span class="p">[</span><span class="s1">&#39;train::features&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+        <span class="o">...</span>
+
+<span class="k">class</span> <span class="nc">EvalModel</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">)]</span>
+        <span class="n">input_tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">TrainModel</span><span class="p">,</span> <span class="s1">&#39;test::features]</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">train_model</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="o">...</span>
+<span class="o">...</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Notes</p>
+<ul>
+<li>if a config is in a namespace, also configs used by this config are in the same namespace</li>
+<li>namespaces can be nested, e.g. task <code>features</code> can be in nested namespace <code>main_model::train</code></li>
+<li>you can still reference task without namespace as long as there is only one task of that name<ul>
+<li>this is the case of <code>input_tasks</code> of <code>Evalmodel</code> task but not <code>input_tasks</code> of <code>TrainModel</code>task in example above</li>
+<li>this applies to referencing tasks in chain, in <code>input_tasks</code> and <code>run</code> method arguments.</li>
+</ul>
+</li>
+</ul>
+<h2 id="advanced-topics">Advanced topics</h2>
+<h3 id="multi-config-files">Multi-config files</h3>
+<p>It is possible to save multiple configs to one file.
+This can be useful, when chain has multiple pipelines, 
+and you need one file configuration.</p>
+<div class="admonition example">
+<p class="admonition-title">Example of multi-config file</p>
+<div class="highlight"><pre><span></span><code><span class="nt">configs</span><span class="p">:</span>
+    <span class="nt">data_config</span><span class="p">:</span>
+        <span class="nt">tasks</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+        <span class="nt">input_data_file</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+        <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="nt">model_config</span><span class="p">:</span>
+        <span class="nt">main_part</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+        <span class="nt">tasks</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+        <span class="nt">uses</span><span class="p">:</span> <span class="c1">#data_config as data</span>
+        <span class="nt">model</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+        <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="nt">other_config_name</span><span class="p">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
+</div>
+<p>Single config can be taken from this file using <code>part</code> argument: 
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s1">&#39;/path/to/task_data&#39;</span><span class="p">,</span> <span class="s1">&#39;multi_config.yaml&#39;</span><span class="p">,</span> <span class="n">part</span><span class="o">=</span><span class="s1">&#39;data_config&#39;</span><span class="p">)</span>
+</code></pre></div>
+It is possible omit <code>part</code> argument if one of defined configs specify <code>main_part: True</code>.
+To access a config from another config (in <code>uses</code>) use 
+<code>/path/to/multi_config.yaml#data_config</code>
+or if you refer to a part of the same multi-config, 
+you can use only <code>#data_donfig</code> as shown in example.</p>
+<h3 id="contexts">Contexts</h3>
+<p>Context is mechanism which allows rewrite parameter values in configs in the time of their instantiation.
+Under the hood <code>Context</code> is special case of <code>Config</code> which is used in specific way. </p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+    <span class="s1">&#39;/path/to/task_data&#39;</span><span class="p">,</span> 
+    <span class="n">CONFIGS_DIR</span> <span class="o">/</span> <span class="s1">&#39;config.yaml&#39;</span><span class="p">,</span>
+    <span class="n">context</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;verbose&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+</div>
+<p>This can be useful for</p>
+<ul>
+<li>ad-hock experiment</li>
+<li>hyper-parameter optimization</li>
+<li>tuning parameters, which are not used in persistence, e.g. <code>batch_size</code> </li>
+<li>consider long data processing chain consisting of multiple dependent pipelines each with own config file. 
+  When we get new input data, it usually leads to recreating all configs which are very similar 
+  (only <code>input_data</code> parameter is changed and config paths in <code>uses</code>).
+  Other approach is omit <code>input_data</code> parameter value in config and provide it context, 
+  which allows run pipeline with same configuration on multiple inputs easily.</li>
+</ul>
+<h4 id="what-can-be-context">What can be context</h4>
+<ul>
+<li><strong>dict</strong> of parameters and their values</li>
+<li><strong>file path</strong> with json on yaml file - this is analogous to context files</li>
+<li>Context object</li>
+<li><strong>list of previous</strong> - in that case context are merged together. 
+  In case of parameter conflict later has higher priority.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Parameters in context are applied globaly, i.e. on all configs in chain. 
+Be cearful with parameters of the same name in different pipelines.</p>
+</div>
+<h4 id="namespaces_1">Namespaces</h4>
+<p>In the case of more complicated chains which uses namespaces you can run to problems, 
+when one pipeline is in chain multiple times with different configuration (under different namespaces).
+For these cases, context can have <code>for_namespaces</code> field. It's valued should be dict with namespaces as keys
+and parameters to overwrite in this namespace as value.</p>
+<div class="admonition example">
+<p class="admonition-title">Context YAML file using <code>for_namespace</code></p>
+<div class="highlight"><pre><span></span><code><span class="nt">for_namespaces</span><span class="p">:</span>
+    <span class="nt">train</span><span class="p">:</span>
+        <span class="nt">input_data</span><span class="p">:</span> <span class="s">&#39;/path/to/data1&#39;</span>
+        <span class="nt">other_param</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
+    <span class="nt">test</span><span class="p">:</span>
+        <span class="nt">input_data</span><span class="p">:</span> <span class="s">&#39;/path/to/data2&#39;</span>
+
+<span class="nt">batch_size</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">32</span>
+</code></pre></div>
+</div>
+<h4 id="uses">Uses</h4>
+<p>It is possible to join multiple context in one file with <code>uses</code> field. 
+Syntax is the same as in configs, but meaning slight different. 
+In contexts files in <code>uses</code> are just merged to the main context.
+If <code>... as namespace</code> format is used, loaded context is applied only for given namespace.
+Following example is equivalent to the previous one.</p>
+<div class="admonition example">
+<p class="admonition-title">Context YAML files using <code>uses</code></p>
+<div class="tabbed-set" data-tabs="6:3"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><label for="__tabbed_6_1">context.yaml</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="nt">uses</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/train.context.yaml as train</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/test.context.yaml as test</span>
+
+<span class="nt">batch_size</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">32</span>
+</code></pre></div>
+</div>
+<input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><label for="__tabbed_6_2">train.context.yaml</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="nt">input_data</span><span class="p">:</span> <span class="s">&#39;/path/to/data1&#39;</span>
+<span class="nt">other_param</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
+</code></pre></div>
+</div>
+<input id="__tabbed_6_3" name="__tabbed_6" type="radio" /><label for="__tabbed_6_3">test.context.yaml</label><div class="tabbed-content">
+<div class="highlight"><pre><span></span><code><span class="nt">input_data</span><span class="p">:</span> <span class="s">&#39;/path/to/data2&#39;</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="../tasks/" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Tasks
+            </div>
+          </div>
+        </a>
+      
+      
+        <a href="../chains/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Chains
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a1c7c35e.min.js"></script>
+      
+    
+  </body>
+</html>
