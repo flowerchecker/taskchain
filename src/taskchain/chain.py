@@ -440,10 +440,11 @@ class Chain(dict):
         """
         Create human readable symlink to data of tasks in the chain.
         Symlink is in same directory as data, i.e. in directory with all task's data.
-        Name of link is taken from
-            - parameter
-            - task's config, parameter `human_readable_data_name`
-            - name of task's config
+        Name of link is taken from first available in order:
+
+        - this method's parameter
+        - task's config, parameter `human_readable_data_name`
+        - name of task's config
 
         Args:
             groups (optional): name of group or list of names of groups, for which should be symlinks created
