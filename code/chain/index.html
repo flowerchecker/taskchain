@@ -1361,10 +1361,12 @@ Border is based on data state:</p>
 
       <p>Create human readable symlink to data of tasks in the chain.
 Symlink is in same directory as data, i.e. in directory with all task's data.
-Name of link is taken from
-    - parameter
-    - task's config, parameter <code>human_readable_data_name</code>
-    - name of task's config</p>
+Name of link is taken from first available in order:</p>
+<ul>
+<li>this method's parameter</li>
+<li>task's config, parameter <code>human_readable_data_name</code></li>
+<li>name of task's config</li>
+</ul>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -1409,10 +1411,11 @@ Name of link is taken from
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create human readable symlink to data of tasks in the chain.</span>
 <span class="sd">    Symlink is in same directory as data, i.e. in directory with all task&#39;s data.</span>
-<span class="sd">    Name of link is taken from</span>
-<span class="sd">        - parameter</span>
-<span class="sd">        - task&#39;s config, parameter `human_readable_data_name`</span>
-<span class="sd">        - name of task&#39;s config</span>
+<span class="sd">    Name of link is taken from first available in order:</span>
+
+<span class="sd">    - this method&#39;s parameter</span>
+<span class="sd">    - task&#39;s config, parameter `human_readable_data_name`</span>
+<span class="sd">    - name of task&#39;s config</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        groups (optional): name of group or list of names of groups, for which should be symlinks created</span>
