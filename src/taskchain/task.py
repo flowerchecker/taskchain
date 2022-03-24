@@ -285,6 +285,10 @@ class Task(object, metaclass=MetaTask):
             return None
         return self._data_without_value.path
 
+    def reset_data(self):
+        self._data = None
+        return self
+
     def force(self, delete_data=False):
         """
         Switch task to forced state to allow data recomputation.
