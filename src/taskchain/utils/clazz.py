@@ -231,7 +231,7 @@ def object_to_definition(obj):
         else:
             raise AttributeError(f'Value of __init__ argument `{name}` not found for class `{fullname(obj.__class__)}`, '
                                  f'make sure that value is saved in `self.{name}` or `self._{name}`')
-        if all(not isinstance(value, type_) for type_ in {int, float, bool, str, list, set, dict}):
+        if value is not None and all(not isinstance(value, type_) for type_ in {int, float, bool, str, list, set, dict}):
             value = object_to_definition(value)
         kwargs[name] = value
     return result
