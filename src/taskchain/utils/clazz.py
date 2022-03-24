@@ -177,9 +177,9 @@ def get_classes_by_import_string(string: str, cls: Type[object] = object):
     if type(members) is not list:
         members = [members]
     classes = []
-    for members in members:
-        if inspect.isclass(members) and issubclass(members, cls):
-            classes.append(members)
+    for member in members:
+        if inspect.isclass(member) and issubclass(member, cls):
+            classes.append(member)
     return classes
 
 
