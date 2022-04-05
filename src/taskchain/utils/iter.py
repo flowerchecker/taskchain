@@ -18,6 +18,8 @@ def progress_bar(data, use_tqdm=True, smoothing=0., **kwargs):
 def parallel_map(fun, iterable, threads=2, desc='Running tasks in parallel.', total=None, smoothing=0.3):
     if total is None and hasattr(iterable, '__len__'):
         total = len(iterable)
+    if threads == 1:
+        return [fun(i) for i in iterable]
 
     def _fun(i, arg):
         return i, fun(arg)
