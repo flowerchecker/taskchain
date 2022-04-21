@@ -231,6 +231,32 @@ class ParameterObject(abc.ABC):
         return self.repr()
 
 
+class IgnoreForPersistence:
+    pass
+
+    @staticmethod
+    def remove(val):
+        if isinstance(val, list):
+            return [
+                IgnoreForPersistence.remove(v)
+                for v in val
+                if not isinstance(v, IgnoreForPersistence)
+            ]
+        if isinstance(val, set):
+            return {
+                IgnoreForPersistence.remove(v)
+                for v in val
+                if not isinstance(v, IgnoreForPersistence)
+            }
+        if isinstance(val, dict):
+            return {
+                name: IgnoreForPersistence.remove(v)
+                for name, v in val.items()
+                if not isinstance(v, IgnoreForPersistence)
+            }
+        return val
+
+
 class AutoParameterObject(ParameterObject):
     """
     ParameterObject with automatic `repr` method based on arguments of __init__ method.
@@ -254,9 +280,11 @@ class AutoParameterObject(ParameterObject):
             else:
                 raise AttributeError(f'Value of __init__ argument `{arg}` not found for class `{fullname(self.__class__)}`, '
                                      f'make sure that value is saved in `self.{arg}` or `self._{arg}`')
-            args[arg] = value
+            if isinstance(value, IgnoreForPersistence):
+                continue
             if arg in dont_persist_default_value_args and args[arg] == parameter.default:
-                del args[arg]
+                continue
+            args[arg] = IgnoreForPersistence.remove(value)
         args_repr = ', '.join(f'{k}={repr(v)}' for k, v in sorted(args.items()))
         assert 'object at 0x' not in args_repr, f'repr for arguments is fragile: {args_repr}'
         return f'{self.__class__.__name__}({args_repr})'
