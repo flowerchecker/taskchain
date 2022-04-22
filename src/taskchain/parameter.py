@@ -282,7 +282,7 @@ class AutoParameterObject(ParameterObject):
                                      f'make sure that value is saved in `self.{arg}` or `self._{arg}`')
             if isinstance(value, IgnoreForPersistence):
                 continue
-            if arg in dont_persist_default_value_args and args[arg] == parameter.default:
+            if arg in dont_persist_default_value_args and value == parameter.default:
                 continue
             args[arg] = IgnoreForPersistence.remove(value)
         args_repr = ', '.join(f'{k}={repr(v)}' for k, v in sorted(args.items()))
