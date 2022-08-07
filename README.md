@@ -20,6 +20,10 @@ python setup.py develop
 
 ## Changelog
 
+#### 1.2.1
+- fixes
+
+
 #### 1.2.0
 - remove redundant module `taskchain.task`
 - add support for task exclusion, just use `exluded_tasks` in your config
