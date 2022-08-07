@@ -32,19 +32,27 @@ class Config(dict):
     ```
     """
 
-    RESERVED_PARAMETER_NAMES = ['tasks', 'excluded_tasks', 'uses', 'human_readable_data_name',
-                                'configs', 'for_namespaces', 'main_part']
+    RESERVED_PARAMETER_NAMES = [
+        'tasks',
+        'excluded_tasks',
+        'uses',
+        'human_readable_data_name',
+        'configs',
+        'for_namespaces',
+        'main_part',
+    ]
 
-    def __init__(self,
-                 base_dir: Union[Path, str, None] = None,
-                 filepath: Union[Path, str] = None,
-                 global_vars: Union[Any, None] = None,
-                 context: Union[None, dict, str, Path, Context, Iterable] = None,
-                 name: str = None,
-                 namespace: str = None,
-                 data: Dict = None,
-                 part: str = None,
-                 ):
+    def __init__(
+        self,
+        base_dir: Union[Path, str, None] = None,
+        filepath: Union[Path, str] = None,
+        global_vars: Union[Any, None] = None,
+        context: Union[None, dict, str, Path, Context, Iterable] = None,
+        name: str = None,
+        namespace: str = None,
+        data: Dict = None,
+        part: str = None,
+    ):
         """
 
         Args:
@@ -111,8 +119,9 @@ class Config(dict):
                 raise KeyError(f'Part `{self._part}` not found in config `{self}`')
             return
 
-        assert len([c for c in self._data['configs'] if 'main_part' in c]) < 2, \
-            f'More then one part of config `self` are marked as main'
+        assert (
+            len([c for c in self._data['configs'] if 'main_part' in c]) < 2
+        ), f'More then one part of config `self` are marked as main'
         for part_name, part in self._data['configs'].items():
             if part.get('main_part', False):
                 self._data = part
@@ -124,6 +133,7 @@ class Config(dict):
     def _update_uses(self):
         if self._filepath is None or 'uses' not in self._data:
             return
+        self._data['uses'] = list_or_str_to_list(self._data['uses'])
         for i, use in enumerate(self._data['uses']):
             if isinstance(use, str) and use.startswith('#'):
                 self._data['uses'][i] = str(self._filepath) + use
@@ -137,19 +147,19 @@ class Config(dict):
         return self._name
 
     def get_name_for_persistence(self, *args, **kwargs) -> str:
-        """ Used for creating filename in task data persistence, should uniquely define config """
+        """Used for creating filename in task data persistence, should uniquely define config"""
         return self.name
 
     @property
     def fullname(self):
-        """ Name with namespace """
+        """Name with namespace"""
         if self.namespace is None:
             return f'{self.name}'
         return f'{self.namespace}::{self.name}'
 
     @property
     def repr_name(self) -> str:
-        """ Should be unique representation of this config"""
+        """Should be unique representation of this config"""
         if self._filepath:
             if self.namespace is None:
                 name = str(self._filepath)
@@ -162,7 +172,7 @@ class Config(dict):
 
     @property
     def repr_name_without_namespace(self) -> str:
-        """ Unique representation of this config without namespace"""
+        """Unique representation of this config without namespace"""
         return self.repr_name.split('::')[-1]
 
     def __str__(self):
@@ -192,7 +202,7 @@ class Config(dict):
         return item in self.data
 
     def apply_context(self, context: Context):
-        """ Amend or rewrite data of config by data from context"""
+        """Amend or rewrite data of config by data from context"""
         self._data.update(deepcopy(context.data))
         if self.namespace:
             for namespace, data in context.for_namespaces.items():
@@ -200,7 +210,7 @@ class Config(dict):
                     self._data.update(deepcopy(data))
 
     def _validate_data(self):
-        """ Check correct format of data """
+        """Check correct format of data"""
         if self._data is None:
             return
 
@@ -217,7 +227,7 @@ class Config(dict):
         search_and_replace_placeholders(self._data, global_vars)
 
     def prepare_objects(self):
-        """ Instantiate objects described in config """
+        """Instantiate objects described in config"""
         if self._data is None:
             return
 
@@ -233,12 +243,13 @@ class Config(dict):
             self._data[key] = find_and_instantiate_clazz(value, instancelize_clazz_fce=_instancelize_clazz)
 
     def chain(self, parameter_mode=True, **kwargs):
-        """ Create chain from this config """
+        """Create chain from this config"""
         from .chain import Chain
+
         return Chain(self, parameter_mode=parameter_mode, **kwargs)
 
     def get_original_config(self):
-        """ Get self of config from which this one is derived """
+        """Get self of config from which this one is derived"""
         return self
 
 
@@ -251,9 +262,10 @@ class Context(Config):
         return f'<context: {self}>'
 
     @staticmethod
-    def prepare_context(context_config: Union[None, dict, str, Path, Context, Iterable],
-                        namespace=None, global_vars=None) -> Union[Context, None]:
-        """ Helper function for instantiating Context from various sources"""
+    def prepare_context(
+        context_config: Union[None, dict, str, Path, Context, Iterable], namespace=None, global_vars=None
+    ) -> Union[Context, None]:
+        """Helper function for instantiating Context from various sources"""
         context = None
         if context_config is None:
             return
@@ -265,7 +277,9 @@ class Context(Config):
         elif isinstance(context_config, Context):
             context = context_config
         elif isinstance(context_config, Iterable):
-            contexts = map(partial(Context.prepare_context, namespace=namespace, global_vars=global_vars), context_config)
+            contexts = map(
+                partial(Context.prepare_context, namespace=namespace, global_vars=global_vars), context_config
+            )
             context = Context.merge_contexts(contexts)
 
         if context is None:
@@ -321,8 +335,7 @@ class Context(Config):
         if self.namespace is not None:
             self.for_namespaces = {f'{self.namespace}::{k}': v for k, v in self.for_namespaces.items()}
             self.for_namespaces[self.namespace] = {
-                k: v for k, v in self._data.items()
-                if k not in Context.RESERVED_PARAMETER_NAMES or k == 'uses'
+                k: v for k, v in self._data.items() if k not in Context.RESERVED_PARAMETER_NAMES or k == 'uses'
             }
             self._data = {}
         super()._prepare(create_objects=False)

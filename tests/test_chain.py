@@ -11,9 +11,7 @@ from tests.tasks.a import ATask
 
 
 def test_config(tmp_path):
-    config_data = {
-        'uses': []
-    }
+    config_data = {'uses': []}
     config = Config(tmp_path, name='config', data=config_data)
     chain = Chain(config)
     assert len(chain._configs) == 1
@@ -36,9 +34,7 @@ def test_configs(tmp_path):
 
 
 def test_task_creation(tmp_path):
-    config_data = {
-        'tasks': ['tests.tasks.a.A']
-    }
+    config_data = {'tasks': ['tests.tasks.a.A']}
     config = Config(tmp_path, name='config', data=config_data)
     chain = Chain(config)
 
@@ -70,9 +66,7 @@ def test_task_creation_with_uses(tmp_path):
 
 
 def test_missing_param(tmp_path):
-    config_data = {
-        'tasks': ['tests.tasks.a.*']
-    }
+    config_data = {'tasks': ['tests.tasks.a.*']}
     config = Config(tmp_path, name='config', data=config_data)
     with pytest.raises(ValueError):
         _ = Chain(config)
@@ -94,10 +88,14 @@ def test_params_in_bad_config(tmp_path):
 def test_params(tmp_path):
     config_data = {
         'uses': [
-            Config(tmp_path, name='config', data={
-                'tasks': ['tests.tasks.a.*'],
-                'a_number': 7,
-            }),
+            Config(
+                tmp_path,
+                name='config',
+                data={
+                    'tasks': ['tests.tasks.a.*'],
+                    'a_number': 7,
+                },
+            ),
         ],
         'tasks': ['tests.tasks.b.*'],
     }
@@ -108,7 +106,6 @@ def test_params(tmp_path):
 
 
 class XTask(Task):
-
     class Meta:
         input_tasks = [ATask]
 
@@ -129,7 +126,6 @@ def test_missing_input_task(tmp_path):
 
 
 class YTask(Task):
-
     class Meta:
         input_tasks = ['a']
 
@@ -275,7 +271,6 @@ def test_multi_chain(tmp_path):
     from tests.tasks.c import PTask
 
     class ZTask(Task):
-
         class Meta:
             input_tasks = [PTask]
             parameters = [Parameter('a', default=1)]
@@ -311,7 +306,6 @@ def test_multi_chain(tmp_path):
 
 
 class MyObject(ChainObject, ParameterObject):
-
     def __init__(self):
         self.x = None
 
@@ -324,11 +318,7 @@ class MyObject(ChainObject, ParameterObject):
 
 def test_chain_objects(tmp_path):
 
-    config_data = {
-        'tasks': [],
-        'x': 1,
-        'my_object': {'class': 'tests.test_chain.MyObject'}
-    }
+    config_data = {'tasks': [], 'x': 1, 'my_object': {'class': 'tests.test_chain.MyObject'}}
 
     config = Config(tmp_path, name='config', data=config_data)
     _ = Chain(config)
@@ -338,7 +328,6 @@ def test_chain_objects(tmp_path):
 
 def test_task_short_names(tmp_path):
     class ABTask(Task):
-
         class Meta:
             task_group = 'a'
             name = 'b'
@@ -347,7 +336,6 @@ def test_task_short_names(tmp_path):
             return False
 
     class BBTask(Task):
-
         class Meta:
             task_group = 'b'
             name = 'b'
@@ -355,9 +343,7 @@ def test_task_short_names(tmp_path):
         def run(self) -> bool:
             return False
 
-    config_data = {
-        'tasks': [ABTask, BBTask]
-    }
+    config_data = {'tasks': [ABTask, BBTask]}
     chain = Config(tmp_path, name='config', data=config_data).chain()
 
     with pytest.raises(KeyError):
@@ -414,14 +400,8 @@ def test_task_dependencies_in_namespace(tmp_path):
 
 
 def test_namespace_in_uses(tmp_path):
-    json.dump(
-        {'tasks': ['tests.tasks.a.A'], 'x': 1},
-        (tmp_path / 'config1.json').open('w')
-    )
-    json.dump(
-        {'uses': [f'{tmp_path}/config1.json as ns'], 'y': 2},
-        (tmp_path / 'config2.json').open('w')
-    )
+    json.dump({'tasks': ['tests.tasks.a.A'], 'x': 1}, (tmp_path / 'config1.json').open('w'))
+    json.dump({'uses': [f'{tmp_path}/config1.json as ns'], 'y': 2}, (tmp_path / 'config2.json').open('w'))
 
     config = Config(tmp_path, str(tmp_path / 'config2.json'))
     chain = config.chain()
@@ -510,9 +490,13 @@ def test_same_tasks_with_multiple_inputs(tmp_path):
 
     for namespace in [False, True]:
         config_a1 = Config(tmp_path, name='config_a1', data={'tasks': [A], 'value': 1})
-        config_a2 = Config(tmp_path, name='config_a2', data={'tasks': [A], 'value': 2}, namespace='a2' if namespace else None)
+        config_a2 = Config(
+            tmp_path, name='config_a2', data={'tasks': [A], 'value': 2}, namespace='a2' if namespace else None
+        )
 
-        config_b = Config(tmp_path, name='config_b', data={'tasks': [B], 'uses': [config_a1]}, namespace='nsb' if namespace else None)
+        config_b = Config(
+            tmp_path, name='config_b', data={'tasks': [B], 'uses': [config_a1]}, namespace='nsb' if namespace else None
+        )
         config_c = Config(tmp_path, name='config_c', data={'tasks': [C], 'uses': [config_a2, config_b]})
 
         if namespace:
@@ -524,18 +508,9 @@ def test_same_tasks_with_multiple_inputs(tmp_path):
 
 
 def test_namespace_composition(tmp_path):
-    json.dump(
-        {'tasks': ['tests.tasks.a.A']},
-        (tmp_path / 'config1.json').open('w')
-    )
-    json.dump(
-        {'uses': [f'{tmp_path}/config1.json as ns1']},
-        (tmp_path / 'config2.json').open('w')
-    )
-    json.dump(
-        {'uses': [f'{tmp_path}/config2.json as ns2']},
-        (tmp_path / 'config.json').open('w')
-    )
+    json.dump({'tasks': ['tests.tasks.a.A']}, (tmp_path / 'config1.json').open('w'))
+    json.dump({'uses': [f'{tmp_path}/config1.json as ns1']}, (tmp_path / 'config2.json').open('w'))
+    json.dump({'uses': [f'{tmp_path}/config2.json as ns2']}, (tmp_path / 'config.json').open('w'))
 
     config = Config(tmp_path, str(tmp_path / 'config.json'))
     chain = config.chain()
@@ -671,18 +646,26 @@ def test_parameter_mode(tmp_path, parameter_mode):
     assert len(list((tmp_path / 'a').glob('*.json'))) == 1 if parameter_mode else 2
 
     if parameter_mode:
-        assert chain1.a.get_config().get_name_for_persistence(chain1.a) == chain2.a.get_config().get_name_for_persistence(chain2.a)
+        assert chain1.a.get_config().get_name_for_persistence(
+            chain1.a
+        ) == chain2.a.get_config().get_name_for_persistence(chain2.a)
     else:
-        assert chain1.a.get_config().get_name_for_persistence(chain1.a) != chain2.a.get_config().get_name_for_persistence(chain2.a)
+        assert chain1.a.get_config().get_name_for_persistence(
+            chain1.a
+        ) != chain2.a.get_config().get_name_for_persistence(chain2.a)
 
     chain3 = config3.chain(parameter_mode=parameter_mode)
     assert chain3.b.value == 9
     assert chain1.a.run_called == 1
     assert len(list((tmp_path / 'a').glob('*.json'))) == 2 if parameter_mode else 3
 
-    assert chain3.a.get_config().get_name_for_persistence(chain3.a) != chain2.a.get_config().get_name_for_persistence(chain2.a)
+    assert chain3.a.get_config().get_name_for_persistence(chain3.a) != chain2.a.get_config().get_name_for_persistence(
+        chain2.a
+    )
 
-    chain = Config(tmp_path, name='config2', data={'tasks': [A, B], 'a': 2, 'b': 3}).chain(parameter_mode=parameter_mode)
+    chain = Config(tmp_path, name='config2', data={'tasks': [A, B], 'a': 2, 'b': 3}).chain(
+        parameter_mode=parameter_mode
+    )
     assert chain.a.run_called == 0
 
     for x in (tmp_path / 'a').glob('*'):
@@ -706,13 +689,16 @@ def test_context(tmp_path):
 
 
 def test_context_with_namespace():
-    context = Context.prepare_context({
-        'for_namespaces': {
-            'ns1': {'x': 1},
-            'ns2::ns3': {'x': 2},
+    context = Context.prepare_context(
+        {
+            'for_namespaces': {
+                'ns1': {'x': 1},
+                'ns2::ns3': {'x': 2},
+            },
+            'x': 3,
         },
-        'x': 3
-    }, namespace='ns')
+        namespace='ns',
+    )
 
     assert 'ns' in context.for_namespaces
     assert 'ns::ns1' in context.for_namespaces
@@ -759,12 +745,14 @@ def test_context_with_files(tmp_path):
 
 def test_multi_configs_uses(tmp_path):
     json.dump(
-        {'configs': {
-            'c1': {'tasks': ['tests.tasks.a.A'], 'x': 1},
-            'c2': {'tasks': ['tests.tasks.a.A'], 'x': 2},
-            'c': {'main_part': True, 'uses': ['#c1 as ns', '#c2 as ns2'], 'y': 2},
-        }},
-        (tmp_path / 'config.json').open('w')
+        {
+            'configs': {
+                'c1': {'tasks': ['tests.tasks.a.A'], 'x': 1},
+                'c2': {'tasks': ['tests.tasks.a.A'], 'x': 2},
+                'c': {'main_part': True, 'uses': ['#c1 as ns', '#c2 as ns2'], 'y': 2},
+            }
+        },
+        (tmp_path / 'config.json').open('w'),
     )
 
     c = Config(filepath=tmp_path / 'config.json')
@@ -772,6 +760,23 @@ def test_multi_configs_uses(tmp_path):
     chain['ns::a'].params.x = 1
     chain['ns2::a'].params.x = 2
     assert len(chain._configs) == 3
+
+
+def test_multi_configs_one_uses(tmp_path):
+    json.dump(
+        {
+            'configs': {
+                'c1': {'tasks': ['tests.tasks.a.A'], 'x': 1},
+                'c': {'main_part': True, 'uses': '#c1 as ns', 'y': 2},
+            }
+        },
+        (tmp_path / 'config.json').open('w'),
+    )
+
+    c = Config(filepath=tmp_path / 'config.json')
+    chain = c.chain()
+    chain['ns::a'].params.x = 1
+    assert len(chain._configs) == 2
 
 
 class Abc(Task):
@@ -788,23 +793,29 @@ class Abc(Task):
 def test_context_for_namespaces(tmp_path):
 
     json.dump(
-        {'configs': {
-            'c1': {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1},
-            'c2': {'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2},
-            'c': {'main_part': True, 'uses': ['#c1 as ns', '#c2 as ns2'], 'z': 2},
-        }},
-        (tmp_path / 'config.json').open('w')
+        {
+            'configs': {
+                'c1': {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1},
+                'c2': {'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2},
+                'c': {'main_part': True, 'uses': ['#c1 as ns', '#c2 as ns2'], 'z': 2},
+            }
+        },
+        (tmp_path / 'config.json').open('w'),
     )
 
-    config = Config(tmp_path, filepath=tmp_path / 'config.json', context={
-        'for_namespaces': {
-            'ns': {'x': 11},
-            'ns2': {'x': 21},
-            'nsX': {'x': 77},
+    config = Config(
+        tmp_path,
+        filepath=tmp_path / 'config.json',
+        context={
+            'for_namespaces': {
+                'ns': {'x': 11},
+                'ns2': {'x': 21},
+                'nsX': {'x': 77},
+            },
+            'x': 666,
+            'y': 33,
         },
-        'x': 666,
-        'y': 33,
-    })
+    )
 
     chain = config.chain()
 
@@ -822,25 +833,29 @@ class Def(Task):
 
 def test_namespaces_use_in_persistence(tmp_path):
     json.dump(
-        {'configs': {
-            'c1': {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1},
-            'c2': {'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2},
-            'c': {'main_part': True, 'uses': ['#c1 as ns', '#c2 as ns2'], 'tasks': ['tests.test_chain.Def']},
-        }},
-        (tmp_path / 'config.json').open('w')
+        {
+            'configs': {
+                'c1': {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1},
+                'c2': {'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2},
+                'c': {'main_part': True, 'uses': ['#c1 as ns', '#c2 as ns2'], 'tasks': ['tests.test_chain.Def']},
+            }
+        },
+        (tmp_path / 'config.json').open('w'),
     )
 
     chain = Config(tmp_path, filepath=tmp_path / 'config.json').chain()
     assert chain['def'].value == 3003
 
     json.dump(
-        {'configs': {
-            'c1': {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1},
-            'c2': {'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2},
-            'c': {'uses': ['#c1 as ns', '#c2 as ns2'], 'tasks': ['tests.test_chain.Def']},
-            'd': {'main_part': True, 'uses': ['#c as nsc']},
-        }},
-        (tmp_path / 'config2.json').open('w')
+        {
+            'configs': {
+                'c1': {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1},
+                'c2': {'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2},
+                'c': {'uses': ['#c1 as ns', '#c2 as ns2'], 'tasks': ['tests.test_chain.Def']},
+                'd': {'main_part': True, 'uses': ['#c as nsc']},
+            }
+        },
+        (tmp_path / 'config2.json').open('w'),
     )
     chain = Config(tmp_path, filepath=tmp_path / 'config2.json').chain()
     assert chain['def'].has_data
@@ -849,7 +864,6 @@ def test_namespaces_use_in_persistence(tmp_path):
 
 def test_logging(tmp_path, caplog):
     class T(Task):
-
         class Meta:
             parameters = [Parameter('debugs', default=1, ignore_persistence=True)]
 
@@ -885,7 +899,6 @@ def test_logging(tmp_path, caplog):
     assert len(caplog.record_tuples) == 6 + 8 + 8
 
     class R(Task):
-
         class Meta:
             parameters = [Parameter('debugs', default=1, ignore_persistence=True)]
             data_class = InMemoryData
@@ -909,13 +922,15 @@ def test_logging(tmp_path, caplog):
 
 def test_one_task_over_multiple_namespaces(tmp_path):
     json.dump(
-        {'configs': {
-            'a': {'tasks': ['tests.tasks.a.A']},
-            'c1': {'tasks': [], 'uses': ['#a as a']},
-            'c2': {'tasks': [], 'uses': ['#a as a']},
-            'c': {'main_part': True, 'uses': ['#c1 as c1', '#c2 as c2']},
-        }},
-        (tmp_path / 'config.json').open('w')
+        {
+            'configs': {
+                'a': {'tasks': ['tests.tasks.a.A']},
+                'c1': {'tasks': [], 'uses': ['#a as a']},
+                'c2': {'tasks': [], 'uses': ['#a as a']},
+                'c': {'main_part': True, 'uses': ['#c1 as c1', '#c2 as c2']},
+            }
+        },
+        (tmp_path / 'config.json').open('w'),
     )
 
     chain = Config(filepath=tmp_path / 'config.json').chain()
@@ -925,27 +940,17 @@ def test_one_task_over_multiple_namespaces(tmp_path):
 
 
 def test_configs_with_same_names(tmp_path):
-    json.dump(
-        {'tasks': ['tests.test_chain.Abc'], 'x':1, 'y': 1},
-        (tmp_path / 'config.json').open('w')
-    )
+    json.dump({'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1}, (tmp_path / 'config.json').open('w'))
 
     (tmp_path / 'a').mkdir()
-    json.dump(
-        {'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2},
-        (tmp_path / 'a' / 'config.json').open('w')
-    )
-
+    json.dump({'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2}, (tmp_path / 'a' / 'config.json').open('w'))
 
     json.dump(
-        {'uses': [
-            str(tmp_path / 'config.json') + ' as s',
-            str(tmp_path / 'a' / 'config.json') + ' as a'
-        ]},
-        (tmp_path/ 'main.json').open('w')
+        {'uses': [str(tmp_path / 'config.json') + ' as s', str(tmp_path / 'a' / 'config.json') + ' as a']},
+        (tmp_path / 'main.json').open('w'),
     )
 
-    chain = Config(tmp_path, tmp_path/ 'main.json').chain()
+    chain = Config(tmp_path, tmp_path / 'main.json').chain()
     assert len(chain.tasks) == 2
     assert chain['s::abc'] != chain['a::abc']
     assert chain['s::abc'].value == 1001
@@ -1018,10 +1023,7 @@ def test_create_readable_filenames_base_on_config_name(tmp_path):
 
 
 def test_multichain_with_contexts(tmp_path):
-    json.dump(
-        {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 0},
-        (tmp_path / 'config.json').open('w')
-    )
+    json.dump({'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 0}, (tmp_path / 'config.json').open('w'))
     config1 = Config(tmp_path, tmp_path / 'config.json', context={'y': 1})
     config2 = Config(tmp_path, tmp_path / 'config.json', context={'y': 2})
     with pytest.raises(AssertionError):
@@ -1047,11 +1049,13 @@ class Ghi(Task):
 
 def test_multichain_with_contexts_and_uses(tmp_path):
     json.dump(
-        {'configs': {
-            'c': {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 0},
-            'g': {'main_part': True, 'uses': ['#c'], 'tasks': ['tests.test_chain.Ghi']},
-        }},
-        (tmp_path / 'config.json').open('w')
+        {
+            'configs': {
+                'c': {'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 0},
+                'g': {'main_part': True, 'uses': ['#c'], 'tasks': ['tests.test_chain.Ghi']},
+            }
+        },
+        (tmp_path / 'config.json').open('w'),
     )
 
     # config1 = Config(tmp_path, tmp_path / 'config.json', name='config1')
@@ -1077,24 +1081,30 @@ def test_task_dataframe(tmp_path):
 def test_uses_in_context(tmp_path):
     json.dump({'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1}, (tmp_path / 'config1.json').open('w'))
     json.dump({'tasks': ['tests.test_chain.Abc'], 'x': 2, 'y': 2}, (tmp_path / 'config2.json').open('w'))
-    json.dump({'uses': [
-        f'{tmp_path}/config1.json as ns',
-        f'{tmp_path}/config2.json as ns2',
-    ]}, (tmp_path / 'config.json').open('w')
+    json.dump(
+        {
+            'uses': [
+                f'{tmp_path}/config1.json as ns',
+                f'{tmp_path}/config2.json as ns2',
+            ]
+        },
+        (tmp_path / 'config.json').open('w'),
     )
 
     json.dump({'x': 3, 'y': 3}, (tmp_path / 'context1.json').open('w'))
     json.dump({'x': 4, 'y': 4}, (tmp_path / 'context2.json').open('w'))
-    json.dump({'uses': [
-        f'{tmp_path}/context1.json as ns',
-        '{tmp_path}/context2.json as ns2',
-    ]}, (tmp_path / 'context.json').open('w'))
+    json.dump(
+        {
+            'uses': [
+                f'{tmp_path}/context1.json as ns',
+                '{tmp_path}/context2.json as ns2',
+            ]
+        },
+        (tmp_path / 'context.json').open('w'),
+    )
 
     chain = Config(
-        tmp_path,
-        str(tmp_path / 'config.json'),
-        context=tmp_path / 'context.json',
-        global_vars={'tmp_path': tmp_path}
+        tmp_path, str(tmp_path / 'config.json'), context=tmp_path / 'context.json', global_vars={'tmp_path': tmp_path}
     ).chain()
     assert 'uses' not in chain._base_config.context
     assert 'ns' in chain._base_config.context.for_namespaces
@@ -1105,25 +1115,34 @@ def test_uses_in_context(tmp_path):
 
 def test_uses_in_context_recursively(tmp_path):
     json.dump({'tasks': ['tests.test_chain.Abc'], 'x': 1, 'y': 1}, (tmp_path / 'config1.json').open('w'))
-    json.dump({'tasks': ['tests.test_chain.Abc'], 'uses': f'{tmp_path / "config1.json"} as ns_inner', 'x': 2, 'y': 2},
-              (tmp_path / 'config2.json').open('w'))
-    json.dump({'uses': [
-        f'{tmp_path}/config2.json as ns',
-    ]}, (tmp_path / 'config.json').open('w')
+    json.dump(
+        {'tasks': ['tests.test_chain.Abc'], 'uses': f'{tmp_path / "config1.json"} as ns_inner', 'x': 2, 'y': 2},
+        (tmp_path / 'config2.json').open('w'),
+    )
+    json.dump(
+        {
+            'uses': [
+                f'{tmp_path}/config2.json as ns',
+            ]
+        },
+        (tmp_path / 'config.json').open('w'),
     )
 
     json.dump({'x': 3, 'y': 3, 'tasks': 'anything'}, (tmp_path / 'context1.json').open('w'))
-    json.dump({'x': 4, 'y': 4, 'uses': f'{tmp_path / "context1.json"} as ns_inner'},
-              (tmp_path / 'context2.json').open('w'))
-    json.dump({'uses': [
-        '{tmp_path}/context2.json as ns',
-    ]}, (tmp_path / 'context.json').open('w'))
+    json.dump(
+        {'x': 4, 'y': 4, 'uses': f'{tmp_path / "context1.json"} as ns_inner'}, (tmp_path / 'context2.json').open('w')
+    )
+    json.dump(
+        {
+            'uses': [
+                '{tmp_path}/context2.json as ns',
+            ]
+        },
+        (tmp_path / 'context.json').open('w'),
+    )
 
     chain = Config(
-        tmp_path,
-        str(tmp_path / 'config.json'),
-        context=tmp_path / 'context.json',
-        global_vars={'tmp_path': tmp_path}
+        tmp_path, str(tmp_path / 'config.json'), context=tmp_path / 'context.json', global_vars={'tmp_path': tmp_path}
     ).chain()
     assert 'uses' not in chain._base_config.context
     assert all('uses' not in v for v in chain._base_config.context.for_namespaces.values())
