@@ -54,3 +54,17 @@ def list_or_str_to_list(value: Union[None, List[str], str]) -> List[str]:
     if isinstance(value, str):
         return [value]
     return value
+
+
+def chunked(iterable, chunksize):
+    result = []
+    result_size = 0
+    for val in iterable:
+        result.append(val)
+        result_size += 1
+        if result_size == chunksize:
+            yield result
+            result = []
+            result_size = 0
+    if result_size > 0:
+        yield result
