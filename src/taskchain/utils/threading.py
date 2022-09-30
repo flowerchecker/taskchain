@@ -37,7 +37,7 @@ def parallel_map(
     if isinstance(iterable, list) and total is None:
         total = len(iterable)
     if threads == 1:
-        return [fun(v) for v in tqdm(iterable, desc=desc, total=total, maxinterval=2) if use_tqdm else iterable]
+        return [fun(v) for v in (tqdm(iterable, desc=desc, total=total, maxinterval=2) if use_tqdm else iterable)]
 
     def _fun(i, arg):
         return i, fun(arg)
