@@ -13,9 +13,7 @@ pip install taskchain
 ```bash
 git clone https://github.com/flowerchecker/taskchain
 cd taskchain
-python setup.py install
-# or
-python setup.py develop
+poetry install
 ```
 
 ## Changelog
@@ -58,8 +56,6 @@ python setup.py develop
 #### Release new version to PIP
 
 ```bash
-pip install bumpversion twine
-
 make version-patch
 # OR
 make version-minor
