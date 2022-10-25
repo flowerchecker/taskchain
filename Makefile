@@ -1,12 +1,13 @@
 
 install:
-	python setup.py install
+	conda env create
+	poetry install
 
 develop:
-	python setup.py develop
+	poetry install
 
 test:
-	python setup.py test
+	pytest
 
 version-patch:
 	bump2version patch
@@ -15,10 +16,8 @@ version-minor:
 	bump2version minor
 
 publish:
-	rm dist/*
-	python setup.py sdist
-	twine check dist/*
-	twine upload dist/*
+	poetry build
+	poetry publish
 
 docs-develop:
 	mkdocs serve
