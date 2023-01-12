@@ -59,6 +59,7 @@ class InMemoryCache(Cache):
 
     def __init__(self):
         self._memory = defaultdict(dict)
+        self._subcaches = defaultdict(dict)
 
     def get_or_compute(self, key: str, computer: Callable, force: bool = False):
         """"""
@@ -66,9 +67,11 @@ class InMemoryCache(Cache):
             self._memory[get_ident()][key] = computer()
         return self._memory[get_ident()][key]
 
-    def subcache(self, *args):
+    def subcache(self, name):
         """"""
-        return InMemoryCache()
+        if name not in self._subcaches[get_ident()]:
+            self._subcaches[get_ident()][name] = InMemoryCache()
+        return self._subcaches[get_ident()][name]
 
     def __len__(self):
         return len(self._memory[get_ident()])

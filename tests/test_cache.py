@@ -5,6 +5,23 @@ import pytest
 from taskchain.cache import InMemoryCache, cached, NumpyArrayCache, JsonCache, DataFrameCache
 
 
+def test_in_memory_subcache():
+    cache = InMemoryCache()
+    assert len(cache) == 0
+    assert cache.get_or_compute('key', lambda: 1) == 1
+    assert len(cache) == 1
+    first_subcache = cache.subcache('first')
+    second_subcache = cache.subcache('second')
+    assert first_subcache.get_or_compute('key', lambda: 2) == 2
+    assert len(cache) == 1
+    assert len(first_subcache) == 1
+    assert len(second_subcache) == 0
+    assert second_subcache.get_or_compute('key', lambda: 3) == 3
+    assert len(cache) == 1
+    assert len(first_subcache) == 1
+    assert len(second_subcache) == 1
+
+
 def test_cache_decorator():
     external_cache = InMemoryCache()
     external_cache2 = InMemoryCache()
