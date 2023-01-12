@@ -45,26 +45,25 @@ def test_cache_decorator():
     obj = CachedClass()
 
     for cache, method in [
-        (obj.cache, obj.cached_method),
+        (obj.cache.subcache(obj.cached_method.__name__), obj.cached_method),
         (external_cache, obj.cached_method2),
         (external_cache2, obj.cached_method3),
     ]:
-        assert len(cache._memory) == 0
+        assert len(cache) == 0
         assert method(1, 2) == 33
-        memory = next(iter(cache._memory.values()))
-        assert len(memory) == 1
+        assert len(cache) == 1
 
         assert method(1, 2) == 33
-        assert len(memory) == 1
+        assert len(cache) == 1
 
         assert method(1, 2, 10, 20) == 33
-        assert len(memory) == 1
+        assert len(cache) == 1
 
         assert method(1, 2, 10, parameter_2=20) == 33
-        assert len(memory) == 1
+        assert len(cache) == 1
 
         assert method(1, 2, 20, 10) == 33
-        assert len(memory) == 2
+        assert len(cache) == 2
 
 
 def test_cache_decorator_forcing():
@@ -79,18 +78,18 @@ def test_cache_decorator_forcing():
             return parameter_1 + parameter_2 + key_parameter_1 + key_parameter_2
 
     obj = CachedClass()
+    cache = obj.cache.subcache(obj.cached_method.__name__)
 
     assert obj.cached_method(1, 2) == 33
-    memory = next(iter(obj.cache._memory.values()))
-    assert len(memory) == 1
+    assert len(cache) == 1
     assert obj.calls == 1
 
     assert obj.cached_method(1, 2) == 33
-    assert len(memory) == 1
+    assert len(cache) == 1
     assert obj.calls == 1
 
     assert obj.cached_method(1, 2, force_cache=True) == 33
-    assert len(memory) == 1
+    assert len(cache) == 1
     assert obj.calls == 2
 
 
@@ -126,16 +125,14 @@ def test_cache_decorator_ignore_params():
             return parameter_1 + key_parameter_1
 
     obj = CachedClass()
+    cache = obj.cache.subcache(obj.cached_method.__name__)
 
     assert len(obj.cache._memory) == 0
     assert obj.cached_method(1, 2) == 11
-    memory = next(iter(obj.cache._memory.values()))
-    assert len(memory) == 1
+    assert len(cache) == 1
 
     assert obj.cached_method(1, 666) == 11
-    memory = next(iter(obj.cache._memory.values()))
-    assert len(memory) == 1
+    assert len(cache) == 1
 
     assert obj.cached_method(1, 666, key_parameter_2=123) == 11
-    memory = next(iter(obj.cache._memory.values()))
-    assert len(memory) == 1
+    assert len(cache) == 1

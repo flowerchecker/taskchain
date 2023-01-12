@@ -216,10 +216,11 @@ class cached:
         self.ignore_params = ignore_kwargs if ignore_kwargs else []
 
     def __call__(self, method):
+        @functools.wraps(method)
         def decorated(obj, *args, force_cache=False, **kwargs):
             if self.cache_object is None:
                 assert hasattr(obj, self.cache_attr), 'Missing cache argument'
-                cache = getattr(obj, self.cache_attr)
+                cache = getattr(obj, self.cache_attr).subcache(method.__name__)
             else:
                 cache = self.cache_object
 
@@ -242,4 +243,4 @@ class cached:
         return decorated
 
     def __get__(self, instance, instancetype):
-        return functools.partial(self(self.method), instance)
+        return functools.wraps(self.method)(functools.partial(self(self.method), instance))
