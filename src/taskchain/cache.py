@@ -260,9 +260,12 @@ class cached:
 
     def __call__(self, method):
         @functools.wraps(method)
-        def decorated(obj, *args, force_cache=False, **kwargs):
+        def decorated(
+                obj, *args, force_cache=False, store_cache_value=NO_VALUE, only_cache=False, **kwargs
+        ):
+            assert store_cache_value is NO_VALUE or not only_cache
             if self.cache_object is None:
-                assert hasattr(obj, self.cache_attr), 'Missing cache argument'
+                assert hasattr(obj, self.cache_attr), f'Missing cache argument for obj {obj}'
                 cache = getattr(obj, self.cache_attr).subcache(method.__name__)
             else:
                 cache = self.cache_object
@@ -282,7 +285,16 @@ class cached:
             else:
                 cache_key = self.key(*args, **kwargs)
 
-            return cache.get_or_compute(cache_key, lambda: method(obj, *args, **kwargs), force=force_cache)
+            if only_cache:
+                return cache.get(cache_key)
+
+            if store_cache_value is NO_VALUE:
+                computer = lambda: method(obj, *args, **kwargs)  # noqa: E731
+            else:
+                computer = lambda: store_cache_value  # noqa: E731
+
+            return cache.get_or_compute(cache_key, computer, force=force_cache)
+
         return decorated
 
     def __get__(self, instance, instancetype):
