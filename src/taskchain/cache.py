@@ -38,12 +38,12 @@ class Cache(abc.ABC):
 
     @abc.abstractmethod
     def subcache(self, *args) -> 'Cache':
-        """ Create separate sub-cache of this cache. """
+        """Create separate sub-cache of this cache."""
         pass
 
 
 class DummyCache(Cache):
-    """ No caching. """
+    """No caching."""
 
     def get_or_compute(self, key: str, computer: Callable, force: bool = False):
         """"""
@@ -55,7 +55,7 @@ class DummyCache(Cache):
 
 
 class InMemoryCache(Cache):
-    """ Cache only in memory. """
+    """Cache only in memory."""
 
     def __init__(self):
         self._memory = defaultdict(dict)
@@ -78,7 +78,7 @@ class InMemoryCache(Cache):
 
 
 class FileCache(Cache):
-    """ General cache for saving values in files. """
+    """General cache for saving values in files."""
 
     def __init__(self, directory: Union[str, Path]):
         self.directory = Path(directory)
@@ -130,7 +130,7 @@ class FileCache(Cache):
 
 
 class JsonCache(FileCache):
-    """ Cache json-like objects in `.json` files. """
+    """Cache json-like objects in `.json` files."""
 
     def __init__(self, directory, allow_nones=True):
         super().__init__(directory)
@@ -147,7 +147,8 @@ class JsonCache(FileCache):
             loaded = json.load(file)
             if key != loaded['key']:
                 raise CacheException(
-                    f'The expected cache key {key} does not match to the retrieved one {loaded["key"]}')
+                    f'The expected cache key {key} does not match to the retrieved one {loaded["key"]}'
+                )
             if loaded['value'] is None and not self.allow_nones:
                 raise CacheException(f'The cache value for key {key} is None, file: {filepath}')
             return loaded['value']
@@ -158,7 +159,7 @@ class JsonCache(FileCache):
 
 
 class DataFrameCache(FileCache):
-    """ Cache pandas DataFrame objects in `.pd` files. """
+    """Cache pandas DataFrame objects in `.pd` files."""
 
     def save_value(self, filepath: Path, key: str, value: Any):
         value.to_pickle(filepath)
@@ -172,7 +173,7 @@ class DataFrameCache(FileCache):
 
 
 class NumpyArrayCache(FileCache):
-    """ Cache numpy arrays in `.npy` files. """
+    """Cache numpy arrays in `.npy` files."""
 
     def save_value(self, filepath: Path, key: str, value: Any):
         np.save(filepath, value)
@@ -186,7 +187,6 @@ class NumpyArrayCache(FileCache):
 
 
 class CacheException(Exception):
-
     pass
 
 
@@ -198,8 +198,13 @@ class cached:
     Cache can be defined in decorator or as attribute of object.
     """
 
-    def __init__(self, cache_object: Cache = None, key: Callable = None,
-                 cache_attr: str = 'cache', ignore_kwargs: List[str] = None):
+    def __init__(
+        self,
+        cache_object: Cache = None,
+        key: Callable = None,
+        cache_attr: str = 'cache',
+        ignore_kwargs: List[str] = None,
+    ):
         """
         Args:
             cache_object: Cache used for caching.
