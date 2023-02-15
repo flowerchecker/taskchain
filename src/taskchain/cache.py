@@ -18,8 +18,25 @@ logger = logging.getLogger('cache')
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
+class NO_VALUE:
+    pass
+
+
 class Cache(abc.ABC):
-    """ Cache interface. """
+    """Cache interface."""
+
+    @abc.abstractmethod
+    def get(self, key: str) -> Any:
+        """
+        Get value for given key if cached.
+
+        Args:
+            key: key under which value is cached
+
+        Returns:
+            cached value or NO_VALUE
+        """
+        pass
 
     @abc.abstractmethod
     def get_or_compute(self, key: str, computer: Callable, force: bool = False) -> Any:
@@ -45,6 +62,9 @@ class Cache(abc.ABC):
 class DummyCache(Cache):
     """No caching."""
 
+    def get(self, key: str):
+        return NO_VALUE
+
     def get_or_compute(self, key: str, computer: Callable, force: bool = False):
         """"""
         return computer()
@@ -60,6 +80,9 @@ class InMemoryCache(Cache):
     def __init__(self):
         self._memory = defaultdict(dict)
         self._subcaches = defaultdict(dict)
+
+    def get(self, key: str):
+        return self._memory[get_ident()].get(key, NO_VALUE)
 
     def get_or_compute(self, key: str, computer: Callable, force: bool = False):
         """"""
@@ -89,6 +112,21 @@ class FileCache(Cache):
         directory = self.directory / key_hash[:5]
         directory.mkdir(exist_ok=True)
         return directory / f'{key_hash[5:]}.{self.extension}'
+
+    def get(self, key):
+        filepath = self.filepath(key)
+        lock = FileLock(str(filepath) + '.lock')
+        with lock:
+            filepath_exists = filepath.exists()
+        if filepath_exists:
+            try:
+                return self.load_value(filepath, key)
+            except CacheException as error:
+                raise error
+            except Exception as error:
+                logger.warning('Cannot load cached value.')
+                logger.exception(error)
+        return NO_VALUE
 
     def get_or_compute(self, key, computer, force=False):
         """"""
