@@ -26,6 +26,8 @@ tqdm = "^4.64.1"
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.0"
 bump2version = "^1.0.1"
+isort = "5.10"
+black = "^23.1.0"
 
 
 [build-system]
@@ -40,3 +42,18 @@ testpaths = [
     'tests',
 ]
 
+
+[tool.black]
+line-length = 120
+target-version = ['py39']
+include = '\.pyi?$'
+# We use preview style for formatting Black itself. If you
+# want stable formatting across releases, you should keep
+# this off.
+preview = true
+skip-string-normalization = 1
+
+
+[tool.isort]
+profile = "black"
+line_length = 120
