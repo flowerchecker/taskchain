@@ -1,18 +1,20 @@
 import abc
 import functools
-import json
+import json as orig_json
 import logging
 import sys
 from collections import defaultdict
 from hashlib import sha256
-from inspect import signature, Parameter
+from inspect import Parameter, signature
 from pathlib import Path
 from threading import get_ident
-from typing import Callable, Union, Any, List
+from typing import Any, Callable, List, Union
 
 import numpy as np
 import pandas as pd
 from filelock import FileLock
+
+from taskchain.utils import json
 
 logger = logging.getLogger('cache')
 logger.addHandler(logging.StreamHandler(sys.stdout))
@@ -260,9 +262,7 @@ class cached:
 
     def __call__(self, method):
         @functools.wraps(method)
-        def decorated(
-                obj, *args, force_cache=False, store_cache_value=NO_VALUE, only_cache=False, **kwargs
-        ):
+        def decorated(obj, *args, force_cache=False, store_cache_value=NO_VALUE, only_cache=False, **kwargs):
             assert store_cache_value is NO_VALUE or not only_cache
             if self.cache_object is None:
                 assert hasattr(obj, self.cache_attr), f'Missing cache argument for obj {obj}'
@@ -281,7 +281,9 @@ class cached:
                         kwargs[arg] = parameter.default
                 args = []
                 key_kwargs = {k: v for k, v in kwargs.items() if k not in self.ignore_params}
-                cache_key = json.dumps(key_kwargs, sort_keys=True)
+                # we use json module from standard library to ensure backward
+                # compatibility
+                cache_key = orig_json.dumps(key_kwargs, sort_keys=True)
             else:
                 cache_key = self.key(*args, **kwargs)
 

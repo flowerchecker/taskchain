@@ -1,9 +1,11 @@
+import json as orig_json
 import logging
 from pathlib import Path
 from typing import Union
-import json
+
 import numpy as np
 
+from taskchain.utils import json
 from taskchain.utils.iter import progress_bar
 
 
@@ -22,7 +24,7 @@ def write_jsons(jsons, filename, use_tqdm=True, overwrite=True, nan_to_null=True
     assert not filename.exists() or overwrite, 'File already exists'
     with filename.open('w') as f:
         for j in progress_bar(jsons, disable=not use_tqdm, desc=f'Writing to {f.name}', **kwargs):
-            f.write(json.dumps(j, ignore_nan=nan_to_null, cls=NumpyEncoder, ensure_ascii=False) + '\n')
+            f.write(json.dumps(j) + '\n')
 
 
 def iter_json_file(filename, use_tqdm=True, **kwargs):
@@ -49,8 +51,7 @@ def check_file_exists(path: Union[Path, str]):
         raise ValueError(f'File `{path}` doesn\'t exists')
 
 
-class NumpyEncoder(json.JSONEncoder):
-
+class NumpyEncoder(orig_json.JSONEncoder):
     def __init__(self, ignore_nan=True, **kwargs):
         super().__init__(**kwargs)
         self.ignore_nan = ignore_nan
@@ -68,7 +69,7 @@ class NumpyEncoder(json.JSONEncoder):
             return None
         if isinstance(obj, (int, bool, str, float)):
             return obj
-        return json.JSONEncoder.default(self, obj)
+        return orig_json.JSONEncoder.default(self, obj)
 
 
 class ListHandler(logging.Handler):

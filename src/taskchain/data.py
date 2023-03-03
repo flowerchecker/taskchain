@@ -1,5 +1,4 @@
 import abc
-import json
 import logging
 import pickle
 import shutil
@@ -14,6 +13,7 @@ import pylab
 import yaml
 from matplotlib import pyplot as plt
 
+from taskchain.utils import json
 from taskchain.utils.io import NumpyEncoder, iter_json_file, write_jsons
 
 
@@ -178,7 +178,7 @@ class JSONData(FileData):
         return 'json'
 
     def save(self):
-        json.dump(self.value, self.path.open('w'), indent=2, sort_keys=True, cls=NumpyEncoder, ensure_ascii=False)
+        json.dump(self.value, self.path.open('w'), indent=2, sort_keys=True)
 
     def load(self) -> Any:
         self._value = json.load(self.path.open())
