@@ -118,7 +118,6 @@ class Data:
 
 
 class InMemoryData(Data):
-
     def __init__(self):
         super().__init__()
         self._value = self
@@ -151,7 +150,6 @@ class InMemoryData(Data):
 
 
 class FileData(Data, abc.ABC):
-
     @property
     def _path(self) -> Path:
         if self.extension is None:
@@ -170,7 +168,6 @@ class FileData(Data, abc.ABC):
 
 
 class JSONData(FileData):
-
     DATA_TYPES = [str, int, float, bool, dict, list]
 
     @property
@@ -186,7 +183,6 @@ class JSONData(FileData):
 
 
 class NumpyData(FileData):
-
     DATA_TYPES = [np.ndarray]
 
     @property
@@ -202,10 +198,9 @@ class NumpyData(FileData):
 
 
 class ListOfNumpyData(Data):
-
     @property
     def _path(self) -> Path:
-            return self._base_dir / self._name
+        return self._base_dir / self._name
 
     def save(self):
         if self.path.exists():
@@ -229,7 +224,6 @@ class ListOfNumpyData(Data):
 
 
 class PandasData(FileData):
-
     DATA_TYPES = [pd.DataFrame, pd.Series]
 
     @property
@@ -245,7 +239,6 @@ class PandasData(FileData):
 
 
 class FigureData(FileData):
-
     DATA_TYPES = [pylab.Figure]
 
     @property
@@ -264,7 +257,6 @@ class FigureData(FileData):
 
 
 class GeneratedData(FileData):
-
     DATA_TYPES = [Generator]
 
     @property
@@ -284,7 +276,6 @@ class GeneratedData(FileData):
 
 
 class DirData(Data):
-
     def __init__(self):
         super().__init__()
         self._dir = None
@@ -335,7 +326,6 @@ class DirData(Data):
 
 
 class ContinuesData(Data):
-
     def __init__(self):
         super().__init__()
         self._dir = None
@@ -379,7 +369,6 @@ class ContinuesData(Data):
 
 
 class H5Data(ContinuesData):
-
     def append_data(self, dataset, data: np.ndarray, dataset_len=None):
         len_before = dataset.len() if dataset_len is None else dataset_len
         dataset.resize(len_before + data.shape[0], axis=0)
