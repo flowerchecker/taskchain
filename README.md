@@ -18,6 +18,9 @@ poetry install
 
 ## Changelog
 
+#### unpublished
+- allow to define multiple input task using regexp 
+
 #### 1.2.1
 - fixes
 

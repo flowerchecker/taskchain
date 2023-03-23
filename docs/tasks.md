@@ -162,7 +162,8 @@ Input task can be defined in following ways:
 - **by name**: `input_tasks = ['my_data']`
 - **by name and group**: `input_tasks = ['group:my_data']`
 - **by name, group and namespace**: `input_tasks = ['namespace::group:my_data']`
-
+- **by regexp string starting with `~`**: `input_tasks = ['~my_*']` - this expands to all matching tasks in chain 
+      (tasks starting with `my_`)
 
 ## Data persistence
 

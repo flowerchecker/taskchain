@@ -4,7 +4,7 @@ from typing import List
 
 import pytest
 
-from taskchain import Config, Chain, Task, MultiChain, InMemoryData, Context
+from taskchain import Chain, Config, Context, InMemoryData, MultiChain, Task
 from taskchain.chain import ChainObject
 from taskchain.parameter import Parameter, ParameterObject
 from tests.tasks.a import ATask
@@ -1151,3 +1151,46 @@ def test_uses_in_context_recursively(tmp_path):
     assert 'tasks' not in chain._base_config.context.for_namespaces['ns::ns_inner']
     assert chain['ns::abc'].value == 4004
     assert chain['ns::ns_inner::abc'].value == 3003
+
+
+class InputATask(Task):
+    def run(self) -> bool:
+        return False
+
+
+class InputBTask(Task):
+    def run(self) -> bool:
+        return True
+
+
+class MultipleInputsTask(Task):
+    class Meta:
+        input_tasks = ['~input_.*']
+
+    def run(self) -> dict:
+        return {task_name: task.value for task_name, task in self.input_tasks.items()}
+
+
+def test_dynamic_input_tasks(tmp_path):
+    config_data = {
+        'tasks': [
+            'tests.test_chain.InputATask',
+            'tests.test_chain.InputBTask',
+            'tests.test_chain.MultipleInputsTask',
+        ]
+    }
+    chain = Config(tmp_path, name='config', data=config_data).chain()
+    assert len(chain.tasks) == 3
+    assert len(chain.multiple_inputs.input_tasks) == 2
+    assert chain.multiple_inputs.value == {'input_a': False, 'input_b': True}
+
+    config_data = {
+        'tasks': [
+            'tests.test_chain.InputATask',
+            'tests.test_chain.MultipleInputsTask',
+        ]
+    }
+    chain = Config(tmp_path, name='config', data=config_data).chain()
+    assert len(chain.tasks) == 2
+    assert len(chain.multiple_inputs.input_tasks) == 1
+    assert chain.multiple_inputs.value == {'input_a': False}

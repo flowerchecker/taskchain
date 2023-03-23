@@ -5,7 +5,7 @@ from collections import defaultdict
 from hashlib import sha256
 from itertools import chain
 from pathlib import Path
-from typing import Dict, Type, Union, Set, Iterable, Sequence, Tuple
+from typing import Dict, List, Type, Union, Set, Iterable, Sequence, Tuple
 
 import networkx as nx
 import pandas as pd
@@ -254,11 +254,24 @@ class Chain(dict):
         return task
 
     @staticmethod
+    def _expand_tasks(input_tasks: List[Union[str, Type[Task]]], tasks: Iterable[str]) -> List[Union[str, Type[Task]]]:
+        """Expand input tasks definition starting with `~` to all matching tasks"""
+        expanded_tasks = []
+        for input_task in input_tasks:
+            if type(input_task) is not str or not input_task.startswith('~'):
+                expanded_tasks.append(input_task)
+            else:
+                for task_name in tasks:
+                    if re.match(input_task[1:], task_name):
+                        expanded_tasks.append(task_name)
+        return expanded_tasks
+
+    @staticmethod
     def _process_dependencies(tasks: Dict[str, Task]):
         """ Process input tasks and inject input task object to tasks. """
         for task_name, task in tasks.items():
             input_tasks = InputTasks()
-            for input_task in chain(task.meta.get('input_tasks', []), task.meta.get('parameters', [])):
+            for input_task in chain(Chain._expand_tasks(task.meta.get('input_tasks', []), tasks), task.meta.get('parameters', [])):
                 if isinstance(input_task, AbstractParameter):
                     if not isinstance(input_task, InputTaskParameter):
                         continue
