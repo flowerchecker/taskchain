@@ -244,6 +244,7 @@ class cached:
         key: Callable = None,
         cache_attr: str = 'cache',
         ignore_kwargs: List[str] = None,
+        version: str = None,
     ):
         """
         Args:
@@ -259,6 +260,7 @@ class cached:
         self.key = key
         self.cache_attr = cache_attr
         self.ignore_params = ignore_kwargs if ignore_kwargs else []
+        self.version = version
 
     def __call__(self, method):
         @functools.wraps(method)
@@ -266,7 +268,10 @@ class cached:
             assert store_cache_value is NO_VALUE or not only_cache
             if self.cache_object is None:
                 assert hasattr(obj, self.cache_attr), f'Missing cache argument for obj {obj}'
-                cache = getattr(obj, self.cache_attr).subcache(method.__name__)
+                subcache_name = method.__name__
+                if self.version is not None:
+                    subcache_name = f'{subcache_name}.{self.version}'
+                cache = getattr(obj, self.cache_attr).subcache(subcache_name)
             else:
                 cache = self.cache_object
 

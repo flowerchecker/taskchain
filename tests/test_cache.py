@@ -1,8 +1,11 @@
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
 import numpy as np
 import pandas as pd
 import pytest
 
-from taskchain.cache import InMemoryCache, cached, NumpyArrayCache, JsonCache, DataFrameCache
+from taskchain.cache import DataFrameCache, InMemoryCache, JsonCache, NumpyArrayCache, cached
 
 
 def test_in_memory_subcache():
@@ -136,3 +139,29 @@ def test_cache_decorator_ignore_params():
 
     assert obj.cached_method(1, 666, key_parameter_2=123) == 11
     assert len(cache) == 1
+
+
+def test_cache_decorator_version():
+    class CachedClass:
+        def __init__(self, cache_dir):
+            self.cache = JsonCache(cache_dir)
+
+        @cached(version='v1')
+        def method_with_version(self, param):
+            return param
+
+        @cached()
+        def method_without_version(self, param):
+            return param
+    with TemporaryDirectory() as tmpdir:
+        tmpdir = Path(tmpdir)
+        instance = CachedClass(tmpdir)
+        instance.method_with_version(None)
+        assert (tmpdir / 'method_with_version.v1').exists()
+        assert not (tmpdir / 'method_without_version').exists()
+    with TemporaryDirectory() as tmpdir:
+        tmpdir = Path(tmpdir)
+        instance = CachedClass(tmpdir)
+        instance.method_without_version(None)
+        assert not (tmpdir / 'method_with_version.v1').exists()
+        assert (tmpdir / 'method_without_version').exists()
