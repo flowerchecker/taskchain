@@ -14,7 +14,7 @@ import yaml
 from matplotlib import pyplot as plt
 
 from taskchain.utils import json
-from taskchain.utils.io import NumpyEncoder, iter_json_file, write_jsons
+from taskchain.utils.io import iter_json_file, write_jsons
 
 
 class Data:
@@ -273,6 +273,46 @@ class GeneratedData(FileData):
     def set_value(self, value: Any = None):
         value = list(value)
         super().set_value(value)
+
+
+class GeneratedDataLazy(FileData):
+    DATA_TYPES = []
+
+    @property
+    def extension(self) -> Union[str, None]:
+        return 'jsonl'
+
+    def save(self):
+        value = self.value
+        if callable(value):
+            value = value()
+        write_jsons(value, self.tmp_path)
+        shutil.move(str(self.tmp_path), str(self.path))
+        self.load()
+
+    def load(self) -> Any:
+        self._value = lambda: iter_json_file(self.path)
+        return self._value
+
+    def set_value(self, value: Any = None):
+        if value is not None and not callable(value):
+            lambda_value = lambda: value  # noqa
+        else:
+            lambda_value = value
+        super().set_value(lambda_value)
+
+    @property
+    def tmp_path(self) -> Path:
+        return self._base_dir / f'{self._name}_tmp.{self.extension}'
+
+    @property
+    def value(self):
+        value = super().value
+        if isinstance(value, Generator):
+            value = list(value)
+            self.set_value(value)
+            return super().value
+        return value
 
 
 class DirData(Data):
