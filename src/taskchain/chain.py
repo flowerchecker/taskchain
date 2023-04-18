@@ -262,7 +262,7 @@ class Chain(dict):
                 expanded_tasks.append(input_task)
             else:
                 for task_name in tasks:
-                    if re.match(input_task[1:], task_name):
+                    if re.fullmatch(input_task[1:], task_name):
                         expanded_tasks.append(task_name)
         return expanded_tasks
 

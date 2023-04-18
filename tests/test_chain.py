@@ -1163,6 +1163,11 @@ class InputBTask(Task):
         return True
 
 
+class NotInputTask(Task):
+    def run(self) -> bool:
+        return True
+
+
 class MultipleInputsTask(Task):
     class Meta:
         input_tasks = ['~input_.*']
@@ -1177,10 +1182,11 @@ def test_dynamic_input_tasks(tmp_path):
             'tests.test_chain.InputATask',
             'tests.test_chain.InputBTask',
             'tests.test_chain.MultipleInputsTask',
+            'tests.test_chain.NotInputTask',
         ]
     }
     chain = Config(tmp_path, name='config', data=config_data).chain()
-    assert len(chain.tasks) == 3
+    assert len(chain.tasks) == 4
     assert len(chain.multiple_inputs.input_tasks) == 2
     assert chain.multiple_inputs.value == {'input_a': False, 'input_b': True}
 
