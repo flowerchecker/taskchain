@@ -183,6 +183,29 @@ def get_classes_by_import_string(string: str, cls: Type[object] = object):
     return classes
 
 
+def repr_from_instantiation(obj):
+    if isinstance(obj, list):
+        return '[' + ', '.join(repr_from_instantiation(val) for val in obj) + ']'
+    if isinstance(obj, dict):
+        return (
+            '{'
+            + ', '.join(
+                f"{repr_from_instantiation(key)}: {repr_from_instantiation(val)}" for key, val in sorted(obj.items())
+            )
+            + '}'
+        )
+    if hasattr(obj, 'repr'):
+        if callable(obj.repr):
+            return obj.repr()
+        else:
+            return obj.repr
+    if isinstance(obj, str):
+        return f"'{obj}'"
+    if hasattr(obj, '_taskchain_instantiate_repr'):
+        return obj._taskchain_instantiate_repr
+    return repr(obj)
+
+
 def instantiate_clazz(clazz, args, kwargs):
     """ Instantiate class from import string and arguments. """
     cls = import_by_string(clazz)
@@ -199,11 +222,17 @@ def find_and_instantiate_clazz(obj, instancelize_clazz_fce=None):
     if instancelize_clazz_fce is None:
         instancelize_clazz_fce = instantiate_clazz
     if isinstance(obj, dict) and 'class' in obj:
-        return instancelize_clazz_fce(
+        instance = instancelize_clazz_fce(
             obj['class'],
             find_and_instantiate_clazz(obj.get('args', [])),
             find_and_instantiate_clazz(obj.get('kwargs', {})),
         )
+        args_repr = ', '.join(repr_from_instantiation(val) for val in obj.get('args', []))
+        kwargs_repr = ', '.join(f'{key}={repr_from_instantiation(val)}' for key, val in obj.get('kwargs', {}).items())
+        if args_repr and kwargs_repr:
+            args_repr = args_repr + ', '
+        instance._taskchain_instantiate_repr = f'{obj["class"]}({args_repr}{kwargs_repr})'
+        return instance
 
     if type(obj) is list:
         for i, value in enumerate(obj):

@@ -3,7 +3,8 @@ from pathlib import Path
 import pytest
 
 from taskchain import Config
-from taskchain.parameter import Parameter, ParameterRegistry, AutoParameterObject, ParameterObject
+from taskchain.parameter import AutoParameterObject, Parameter, ParameterObject, ParameterRegistry
+from taskchain.utils.clazz import find_and_instantiate_clazz, repr_from_instantiation
 
 
 def test_value():
@@ -137,6 +138,13 @@ class AutoObj(AutoParameterObject):
         self.arg = arg
 
 
+class NoParameterObj:
+
+    def __init__(self, x, y=None):
+        self.x = x
+        self.y = y
+
+
 def test_object_parameter():
 
     config = Config(name='config', data={
@@ -248,6 +256,21 @@ def test_auto_parameter_object_dont_persist_default_value():
     assert Obj(1, 2).repr() == Obj(1, 2, new_param=1).repr()
     assert Obj(1, 2).repr() != Obj(1, 2, new_param=2).repr()
     assert OldObj(1, 2).repr().replace('OldObj', 'Obj') == Obj(1, 2).repr()
+
+
+def test_no_parameter_obj_repr():
+    definition = {
+        'class': 'tests.test_parameter.NoParameterObj',
+        'kwargs': {
+            'x': {
+                'class': 'tests.test_parameter.NoParameterObj',
+                'args': [2]
+            },
+            'y': [1, '2', {'a': 3}, {'class': 'tests.test_parameter.NoParameterObj', 'args': [1], 'kwargs': {'y': 2}}],
+        },
+    }
+    instance = find_and_instantiate_clazz(definition)
+    assert repr_from_instantiation(instance) == "tests.test_parameter.NoParameterObj(x=tests.test_parameter.NoParameterObj(2), y=[1, '2', {'a': 3}, tests.test_parameter.NoParameterObj(1, y=2)])"
 
 
 def test_path(tmp_path):

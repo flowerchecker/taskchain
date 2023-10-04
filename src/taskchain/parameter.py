@@ -3,7 +3,7 @@ from inspect import signature
 from pathlib import Path
 
 import taskchain.config
-from taskchain.utils.clazz import fullname
+from taskchain.utils.clazz import fullname, repr_from_instantiation
 from typing import Union, Any, Iterable, List
 
 
@@ -51,7 +51,7 @@ class AbstractParameter(abc.ABC):
             return self.value.repr()
         if isinstance(self.value, Path):
             return repr(self._value)
-        return repr(self.value)
+        return repr_from_instantiation(self.value)
 
     @property
     def repr(self) -> Union[str, None]:
