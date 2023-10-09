@@ -117,7 +117,7 @@ class FileCache(Cache):
 
     def get(self, key):
         filepath = self.filepath(key)
-        lock = FileLock(str(filepath) + '.lock')
+        lock = FileLock(str(filepath) + '.lock', mode=0o664)
         with lock:
             filepath_exists = filepath.exists()
         if filepath_exists:
@@ -133,7 +133,7 @@ class FileCache(Cache):
     def get_or_compute(self, key, computer, force=False):
         """"""
         filepath = self.filepath(key)
-        lock = FileLock(str(filepath) + '.lock')
+        lock = FileLock(str(filepath) + '.lock', mode=0o664)
         with lock:
             filepath_exists = filepath.exists()
         if filepath_exists and not force:
