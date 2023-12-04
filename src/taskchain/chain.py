@@ -493,7 +493,7 @@ class Chain(dict):
         symlink_path = task.path / f'{name}{task.data_path.suffix}'
 
         action_name = 'keep existing'
-        if symlink_path.exists() and not keep_existing:
+        if symlink_path.is_symlink() and not keep_existing:
             symlink_path.unlink()
             action_name = 'rewriting'
         if not symlink_path.exists():
