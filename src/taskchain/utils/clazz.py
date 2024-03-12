@@ -1,4 +1,5 @@
 import functools
+from copy import deepcopy
 import importlib
 import inspect
 import re
@@ -218,6 +219,7 @@ def find_and_instantiate_clazz(obj, instancelize_clazz_fce=None):
     Got through json-like object and find all classes definitions and instantiate them.
     Class definition is dict with `class` key and optionally `args` and `kwargs` keys.
     """
+    definition = deepcopy(obj)
 
     if instancelize_clazz_fce is None:
         instancelize_clazz_fce = instantiate_clazz
@@ -232,6 +234,7 @@ def find_and_instantiate_clazz(obj, instancelize_clazz_fce=None):
         if args_repr and kwargs_repr:
             args_repr = args_repr + ', '
         instance._taskchain_instantiate_repr = f'{obj["class"]}({args_repr}{kwargs_repr})'
+        instance._taskchain_instantiate_def = definition
         return instance
 
     if type(obj) is list:
@@ -247,6 +250,14 @@ def find_and_instantiate_clazz(obj, instancelize_clazz_fce=None):
 
 def object_to_definition(obj):
     """ Get config definition from class instance. Kind of reverse of `find_and_instantiate_clazz`. """
+    if any(isinstance(obj, type_) for type_ in {int, float, bool, str}):
+        return obj
+    if isinstance(obj, list):
+        return [object_to_definition(val) for val in obj]
+    if isinstance(obj, dict):
+        return {key: object_to_definition(val) for key, val in obj.items()}
+    if hasattr(obj, '_taskchain_instantiate_def'):
+        return obj._taskchain_instantiate_def
     result = {
         'class': fullname(obj.__class__),
     }
@@ -260,7 +271,5 @@ def object_to_definition(obj):
         else:
             raise AttributeError(f'Value of __init__ argument `{name}` not found for class `{fullname(obj.__class__)}`, '
                                  f'make sure that value is saved in `self.{name}` or `self._{name}`')
-        if value is not None and all(not isinstance(value, type_) for type_ in {int, float, bool, str, list, set, dict}):
-            value = object_to_definition(value)
-        kwargs[name] = value
+        kwargs[name] = object_to_definition(value)
     return result

@@ -1,5 +1,6 @@
 import re
-from typing import Generator, Any, Callable, Type, Iterable
+from copy import deepcopy
+from typing import Any, Callable, Generator, Iterable, Type
 
 
 def traverse(obj: Any) -> Generator:
@@ -94,3 +95,9 @@ class ReprStr(str):
 
     def __repr__(self):
         return self.repr
+
+    def __copy__(self):
+        return ReprStr(str(self), self.repr)
+
+    def __deepcopy__(self, memo):
+        return ReprStr(str(self), deepcopy(self.repr))

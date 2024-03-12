@@ -191,7 +191,7 @@ class Config(dict):
         return self.data[item]
 
     def __getattr__(self, item):
-        if item in self:
+        if item not in {'data', '_data'} and item in self:
             return self.data[item]
         return self.__getattribute__(item)
 

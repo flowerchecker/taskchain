@@ -1,3 +1,4 @@
+from copy import deepcopy
 from types import ModuleType
 
 import pytest
@@ -174,6 +175,8 @@ def test_repr_str():
     assert type(s) is ReprStr
     assert str(s) == 'a'
     assert repr(s) == "'b'"
+    assert deepcopy(s) == s
+    assert deepcopy(s) is not s
 
 
 def test_search_and_replace_placeholders():

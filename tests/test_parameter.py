@@ -4,7 +4,7 @@ import pytest
 
 from taskchain import Config
 from taskchain.parameter import AutoParameterObject, Parameter, ParameterObject, ParameterRegistry
-from taskchain.utils.clazz import find_and_instantiate_clazz, repr_from_instantiation
+from taskchain.utils.clazz import find_and_instantiate_clazz, repr_from_instantiation, object_to_definition
 
 
 def test_value():
@@ -271,6 +271,7 @@ def test_no_parameter_obj_repr():
     }
     instance = find_and_instantiate_clazz(definition)
     assert repr_from_instantiation(instance) == "tests.test_parameter.NoParameterObj(x=tests.test_parameter.NoParameterObj(2), y=[1, '2', {'a': 3}, tests.test_parameter.NoParameterObj(1, y=2)])"
+    object_to_definition(instance) == definition
 
 
 def test_path(tmp_path):

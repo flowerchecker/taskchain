@@ -3,6 +3,7 @@ import json
 import pytest
 import yaml
 
+from copy import deepcopy
 from taskchain import Config
 from taskchain import Context
 from taskchain.parameter import ParameterObject
@@ -256,3 +257,15 @@ def test_context_for_namespaces_merging():
     assert context.for_namespaces['ns2']['a'] == 21
     assert context.for_namespaces['ns3']['a'] == 32
     assert context.a == 2
+
+
+def test_deepcopy(tmp_path):
+    data = {
+        'my_object': {
+            'class': 'tests.test_config.MyObject',
+            'args': [7],
+            'kwargs': {'b': 13},
+        }
+    }
+    config = Config(tmp_path, data=data, name='config')
+    assert deepcopy(config) == config
