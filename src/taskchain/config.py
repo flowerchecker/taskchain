@@ -235,8 +235,6 @@ class Config(dict):
             obj = instantiate_clazz(clazz, args, kwargs)
             if not isinstance(obj, ParameterObject):
                 LOGGER.warning(f'Object `{obj}` in config `{self}` is not instance of ParameterObject')
-            if not hasattr(obj, 'repr'):
-                raise Exception(f'Object `{obj}` does not implement `repr` property')
             return obj
 
         for key, value in self._data.items():
