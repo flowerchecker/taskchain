@@ -213,6 +213,7 @@ def test_generator_data(tmp_path):
 
     def _gen():
         yield from range(10)
+
     data.set_value(_gen())
     data.save()
 

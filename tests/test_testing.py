@@ -6,13 +6,11 @@ from taskchain.utils.testing import TestChain, MockTask, create_test_task
 
 
 class MyParameterObject(AutoParameterObject):
-
     def __init__(self, value):
         self.value = value
 
 
 class A(Task):
-
     class Meta:
         parameters = [Parameter('pa')]
 
@@ -21,15 +19,14 @@ class A(Task):
 
 
 class B(Task):
-
     class Meta:
         parameters = [Parameter('pb', default=7)]
 
     def run(self, pb) -> int:
         return pb
 
-class C(Task):
 
+class C(Task):
     class Meta:
         input_tasks = [A]
         parameters = [Parameter('pc')]
@@ -39,7 +36,6 @@ class C(Task):
 
 
 class D(Task):
-
     class Meta:
         input_tasks = [A, C]
         parameters = [Parameter('pd', default=7000)]
@@ -56,8 +52,8 @@ def test_mock_task():
 
 def test_test_chain(tmp_path):
     tc = TestChain(
-        tasks = [D],
-        mock_tasks = {
+        tasks=[D],
+        mock_tasks={
             'a': 10,
             C: 1,
         },
@@ -110,6 +106,7 @@ def test_missing_input_task():
             },
         )
 
+
 def test_missing_parameter():
     with pytest.raises(ValueError):
         TestChain(
@@ -119,21 +116,13 @@ def test_missing_parameter():
 
 def test_parameter_objects():
     tc = TestChain(
-        tasks=[A],
-        parameters={
-            'pa': {'class': 'tests.test_testing.MyParameterObject', 'kwargs': {'value': 77}}
-        }
+        tasks=[A], parameters={'pa': {'class': 'tests.test_testing.MyParameterObject', 'kwargs': {'value': 77}}}
     )
     assert tc.a.value == 77
 
 
 def test_parameter_objects_as_instance():
-    tc = TestChain(
-        tasks=[A],
-        parameters={
-            'pa': MyParameterObject(33)
-        }
-    )
+    tc = TestChain(tasks=[A], parameters={'pa': MyParameterObject(33)})
     assert tc.a.value == 33
 
 

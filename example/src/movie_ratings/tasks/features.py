@@ -8,7 +8,7 @@ from taskchain import Parameter
 
 
 class SelectedDirectors(ModuleTask):
-    """ List of selected directors - with enough movies with good rating """
+    """List of selected directors - with enough movies with good rating"""
 
     class Meta:
         input_tasks = [Directors, Movies]
@@ -20,8 +20,9 @@ class SelectedDirectors(ModuleTask):
     def run(self, directors, movies, director_minimal_movie_count, director_minimal_movie_rating) -> Generator:
         selected_directors_count = 0
         for director, directors_movies in directors.items():
-            good_movies = [m for m in directors_movies
-                           if self.get_movie_rating(movies, m) >= director_minimal_movie_rating]
+            good_movies = [
+                m for m in directors_movies if self.get_movie_rating(movies, m) >= director_minimal_movie_rating
+            ]
             if len(good_movies) >= director_minimal_movie_count:
                 selected_directors_count += 1
                 yield director
@@ -33,7 +34,7 @@ class SelectedDirectors(ModuleTask):
 
 
 class SelectedActors(ModuleTask):
-    """ List of selected actors - with enough movies """
+    """List of selected actors - with enough movies"""
 
     class Meta:
         input_tasks = [Actors, Movies]
@@ -52,7 +53,6 @@ class SelectedActors(ModuleTask):
 
 
 class AllFeatures(ModuleTask):
-
     BASIC_FEATURES = ['year', 'duration']
 
     class Meta:
@@ -76,19 +76,15 @@ class AllFeatures(ModuleTask):
 
 
 class FeatureNames(ModuleTask):
-
     class Meta:
         input_tasks = [AllFeatures]
-        parameters = [
-            Parameter('feature_types', dtype=list)
-        ]
+        parameters = [Parameter('feature_types', dtype=list)]
 
     def run(self, all_features, feature_types) -> List:
         return [column for column in all_features.columns if column.split('_')[0] in feature_types]
 
 
 class Features(ModuleTask):
-
     class Meta:
         input_tasks = [AllFeatures, FeatureNames]
         data_class = InMemoryData

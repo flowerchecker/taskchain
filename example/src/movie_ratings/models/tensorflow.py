@@ -11,7 +11,6 @@ from taskchain.utils.io import NumpyEncoder
 
 
 class TFRatingModel(RatingModel, abc.ABC):
-
     def __init__(self, learning_params, batch_size):
         self.learning_params = learning_params
         self.batch_size = batch_size
@@ -29,11 +28,10 @@ class TFRatingModel(RatingModel, abc.ABC):
         )
 
         self.history = self.model.fit(
-            X, y,
+            X,
+            y,
             epochs=self.learning_params['epochs'],
-            callbacks=[
-                self.learning_rate_scheduler(self.learning_params['lr_schedule'])
-            ],
+            callbacks=[self.learning_rate_scheduler(self.learning_params['lr_schedule'])],
         ).history
 
     def learning_rate_scheduler(self, learning_rate_schedule):
@@ -74,8 +72,7 @@ class TFRatingModel(RatingModel, abc.ABC):
 
 
 class LinearRatingModel(TFRatingModel):
-
-    def __init__(self, learning_params, regularization=.01, batch_size=128):
+    def __init__(self, learning_params, regularization=0.01, batch_size=128):
         self.regularization = regularization
 
         super().__init__(learning_params, batch_size)
@@ -89,15 +86,14 @@ class LinearRatingModel(TFRatingModel):
 
 
 class NeuralRatingModel(TFRatingModel):
-
-    def __init__(self, layers, learning_params, dropout=.5, batch_size=128):
+    def __init__(self, layers, learning_params, dropout=0.5, batch_size=128):
         self.layers = layers
         self.dropout = dropout
 
         super().__init__(learning_params, batch_size)
 
     def build_model(self, feature_count: int) -> tf.keras.Model:
-        input = tf.keras.Input((feature_count, ), dtype=float)
+        input = tf.keras.Input((feature_count,), dtype=float)
         x = tf.keras.layers.BatchNormalization()(input)
         for layer_size in self.layers:
             x = tf.keras.layers.Dense(layer_size, activation='swish')(x)

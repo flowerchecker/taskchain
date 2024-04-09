@@ -7,8 +7,8 @@ from taskchain import Task
 # M -> O -> P
 #
 
-class MTask(Task):
 
+class MTask(Task):
     class Meta:
         input_tasks = []
 
@@ -17,7 +17,6 @@ class MTask(Task):
 
 
 class NTask(Task):
-
     class Meta:
         input_tasks = []
 
@@ -26,7 +25,6 @@ class NTask(Task):
 
 
 class OTask(Task):
-
     class Meta:
         input_tasks = [NTask, MTask]
 
@@ -35,7 +33,6 @@ class OTask(Task):
 
 
 class PTask(Task):
-
     class Meta:
         input_tasks = [OTask]
 
@@ -44,10 +41,8 @@ class PTask(Task):
 
 
 class XTask(Task):
-
     class Meta:
         input_tasks = []
 
     def run(self) -> bool:
         return False
-

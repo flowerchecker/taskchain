@@ -11,7 +11,6 @@ class ATask(Task):
 
 
 class BTask(Task):
-
     class Meta:
         parameters = [Parameter('a_number')]
 

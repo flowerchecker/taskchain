@@ -1,26 +1,30 @@
 import abc
 from inspect import signature
 from pathlib import Path
+from typing import Union, Any, Iterable, List
 
 import taskchain.config
 from taskchain.utils.clazz import fullname, repr_from_instantiation
-from typing import Union, Any, Iterable, List
 
 
-class NO_DEFAULT: pass
-class NO_VALUE: pass
+class NO_DEFAULT:
+    pass
+
+
+class NO_VALUE:
+    pass
 
 
 class AbstractParameter(abc.ABC):
-
     NO_DEFAULT = NO_DEFAULT
     NO_VALUE = NO_VALUE
 
-    def __init__(self,
-                 default: Any = NO_DEFAULT,
-                 ignore_persistence: bool = False,
-                 dont_persist_default_value: bool = True,
-                 ):
+    def __init__(
+        self,
+        default: Any = NO_DEFAULT,
+        ignore_persistence: bool = False,
+        dont_persist_default_value: bool = True,
+    ):
         """
         Args:
             default: value used if not provided in config, default to NO_DEFAULT meaning that param is required
@@ -65,18 +69,18 @@ class AbstractParameter(abc.ABC):
 
 
 class Parameter(AbstractParameter):
-
     NO_DEFAULT = NO_DEFAULT
     NO_VALUE = NO_VALUE
 
-    def __init__(self,
-                 name: str,
-                 dtype: Union[type] = None,
-                 default: Any = NO_DEFAULT,
-                 name_in_config: str = None,
-                 ignore_persistence: bool = False,
-                 dont_persist_default_value: bool = False,
-                 ):
+    def __init__(
+        self,
+        name: str,
+        dtype: Union[type] = None,
+        default: Any = NO_DEFAULT,
+        name_in_config: str = None,
+        ignore_persistence: bool = False,
+        dont_persist_default_value: bool = False,
+    ):
         """
         Args:
             name: name for referencing from task
@@ -123,19 +127,25 @@ class Parameter(AbstractParameter):
             value = self.default
 
         if self.dtype is not None:
-            if value is not None and not isinstance(value, self.dtype) and not(self.dtype is Path and isinstance(value, str)):
-                raise ValueError(f'Value `{value}` of parameter `{self}` has type {type(value)} instead of `{self.dtype}`')
+            if (
+                value is not None
+                and not isinstance(value, self.dtype)
+                and not (self.dtype is Path and isinstance(value, str))
+            ):
+                raise ValueError(
+                    f'Value `{value}` of parameter `{self}` has type {type(value)} instead of `{self.dtype}`'
+                )
 
         self._value = value
         return value
 
 
 class InputTaskParameter(AbstractParameter):
-
-    def __init__(self,
-                 task_identifier: Union[str, type],
-                 default: Any = NO_DEFAULT,
-                 ):
+    def __init__(
+        self,
+        task_identifier: Union[str, type],
+        default: Any = NO_DEFAULT,
+    ):
         super().__init__(
             default=default,
             dont_persist_default_value=True,
@@ -153,12 +163,13 @@ class InputTaskParameter(AbstractParameter):
     def value(self) -> Any:
         if not self.required and self.task is None:
             return self.default
-        assert self.task is not None, f'The input task parameter ({self.task_identifier}) has to be initialized before its value is accessed.'
+        assert (
+            self.task is not None
+        ), f'The input task parameter ({self.task_identifier}) has to be initialized before its value is accessed.'
         return self.task.value
 
 
 class ParameterRegistry:
-
     def __init__(self, parameters: Iterable[Parameter] = None):
         super().__init__()
         self._parameters = {}
@@ -237,17 +248,9 @@ class IgnoreForPersistence:
     @staticmethod
     def remove(val):
         if isinstance(val, list):
-            return [
-                IgnoreForPersistence.remove(v)
-                for v in val
-                if not isinstance(v, IgnoreForPersistence)
-            ]
+            return [IgnoreForPersistence.remove(v) for v in val if not isinstance(v, IgnoreForPersistence)]
         if isinstance(val, set):
-            return {
-                IgnoreForPersistence.remove(v)
-                for v in val
-                if not isinstance(v, IgnoreForPersistence)
-            }
+            return {IgnoreForPersistence.remove(v) for v in val if not isinstance(v, IgnoreForPersistence)}
         if isinstance(val, dict):
             return {
                 name: IgnoreForPersistence.remove(v)
@@ -278,8 +281,10 @@ class AutoParameterObject(ParameterObject):
             elif hasattr(self, arg):
                 value = getattr(self, arg)
             else:
-                raise AttributeError(f'Value of __init__ argument `{arg}` not found for class `{fullname(self.__class__)}`, '
-                                     f'make sure that value is saved in `self.{arg}` or `self._{arg}`')
+                raise AttributeError(
+                    f'Value of __init__ argument `{arg}` not found for class `{fullname(self.__class__)}`, '
+                    f'make sure that value is saved in `self.{arg}` or `self._{arg}`'
+                )
             if isinstance(value, IgnoreForPersistence):
                 continue
             if arg in dont_persist_default_value_args and value == parameter.default:
@@ -291,7 +296,7 @@ class AutoParameterObject(ParameterObject):
 
     @staticmethod
     def ignore_persistence_args() -> List[str]:
-        """ List of __init__ argument names which are ignored in persistence. """
+        """List of __init__ argument names which are ignored in persistence."""
         return ['verbose', 'debug']
 
     @staticmethod

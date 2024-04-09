@@ -12,12 +12,9 @@ from taskchain import Parameter
 
 
 class AllX(ModuleTask):
-
     class Meta:
         input_tasks = [Features]
-        parameters = [
-            Parameter('user_rating_file', default=None)
-        ]
+        parameters = [Parameter('user_rating_file', default=None)]
 
     def run(self, features, user_rating_file) -> pd.DataFrame:
         if user_rating_file is None:
@@ -34,12 +31,11 @@ class AllX(ModuleTask):
 
 
 class AllY(ModuleTask):
-
     class Meta:
-        input_tasks = [Movies, ]
-        parameters = [
-            Parameter('user_rating_file', default=None)
+        input_tasks = [
+            Movies,
         ]
+        parameters = [Parameter('user_rating_file', default=None)]
 
     def run(self, movies, user_rating_file) -> pd.Series:
         if user_rating_file is None:
@@ -53,7 +49,6 @@ class AllY(ModuleTask):
 
 
 class TestMoviesMask(ModuleTask):
-
     class Meta:
         input_tasks = [AllX]
         parameters = [
@@ -76,7 +71,6 @@ class TestMoviesMask(ModuleTask):
 
 
 class DataSelectionTask(ModuleTask):
-
     class Meta:
         abstract = True
         train = None
@@ -117,12 +111,9 @@ class TestY(DataSelectionTask):
 
 
 class TrainModel(ModuleTask):
-
     class Meta:
         input_tasks = [TrainX, TrainY]
-        parameters = [
-            Parameter('model')
-        ]
+        parameters = [Parameter('model')]
 
     def run(self, model: RatingModel, train_x, train_y) -> DirData:
         data: DirData = self.get_data_object()
@@ -132,12 +123,9 @@ class TrainModel(ModuleTask):
 
 
 class TrainedModel(ModuleTask):
-
     class Meta:
         input_tasks = [TrainModel]
-        parameters = [
-            Parameter('model')
-        ]
+        parameters = [Parameter('model')]
 
     def run(self, model, train_model) -> RatingModel:
         model.load(train_model)
@@ -145,7 +133,6 @@ class TrainedModel(ModuleTask):
 
 
 class TestMetrics(ModuleTask):
-
     class Meta:
         input_tasks = [TrainedModel, TestX, TestY]
 

@@ -1,15 +1,14 @@
 import functools
-from copy import deepcopy
 import importlib
 import inspect
 import re
+from copy import deepcopy
 from time import sleep
 from types import ModuleType
 from typing import Union, List, Type
 
 
 class Meta(dict):
-
     def __init__(self, cls):
         super().__init__()
 
@@ -49,9 +48,9 @@ class persistent:
 
 
 class repeat_on_error:
-    """ Method decorator which calls method again on error. """
+    """Method decorator which calls method again on error."""
 
-    def __init__(self, retries: int = 10, waiting_time: int = 1, wait_extension: float = 1.):
+    def __init__(self, retries: int = 10, waiting_time: int = 1, wait_extension: float = 1.0):
         """
         Args:
             retries: how many times try to call again
@@ -77,6 +76,7 @@ class repeat_on_error:
                     sleep(waiting_time)
                     waiting_time *= self.wait_extension
             assert False
+
         return decorated
 
     def __get__(self, instance, instancetype):
@@ -84,7 +84,7 @@ class repeat_on_error:
 
 
 def inheritors(cls, include_self=True):
-    """ Get all classes inheriting of given class. """
+    """Get all classes inheriting of given class."""
     subclasses = {cls} if include_self else set()
     work = [cls]
     while work:
@@ -208,7 +208,7 @@ def repr_from_instantiation(obj):
 
 
 def instantiate_clazz(clazz, args, kwargs):
-    """ Instantiate class from import string and arguments. """
+    """Instantiate class from import string and arguments."""
     cls = import_by_string(clazz)
     obj = cls(*args, **kwargs)
     return obj
@@ -249,7 +249,7 @@ def find_and_instantiate_clazz(obj, instancelize_clazz_fce=None):
 
 
 def object_to_definition(obj):
-    """ Get config definition from class instance. Kind of reverse of `find_and_instantiate_clazz`. """
+    """Get config definition from class instance. Kind of reverse of `find_and_instantiate_clazz`."""
     if any(isinstance(obj, type_) for type_ in {int, float, bool, str}):
         return obj
     if isinstance(obj, list):
@@ -269,7 +269,9 @@ def object_to_definition(obj):
         elif hasattr(obj, name):
             value = getattr(obj, name)
         else:
-            raise AttributeError(f'Value of __init__ argument `{name}` not found for class `{fullname(obj.__class__)}`, '
-                                 f'make sure that value is saved in `self.{name}` or `self._{name}`')
+            raise AttributeError(
+                f'Value of __init__ argument `{name}` not found for class `{fullname(obj.__class__)}`, '
+                f'make sure that value is saved in `self.{name}` or `self._{name}`'
+            )
         kwargs[name] = object_to_definition(value)
     return result

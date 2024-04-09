@@ -8,11 +8,14 @@ from taskchain.utils.clazz import find_and_instantiate_clazz, repr_from_instanti
 
 
 def test_value():
-    config = Config(name='config', data={
-        'value0': None,
-        'value1': 1,
-        'value2': 'abc',
-    })
+    config = Config(
+        name='config',
+        data={
+            'value0': None,
+            'value1': 1,
+            'value2': 'abc',
+        },
+    )
 
     p = Parameter('value0')
     p.set_value(config)
@@ -42,13 +45,16 @@ def test_value():
 
 
 def test_type():
-    config = Config(name='config', data={
-        'value0': None,
-        'value1': 1,
-        'value2': 'abc',
-        'value3': [1, 2],
-        'value4': {},
-    })
+    config = Config(
+        name='config',
+        data={
+            'value0': None,
+            'value1': 1,
+            'value2': 'abc',
+            'value3': [1, 2],
+            'value4': {},
+        },
+    )
 
     p = Parameter('value0', dtype=str)
     p.set_value(config)
@@ -71,11 +77,14 @@ def test_type():
 
 
 def test_hash():
-    config = Config(name='config', data={
-        'value0': None,
-        'value1': 1,
-        'value2': 'abc',
-    })
+    config = Config(
+        name='config',
+        data={
+            'value0': None,
+            'value1': 1,
+            'value2': 'abc',
+        },
+    )
 
     p = Parameter('value1', ignore_persistence=True)
     p.set_value(config)
@@ -95,19 +104,19 @@ def test_hash():
 
 
 def test_registry():
-    config = Config(name='config', data={
-        'value0': None,
-        'value1': 1,
-        'value2': 'abc',
-    })
+    config = Config(
+        name='config',
+        data={
+            'value0': None,
+            'value1': 1,
+            'value2': 'abc',
+        },
+    )
 
     with pytest.raises(ValueError):
         ParameterRegistry([Parameter('v1'), Parameter('v1')])
 
-    ps = [
-        Parameter('value1'),
-        Parameter('value2')
-    ]
+    ps = [Parameter('value1'), Parameter('value2')]
 
     registry = ParameterRegistry(ps)
     registry.set_values(config)
@@ -115,16 +124,14 @@ def test_registry():
     assert registry.value1 == 1
     assert registry['value2'] == registry.value2 == 'abc'
 
-    registry2 = ParameterRegistry([
-        Parameter('value2'), Parameter('value1'),
-        Parameter('value0', ignore_persistence=True)
-    ])
+    registry2 = ParameterRegistry(
+        [Parameter('value2'), Parameter('value1'), Parameter('value0', ignore_persistence=True)]
+    )
     registry2.set_values(config)
     assert registry.repr == registry2.repr
 
 
 class Obj(ParameterObject):
-
     def __init__(self, arg):
         self.arg = arg
 
@@ -133,49 +140,37 @@ class Obj(ParameterObject):
 
 
 class AutoObj(AutoParameterObject):
-
     def __init__(self, arg):
         self.arg = arg
 
 
 class NoParameterObj:
-
     def __init__(self, x, y=None):
         self.x = x
         self.y = y
 
 
 def test_object_parameter():
-
-    config = Config(name='config', data={
-        'obj': {
-            'class': 'tests.test_parameter.Obj',
-            'args': ['abc']
-        }
-    })
+    config = Config(name='config', data={'obj': {'class': 'tests.test_parameter.Obj', 'args': ['abc']}})
 
     p = Parameter('obj')
     p.set_value(config)
     assert p.repr == "obj='abc'"
 
-    config = Config(name='config', data={
-        'obj': {
-            'class': 'tests.test_parameter.Obj',
-            'args': ['{A}/abc']
-        }
-    }, global_vars={'A': 'a'})
+    config = Config(
+        name='config', data={'obj': {'class': 'tests.test_parameter.Obj', 'args': ['{A}/abc']}}, global_vars={'A': 'a'}
+    )
 
     p = Parameter('obj')
     p.set_value(config)
     assert p.repr == "obj='{A}/abc'"
     assert p.value.arg == 'a/abc'
 
-    config = Config(name='config', data={
-        'obj': {
-            'class': 'tests.test_parameter.AutoObj',
-            'args': ['{A}/abc']
-        }
-    }, global_vars={'A': 'a'})
+    config = Config(
+        name='config',
+        data={'obj': {'class': 'tests.test_parameter.AutoObj', 'args': ['{A}/abc']}},
+        global_vars={'A': 'a'},
+    )
 
     p = Parameter('obj')
     p.set_value(config)
@@ -184,7 +179,6 @@ def test_object_parameter():
 
 
 def test_auto_parameter_object_bad_init():
-
     class Obj(AutoParameterObject):
         def __init__(self, a1, a2, k1=3, k2=4):
             pass
@@ -204,7 +198,6 @@ def test_auto_parameter_object_bad_init():
 
 
 def test_auto_parameter_object():
-
     class Obj(AutoParameterObject):
         def __init__(self, a1, a2, k1=3, k2=4):
             self.a1 = a1
@@ -219,7 +212,6 @@ def test_auto_parameter_object():
 
 
 def test_auto_parameter_object_ignore_persistence():
-
     class Obj(AutoParameterObject):
         def __init__(self, a1, a2, k1=3, verbose=False):
             self.a1 = a1
@@ -235,7 +227,6 @@ def test_auto_parameter_object_ignore_persistence():
 
 
 def test_auto_parameter_object_dont_persist_default_value():
-
     class OldObj(AutoParameterObject):
         def __init__(self, a1, a2, k1=3):
             self.a1 = a1
@@ -262,15 +253,16 @@ def test_no_parameter_obj_repr():
     definition = {
         'class': 'tests.test_parameter.NoParameterObj',
         'kwargs': {
-            'x': {
-                'class': 'tests.test_parameter.NoParameterObj',
-                'args': [2]
-            },
+            'x': {'class': 'tests.test_parameter.NoParameterObj', 'args': [2]},
             'y': [1, '2', {'a': 3}, {'class': 'tests.test_parameter.NoParameterObj', 'args': [1], 'kwargs': {'y': 2}}],
         },
     }
     instance = find_and_instantiate_clazz(definition)
-    assert repr_from_instantiation(instance) == "tests.test_parameter.NoParameterObj(x=tests.test_parameter.NoParameterObj(2), y=[1, '2', {'a': 3}, tests.test_parameter.NoParameterObj(1, y=2)])"
+    assert (
+        repr_from_instantiation(instance)
+        == "tests.test_parameter.NoParameterObj(x=tests.test_parameter.NoParameterObj(2), y=[1, '2', {'a': 3},"
+        " tests.test_parameter.NoParameterObj(1, y=2)])"
+    )
     object_to_definition(instance) == definition
 
 
@@ -291,18 +283,21 @@ def test_none_path(tmp_path):
 
 
 def test_global_vars(tmp_path):
-
-    ps = ParameterRegistry([
-        Parameter('a'),
-        Parameter('b'),
-    ])
+    ps = ParameterRegistry(
+        [
+            Parameter('a'),
+            Parameter('b'),
+        ]
+    )
 
     ps.set_values(Config(tmp_path, data={'a': '{A}/{B}.{B}', 'b': '{B}'}, global_vars={'B': 2}, name='config'))
     assert ps.a == '{A}/2.2'
     assert ps.repr == "a='{A}/{B}.{B}'###b='{B}'"
     assert ps.b == '2'
 
-    ps.set_values(Config(tmp_path, data={'a': '{A}/{B}.{B}', 'b': '{B}'}, global_vars={'A': '1', 'B': '2'}, name='config'))
+    ps.set_values(
+        Config(tmp_path, data={'a': '{A}/{B}.{B}', 'b': '{B}'}, global_vars={'A': '1', 'B': '2'}, name='config')
+    )
     assert ps['a'] == '1/2.2'
 
 

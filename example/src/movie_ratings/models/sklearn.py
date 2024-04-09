@@ -10,7 +10,6 @@ from movie_ratings.models.core import RatingModel
 
 
 class SklearnRatingModel(RatingModel, abc.ABC):
-
     def __init__(self, verbose=True):
         self.verbose = verbose
         super().__init__()
@@ -43,8 +42,7 @@ class SklearnRatingModel(RatingModel, abc.ABC):
 
 
 class LinearRegressionRatingModel(SklearnRatingModel):
-
-    def __init__(self, normalize=False, regularization=1., solver='auto', verbose=True):
+    def __init__(self, normalize=False, regularization=1.0, solver='auto', verbose=True):
         self.solver = solver
         self.normalize = normalize
         self.regularization = regularization
@@ -60,8 +58,7 @@ class LinearRegressionRatingModel(SklearnRatingModel):
 
 
 class SVMRatingModel(SklearnRatingModel):
-
-    def __init__(self, kernel, regularization=1., degree=3, verbose=True):
+    def __init__(self, kernel, regularization=1.0, degree=3, verbose=True):
         self.kernel = kernel
         self.degree = degree
         self.regularization = regularization
@@ -72,6 +69,6 @@ class SVMRatingModel(SklearnRatingModel):
         return SVR(
             kernel=self.kernel,
             degree=self.degree,
-            C=1. / self.regularization,
+            C=1.0 / self.regularization,
             verbose=self.verbose,
         )

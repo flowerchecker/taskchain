@@ -96,16 +96,20 @@ def test_cache_decorator_forcing():
     assert obj.calls == 2
 
 
-@pytest.mark.parametrize('cache_class,value,test', [
-    (JsonCache, lambda: 'value', lambda v: v == 'value'),
-    (JsonCache, lambda: {'a': 3}, lambda v: v['a'] == 3),
-    (JsonCache, lambda: None, lambda v: v is None),
-    (NumpyArrayCache, lambda: np.zeros(10), lambda v: v.shape == (10,)),
-    (DataFrameCache, lambda: pd.DataFrame(np.zeros((10, 10))), lambda v: v.values.shape == (10, 10)),
-])
+@pytest.mark.parametrize(
+    'cache_class,value,test',
+    [
+        (JsonCache, lambda: 'value', lambda v: v == 'value'),
+        (JsonCache, lambda: {'a': 3}, lambda v: v['a'] == 3),
+        (JsonCache, lambda: None, lambda v: v is None),
+        (NumpyArrayCache, lambda: np.zeros(10), lambda v: v.shape == (10,)),
+        (DataFrameCache, lambda: pd.DataFrame(np.zeros((10, 10))), lambda v: v.values.shape == (10, 10)),
+    ],
+)
 def test_cache(tmp_path, cache_class, value, test):
     class Example:
         counter = 0
+
         def fce(self):
             self.counter += 1
             return value()
@@ -153,6 +157,7 @@ def test_cache_decorator_version():
         @cached()
         def method_without_version(self, param):
             return param
+
     with TemporaryDirectory() as tmpdir:
         tmpdir = Path(tmpdir)
         instance = CachedClass(tmpdir)

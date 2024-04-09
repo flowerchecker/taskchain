@@ -12,13 +12,11 @@ from taskchain.utils.iter import progress_bar
 
 
 class AllMovies(ModuleTask):
-    """ DataFrame with all movies and their data """
+    """DataFrame with all movies and their data"""
 
     class Meta:
         input_tasks = []
-        parameters = [
-            Parameter('source_file', dtype=Path)
-        ]
+        parameters = [Parameter('source_file', dtype=Path)]
 
     def run(self, source_file) -> pd.DataFrame:
         df = pd.read_csv(source_file)
@@ -36,7 +34,7 @@ class AllMovies(ModuleTask):
 
 
 class Movies(ModuleTask):
-    """ DataFrame with all movies and their data """
+    """DataFrame with all movies and their data"""
 
     class Meta:
         input_tasks = [AllMovies]
@@ -58,24 +56,23 @@ class Movies(ModuleTask):
 
 
 class Movie_names(ModuleTask):
-
     class Meta:
         input_tasks = [Movies]
         data_type = Dict
 
     def run(self):
-        return dict(zip(
-            self.input_tasks['movies'].value.index,        # access input task by name
-            self.input_tasks[0].value.original_title,      # access input task by order defined in meta
-        ))
+        return dict(
+            zip(
+                self.input_tasks['movies'].value.index,  # access input task by name
+                self.input_tasks[0].value.original_title,  # access input task by order defined in meta
+            )
+        )
 
 
 class DurationHistogram(ModuleTask):
     class Meta:
         input_tasks = [Movies]
-        parameters = [
-            Parameter('max_duration_in_histogram', default=4 * 60)
-        ]
+        parameters = [Parameter('max_duration_in_histogram', default=4 * 60)]
 
     def run(self, movies, max_duration_in_histogram) -> plt.Figure:
         sns.distplot(movies.duration)
@@ -96,7 +93,7 @@ class YearHistogram(ModuleTask):
 
 
 class ExtractFeatureTask(ModuleTask):
-    """ Universal task for extracting M:N feature to dict feature -> list of movie ids """
+    """Universal task for extracting M:N feature to dict feature -> list of movie ids"""
 
     class Meta:
         abstract = True
@@ -118,28 +115,24 @@ class ExtractFeatureTask(ModuleTask):
 
 
 class Directors(ExtractFeatureTask):
-
     class Meta:
         input_tasks = ExtractFeatureTask.meta.input_tasks
         column_name = 'director'
 
 
 class Genres(ExtractFeatureTask):
-
     class Meta:
         input_tasks = ExtractFeatureTask.meta.input_tasks
         column_name = 'genre'
 
 
 class Countries(ExtractFeatureTask):
-
     class Meta:
         input_tasks = ExtractFeatureTask.meta.input_tasks
         column_name = 'country'
 
 
 class Actors(ExtractFeatureTask):
-
     class Meta:
         input_tasks = ExtractFeatureTask.meta.input_tasks
         column_name = 'actors'

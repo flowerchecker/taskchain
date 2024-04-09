@@ -4,7 +4,7 @@ from typing import Any, Callable, Generator, Iterable, Type
 
 
 def traverse(obj: Any) -> Generator:
-    """ Recursively traverse json-like objects and yield all primitive values. """
+    """Recursively traverse json-like objects and yield all primitive values."""
     if type(obj) in [list, tuple, set]:
         for v in obj:
             yield from traverse(v)
@@ -61,6 +61,7 @@ def search_and_replace_placeholders(obj, replacements):
     Returns:
         changed object
     """
+
     def _replace(match):
         placeholder = match.group(1)
         if isinstance(replacements, dict):
@@ -87,7 +88,8 @@ def search_and_replace_placeholders(obj, replacements):
 
 
 class ReprStr(str):
-    """ String which carry additional string which is used as `__repr__`. """
+    """String which carry additional string which is used as `__repr__`."""
+
     def __new__(cls, value, repr_: str):
         s = str.__new__(cls, value)
         s.repr = repr(repr_)

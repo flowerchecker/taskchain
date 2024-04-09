@@ -24,7 +24,6 @@ class Clazz:
 
 
 def test_persistent():
-
     clz = Clazz()
     assert clz.calls == 0
 
@@ -51,7 +50,7 @@ def test_import_by_string():
     member = import_by_string('tests.test_task.*')
     assert type(member) == list
     assert any(hasattr(m, '__name__') and m.__name__ == 'A' for m in member)
-    assert all(not(hasattr(m, '__name__') and m.__name__ == 'Task') for m in member)
+    assert all(not (hasattr(m, '__name__') and m.__name__ == 'Task') for m in member)
 
     dd = import_by_string('collections.defaultdict')
     assert dd(int)['666'] == 0
@@ -72,12 +71,8 @@ def test_traverse():
 
 
 def test_search_and_apply():
-    s = [
-        {'a': 1, 'b': False, 'c': 'a'},
-        10,
-        20
-    ]
-    search_and_apply(s, fce=lambda x: True, allowed_types=(bool, ))
+    s = [{'a': 1, 'b': False, 'c': 'a'}, 10, 20]
+    search_and_apply(s, fce=lambda x: True, allowed_types=(bool,))
     assert s[0]['b'] is True
 
     search_and_apply(s, fce=lambda x: x + 'x', allowed_types=(str,))
@@ -124,11 +119,7 @@ def test_find_and_instancelize_clazz():
     assert r['b'].kwa == 2
     assert id(obj) == id(r)
 
-    class_def2 = {
-        'class': 'tests.test_utils.TestObject',
-        'args': [class_def],
-        'kwargs': {'kwa': class_def}
-    }
+    class_def2 = {'class': 'tests.test_utils.TestObject', 'args': [class_def], 'kwargs': {'kwa': class_def}}
     r = find_and_instantiate_clazz(class_def2)
     assert r.a.a == 1
     assert r.kwa.a == 1
@@ -137,9 +128,7 @@ def test_find_and_instancelize_clazz():
 
 
 def test_repeat_call():
-
     class Clazz:
-
         def __init__(self):
             self.calls = 0
 
@@ -187,11 +176,13 @@ def test_search_and_replace_placeholders():
         assert type(r) is ReprStr
         r = search_and_replace_placeholders(r, {})
 
-
-    r = search_and_replace_placeholders({
-        'string': '{A}.b',
-        'list': ['{A}.b', ['{A}{A}']],
-    }, {'A': 'a'})
+    r = search_and_replace_placeholders(
+        {
+            'string': '{A}.b',
+            'list': ['{A}.b', ['{A}{A}']],
+        },
+        {'A': 'a'},
+    )
     assert r['string'] == 'a.b'
     assert r['list'][0] == 'a.b'
     assert r['list'][1][0] == 'aa'

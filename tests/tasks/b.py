@@ -2,13 +2,11 @@ from taskchain import Task
 
 
 class CTask(Task):
-
     def run(self) -> bool:
         return False
 
 
 class DTask(Task):
-
     class Meta:
         input_tasks = ['c']
 
@@ -17,7 +15,6 @@ class DTask(Task):
 
 
 class ETask(Task):
-
     class Meta:
         input_tasks = [CTask]
 

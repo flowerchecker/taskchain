@@ -2,7 +2,6 @@ from taskchain import Task
 
 
 class ATask(Task):
-
     def run(self) -> str:
         return self.get_value()
 
@@ -11,12 +10,10 @@ class ATask(Task):
 
 
 class BTask(ATask):
-
     def get_value(self):
         return 'b'
 
 
 class CTask(ATask):
-
     def get_value(self):
         return 'c'

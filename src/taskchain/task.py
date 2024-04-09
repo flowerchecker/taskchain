@@ -11,14 +11,13 @@ from pathlib import Path
 from typing import Union, Any, get_type_hints, Type, Dict, Iterable, get_origin, List
 
 import taskchain
+from taskchain.utils.clazz import Meta, inheritors, isinstance as custom_isinstance, fullname
 from .config import Config
 from .data import Data, DirData, InMemoryData
 from .parameter import Parameter, ParameterRegistry, NO_VALUE
-from taskchain.utils.clazz import persistent, Meta, inheritors, isinstance as custom_isinstance, fullname
 
 
 class MetaTask(type):
-
     @property
     def meta(cls):
         return Meta(cls)
@@ -58,7 +57,9 @@ class MetaTask(type):
             data_type = return_data_type
         elif meta_data_type != return_data_type:
             raise AttributeError(
-                f'Data type {meta_data_type} and return data type {return_data_type} does not match for task {cls.slugname}')
+                f'Data type {meta_data_type} and return data type {return_data_type} does not match for task'
+                f' {cls.slugname}'
+            )
         else:
             data_type = return_data_type
 
@@ -87,14 +88,12 @@ class MetaTask(type):
 
 
 class MetaModuleTask(MetaTask):
-
     @property
     def group(cls) -> str:
         return inspect.getmodule(cls).__name__.split('.')[-1]
 
 
 class MetaDoubleModuleTask(MetaTask):
-
     @property
     def group(cls) -> str:
         return cls.meta.get('task_group', ':'.join(inspect.getmodule(cls).__name__.split('.')[-2:]))
@@ -129,14 +128,10 @@ class Task(object, metaclass=MetaTask):
         self._prepare_parameters()
 
     def _prepare_parameters(self):
-        """ Create task's parameter registry and load their values from config """
+        """Create task's parameter registry and load their values from config"""
         parameters = self.meta.get('parameters')
         if parameters is not None:
-            parameters = [
-                p
-                for p in deepcopy(parameters)
-                if isinstance(p, Parameter)
-            ]
+            parameters = [p for p in deepcopy(parameters) if isinstance(p, Parameter)]
         self.params = self.parameters = ParameterRegistry(parameters)
         self.parameters.set_values(self._config)
 
@@ -226,7 +221,7 @@ class Task(object, metaclass=MetaTask):
 
     @property
     def value(self) -> Any:
-        """ Return result of computation. Load persisted data or compute them by `run` method. """
+        """Return result of computation. Load persisted data or compute them by `run` method."""
         return self.data.value
 
     def __str__(self):
@@ -236,23 +231,24 @@ class Task(object, metaclass=MetaTask):
         return f'<task: {self}>'
 
     def _repr_markdown_(self):
-        repr = f'**{self.slugname.split(":")[-1]}** \n' \
-               f' - fullname: `{self.fullname}` \n' \
-               f' - group: `{self.group}` \n' \
-               f' - config: `{self.get_config()}` \n'
+        repr = (
+            f'**{self.slugname.split(":")[-1]}** \n'
+            f' - fullname: `{self.fullname}` \n'
+            f' - group: `{self.group}` \n'
+            f' - config: `{self.get_config()}` \n'
+        )
 
         if self.has_data:
-            repr += f' - data: `{self.data_path}` \n' \
-
+            repr += f' - data: `{self.data_path}` \n'
         return repr
 
     def get_config(self):
-        """ Return config used to configure this task. """
+        """Return config used to configure this task."""
         return self._config
 
     @property
     def path(self) -> Path:
-        """ Path where all data of this task are persisted. """
+        """Path where all data of this task are persisted."""
         if self._config.base_dir is None:
             raise ValueError(f'Config `{self._config}` has not base dir set')
         path = self._config.base_dir / self.slugname.replace(':', '/')
@@ -260,7 +256,7 @@ class Task(object, metaclass=MetaTask):
 
     @property
     def _data_without_value(self) -> Data:
-        """ Get data object but avoid loading or computation of data. """
+        """Get data object but avoid loading or computation of data."""
         if hasattr(self, '_data') and self._data is not None:
             return self._data
         data = self.data_class()
@@ -269,7 +265,7 @@ class Task(object, metaclass=MetaTask):
 
     @property
     def has_data(self) -> bool:
-        """ Check if this task has data already computed and persisted. """
+        """Check if this task has data already computed and persisted."""
         if issubclass(self.data_class, InMemoryData):
             return False
         return self._data_without_value.exists()
@@ -334,11 +330,17 @@ class Task(object, metaclass=MetaTask):
         if isclass(self.data_type) and issubclass(self.data_type, Data) and isinstance(run_result, self.data_type):
             self._data = run_result
             self._init_persistence(self._data)
-        elif isinstance(run_result, self.data_type) or custom_isinstance(run_result, self.data_type) or fullname(self.data_type) == 'typing.Generator':
+        elif (
+            isinstance(run_result, self.data_type)
+            or custom_isinstance(run_result, self.data_type)
+            or fullname(self.data_type) == 'typing.Generator'
+        ):
             assert self._data is not None, f'{fullname(self.__class__)}: attribute "_data" cannot be None'
             self._data.set_value(run_result)
         else:
-            raise ValueError(f'{fullname(self.__class__)}: Invalid result data type: {type(run_result)} instead of {self.data_type}')
+            raise ValueError(
+                f'{fullname(self.__class__)}: Invalid result data type: {type(run_result)} instead of {self.data_type}'
+            )
 
         if self._data.is_persisting:
             self._data.save()
@@ -360,7 +362,7 @@ class Task(object, metaclass=MetaTask):
 
     @property
     def run_info(self) -> Dict:
-        """ Info about last call of `run` method. """
+        """Info about last call of `run` method."""
         data = self._data_without_value
         return data.load_run_info()
 
@@ -386,6 +388,7 @@ class Task(object, metaclass=MetaTask):
             }
 
             from .chain import TaskParameterConfig
+
             if isinstance(self._config, TaskParameterConfig):
                 self._run_info['input_tasks'] = self._config.input_tasks
         self._run_info['started'] = datetime.timestamp(datetime.now())
@@ -412,7 +415,7 @@ class Task(object, metaclass=MetaTask):
 
     @property
     def log(self) -> Union[None, List[str]]:
-        """ Log (from `self.logger`) from last run as list of rows. """
+        """Log (from `self.logger`) from last run as list of rows."""
         data = self._data_without_value
         if data:
             return data.log

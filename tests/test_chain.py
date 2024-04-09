@@ -317,7 +317,6 @@ class MyObject(ChainObject, ParameterObject):
 
 
 def test_chain_objects(tmp_path):
-
     config_data = {'tasks': [], 'x': 1, 'my_object': {'class': 'tests.test_chain.MyObject'}}
 
     config = Config(tmp_path, name='config', data=config_data)
@@ -791,7 +790,6 @@ class Abc(Task):
 
 
 def test_context_for_namespaces(tmp_path):
-
     json.dump(
         {
             'configs': {

@@ -6,7 +6,6 @@ from taskchain import Chain, Config, Task, InMemoryData
 
 
 class MockTask(Task):
-
     class Meta:
         data_type = Any
         data_class = InMemoryData
@@ -21,13 +20,13 @@ class MockTask(Task):
 
 
 class TestChain(Chain):
-
-    def __init__(self,
-                 tasks: List[Type[Task]],
-                 mock_tasks: Dict[Union[str, Type[Task]], Any] = None,
-                 parameters: Dict[str, Any] = None,
-                 base_dir: Path = None,
-                 ):
+    def __init__(
+        self,
+        tasks: List[Type[Task]],
+        mock_tasks: Dict[Union[str, Type[Task]], Any] = None,
+        parameters: Dict[str, Any] = None,
+        base_dir: Path = None,
+    ):
         """
         Helper class for testing part of a chain. Some tasks are present fully, some are mocked.
         Config is not needed, parameters are provided directly.
@@ -73,11 +72,11 @@ class TestChain(Chain):
 
 
 def create_test_task(
-        task: Type[Task],
-        input_tasks: Dict[Union[str, Type[Task]], Any] = None,
-        parameters: Dict[str, Any] = None,
-        base_dir: Path = None,
-        ) -> Task:
+    task: Type[Task],
+    input_tasks: Dict[Union[str, Type[Task]], Any] = None,
+    parameters: Dict[str, Any] = None,
+    base_dir: Path = None,
+) -> Task:
     """
     Helper function which instantiate task in such way, that parameters and input_tasks are given with arguments
     of this function.
@@ -88,5 +87,5 @@ def create_test_task(
         parameters: parameter names and their values
         base_dir: path for data persistence, if None tmp dir is created
     """
-    test_chain = TestChain([task],  parameters=parameters, mock_tasks=input_tasks, base_dir=base_dir)
+    test_chain = TestChain([task], parameters=parameters, mock_tasks=input_tasks, base_dir=base_dir)
     return test_chain[task.fullname(test_chain.config)]

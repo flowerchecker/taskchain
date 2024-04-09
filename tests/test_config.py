@@ -99,7 +99,6 @@ class MyObject2(ParameterObject):
 
 
 def test_config_objects(tmp_path):
-
     data = {
         'my_object': {
             'class': 'tests.test_config.MyObject',
@@ -116,16 +115,17 @@ def test_config_objects(tmp_path):
 
 
 def test_config_complex_objects(tmp_path):
-
     data = {
         'my_object': {
             'class': 'tests.test_config.MyObject2',
             'args': [5],
-            'kwargs': {'o': {
-                'class': 'tests.test_config.MyObject',
-                'args': [7],
-                'kwargs': {'b': 13},
-            }},
+            'kwargs': {
+                'o': {
+                    'class': 'tests.test_config.MyObject',
+                    'args': [7],
+                    'kwargs': {'b': 13},
+                }
+            },
         }
     }
 
@@ -149,13 +149,16 @@ def test_namespace(tmp_path):
 def test_context(tmp_path):
     json.dump({'b': 7}, (tmp_path / 'file_context.json').open('w'))
 
-    config = Config(data={'a': 1, 'rw': 666}, context=[
-        str(tmp_path / 'file_context.json'),
-        tmp_path / 'file_context.json',
-        {'c': 4, 'rw': 0},
-        {'c': 6, 'rw': 1},
-        Context(data={'d': 8}, name='my_context')
-    ])
+    config = Config(
+        data={'a': 1, 'rw': 666},
+        context=[
+            str(tmp_path / 'file_context.json'),
+            tmp_path / 'file_context.json',
+            {'c': 4, 'rw': 0},
+            {'c': 6, 'rw': 1},
+            Context(data={'d': 8}, name='my_context'),
+        ],
+    )
 
     assert len(config.context.name.split(';')) == 5
     assert config.a == 1
@@ -166,18 +169,20 @@ def test_context(tmp_path):
 
 
 def test_multi_configs():
-    data = {'configs': {
-        'config1': {
-            'a': 1,
-        },
-        'config2': {
-            'a': 2,
-        },
-        'config3': {
-            'a': 3,
-            'b': 2,
-        },
-    }}
+    data = {
+        'configs': {
+            'config1': {
+                'a': 1,
+            },
+            'config2': {
+                'a': 2,
+            },
+            'config3': {
+                'a': 3,
+                'b': 2,
+            },
+        }
+    }
 
     assert Config(data=data, part='config1', name='c').a == 1
     assert Config(data=data, part='config1', name='c').name == 'c#config1'
@@ -192,29 +197,36 @@ def test_multi_configs():
     with pytest.raises(KeyError):
         assert Config(data=data, name='c').a
 
-    data = {'configs': {
-        'config1': {
-            'a': 1,
-        },
-        'config2': {
-            'main_part': True,
-            'a': 2,
-        },
-    }}
+    data = {
+        'configs': {
+            'config1': {
+                'a': 1,
+            },
+            'config2': {
+                'main_part': True,
+                'a': 2,
+            },
+        }
+    }
     assert Config(data=data, name='c').a == 2
     assert Config(data=data, name='c').name == 'c#config2'
 
 
 def test_multi_configs_file(tmp_path):
-    json.dump({'configs': {
-        'config1': {
-            'a': 1,
+    json.dump(
+        {
+            'configs': {
+                'config1': {
+                    'a': 1,
+                },
+                'config2': {
+                    'main_part': True,
+                    'a': 2,
+                },
+            }
         },
-        'config2': {
-            'main_part': True,
-            'a': 2,
-        },
-    }}, (tmp_path / 'file_context.json').open('w'))
+        (tmp_path / 'file_context.json').open('w'),
+    )
 
     print(f'{tmp_path / "file_context.json"}#config1')
     c1 = Config(filepath=f'{tmp_path / "file_context.json"}#config1')
@@ -227,31 +239,32 @@ def test_multi_configs_file(tmp_path):
 
 
 def test_context_for_namespaces_merging():
-
-    context = Context.prepare_context([
-        {
-            'for_namespaces': {
-                'ns1': {
-                    'a': 11,
+    context = Context.prepare_context(
+        [
+            {
+                'for_namespaces': {
+                    'ns1': {
+                        'a': 11,
+                    },
+                    'ns2': {
+                        'a': 21,
+                    },
                 },
-                'ns2': {
-                    'a': 21,
-                },
+                'a': 1,
             },
-            'a': 1,
-        },
-        {
-            'for_namespaces': {
-                'ns1': {
-                    'a': 22,
+            {
+                'for_namespaces': {
+                    'ns1': {
+                        'a': 22,
+                    },
+                    'ns3': {
+                        'a': 32,
+                    },
                 },
-                'ns3': {
-                    'a': 32,
-                },
+                'a': 2,
             },
-            'a': 2,
-        },
-    ])
+        ]
+    )
 
     assert context.for_namespaces['ns1']['a'] == 22
     assert context.for_namespaces['ns2']['a'] == 21

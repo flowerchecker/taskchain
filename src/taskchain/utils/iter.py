@@ -2,13 +2,15 @@ import asyncio
 import concurrent.futures
 from typing import Union, List
 
-from .jupyter import in_ipynb
 from tqdm import tqdm, tqdm_notebook
 
+from .jupyter import in_ipynb
 
-def progress_bar(data, use_tqdm=True, smoothing=0., **kwargs):
+
+def progress_bar(data, use_tqdm=True, smoothing=0.0, **kwargs):
     def iter_fce(iterator, **kwargs):
         return iterator
+
     if use_tqdm:
         iter_fce = tqdm_notebook if in_ipynb() else tqdm
         kwargs['smoothing'] = smoothing
@@ -27,14 +29,12 @@ def parallel_map(fun, iterable, threads=2, desc='Running tasks in parallel.', to
     async def _run():
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
             loop = asyncio.get_event_loop()
-            futures = [
-                loop.run_in_executor(
-                    executor, _fun, i, input_value
-                ) for i, input_value in enumerate(iterable) ]
+            futures = [loop.run_in_executor(executor, _fun, i, input_value) for i, input_value in enumerate(iterable)]
             return [
                 await output_value
-                for output_value
-                in progress_bar(asyncio.as_completed(futures), desc=desc, total=total, smoothing=smoothing)
+                for output_value in progress_bar(
+                    asyncio.as_completed(futures), desc=desc, total=total, smoothing=smoothing
+                )
             ]
 
     loop = asyncio.get_event_loop()
@@ -43,7 +43,7 @@ def parallel_map(fun, iterable, threads=2, desc='Running tasks in parallel.', to
 
 
 def list_or_str_to_list(value: Union[None, List[str], str]) -> List[str]:
-    """ Helper function for cases where list of string is expected but single string is also ok.
+    """Helper function for cases where list of string is expected but single string is also ok.
 
     Args:
         value:

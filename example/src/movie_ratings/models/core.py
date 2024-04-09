@@ -11,7 +11,6 @@ from taskchain.parameter import AutoParameterObject
 
 
 class RatingModel(AutoParameterObject, InMemoryData, abc.ABC):
-
     def train(self, X: pd.DataFrame, y: pd.Series):
         self._train(self._process_features(X), self._process_labels(y))
 
@@ -20,7 +19,7 @@ class RatingModel(AutoParameterObject, InMemoryData, abc.ABC):
 
         return {
             'RMSE': metrics.mean_squared_error(y, predicted, squared=False),
-            'MAE': metrics.mean_absolute_error(y, predicted)
+            'MAE': metrics.mean_absolute_error(y, predicted),
         }
 
     def predict(self, X: pd.DataFrame) -> pd.Series:
@@ -51,7 +50,6 @@ class RatingModel(AutoParameterObject, InMemoryData, abc.ABC):
 
 
 class BaselineRatingModel(RatingModel):
-
     def __init__(self):
         super().__init__()
         self._mean = None

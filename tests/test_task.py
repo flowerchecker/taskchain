@@ -11,7 +11,6 @@ from taskchain.task import _find_task_full_name
 
 
 class ThisIsSomethingTask(Task):
-
     class Meta:
         int_value = 1
         str_value = 'value'
@@ -22,13 +21,11 @@ class ThisIsSomethingTask(Task):
 
 
 class ThisIsSomething(Task):
-
     def run(self) -> int:
         return 1
 
 
 class X(Task):
-
     class Meta:
         task_group = 'a:b'
         name = 'y'
@@ -53,7 +50,6 @@ def test_meta():
 
 def test_module_task():
     class Mt(ModuleTask):
-
         def run(self) -> bool:
             pass
 
@@ -169,9 +165,7 @@ def test_advanced_return_types():
 
 
 def test_forcing(tmp_path):
-
     class A(Task):
-
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.run_called = 0
@@ -219,9 +213,7 @@ def test_forcing(tmp_path):
 
 
 def test_run_fail(tmp_path):
-
     class A(Task):
-
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.run_called = 0
@@ -364,7 +356,6 @@ def test_run_input_arguments(tmp_path):
 
 
 def test_optional_input_tasks(tmp_path):
-
     class A(Task):
         class Meta:
             parameters = [
