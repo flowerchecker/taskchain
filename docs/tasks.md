@@ -162,8 +162,11 @@ Input task can be defined in following ways:
 - **by name**: `input_tasks = ['my_data']`
 - **by name and group**: `input_tasks = ['group:my_data']`
 - **by name, group and namespace**: `input_tasks = ['namespace::group:my_data']`
-- **by regexp string starting with `~`**: `input_tasks = ['~my_*']` - this expands to all matching tasks in chain 
-      (tasks starting with `my_`)
+- **by regexp string starting with `~`**: `input_tasks = ['~my_*']` - expands to all matching tasks in chain in 
+      the same namespace (tasks starting with `my_` in the same namespace as `task`), check is done only on task_name
+      without group (e.g. `<task_namespace>::group:my_task` is matched by)
+- **by regexp string starting with `~~`**: `input_tasks = ['~~my_*']` - expands to all matching tasks in chain 
+      (tasks starting with `my_`), check is done only on task_name without group (e.g. `group:my_task` is matched by)
 
 ## Data persistence
 

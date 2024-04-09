@@ -254,15 +254,24 @@ class Chain(dict):
         return task
 
     @staticmethod
-    def _expand_tasks(input_tasks: List[Union[str, Type[Task]]], tasks: Iterable[str]) -> List[Union[str, Type[Task]]]:
-        """Expand input tasks definition starting with `~` to all matching tasks"""
+    def _expand_tasks(
+        input_tasks: List[Union[str, Type[Task]]], tasks: Iterable[str], current_task_name: str
+    ) -> List[Union[str, Type[Task]]]:
+        """
+        Expand input tasks definition starting with `~` to all matching tasks.
+        If task starts with 2 `~` namespace is ignored, otherwise it must match namespace of current task.
+        """
         expanded_tasks = []
+        current_task_namespace = current_task_name.split('::')[:-1]
         for input_task in input_tasks:
             if type(input_task) is not str or not input_task.startswith('~'):
                 expanded_tasks.append(input_task)
             else:
                 for task_name in tasks:
-                    if re.fullmatch(input_task[1:], task_name):
+                    namespace_check = current_task_namespace == task_name.split('::')[:-1] or input_task.startswith(
+                        '~~'
+                    )
+                    if re.fullmatch(input_task.lstrip('~'), task_name.split('::')[-1]) and namespace_check:
                         expanded_tasks.append(task_name)
         return expanded_tasks
 
@@ -271,7 +280,9 @@ class Chain(dict):
         """ Process input tasks and inject input task object to tasks. """
         for task_name, task in tasks.items():
             input_tasks = InputTasks()
-            for input_task in chain(Chain._expand_tasks(task.meta.get('input_tasks', []), tasks), task.meta.get('parameters', [])):
+            for input_task in chain(
+                Chain._expand_tasks(task.meta.get('input_tasks', []), tasks, task_name), task.meta.get('parameters', [])
+            ):
                 if isinstance(input_task, AbstractParameter):
                     if not isinstance(input_task, InputTaskParameter):
                         continue

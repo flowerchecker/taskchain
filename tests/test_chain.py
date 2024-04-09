@@ -1176,6 +1176,14 @@ class MultipleInputsTask(Task):
         return {task_name: task.value for task_name, task in self.input_tasks.items()}
 
 
+class MultipleInputsIgnoringNamespaceTask(Task):
+    class Meta:
+        input_tasks = ['~~input_.*']
+
+    def run(self) -> dict:
+        return {task_name: task.value for task_name, task in self.input_tasks.items()}
+
+
 def test_dynamic_input_tasks(tmp_path):
     config_data = {
         'tasks': [
@@ -1200,3 +1208,23 @@ def test_dynamic_input_tasks(tmp_path):
     assert len(chain.tasks) == 2
     assert len(chain.multiple_inputs.input_tasks) == 1
     assert chain.multiple_inputs.value == {'input_a': False}
+
+
+def test_dynamic_input_tasks__multiple_namespaces(tmp_path):
+    # test namespaces
+
+    config_a1 = Config(tmp_path, name='config_a1', namespace='nsa1', data={'tasks': [InputATask]})
+    config_a2 = Config(tmp_path, name='config_a2', namespace='nsa2', data={'tasks': [InputBTask]})
+    config_a3 = Config(tmp_path, name='config_a2', namespace='nsa2', data={'tasks': [NotInputTask]})
+    config_a4 = Config(tmp_path, name='config_a3', namespace='nsa1', data={'tasks': [MultipleInputsTask]})
+    config_a5 = Config(tmp_path, name='config_a4', data={'tasks': [MultipleInputsIgnoringNamespaceTask]})
+
+    chain = Config(
+        tmp_path, name='config', data={'uses': [config_a1, config_a2, config_a3, config_a4, config_a5]}
+    ).chain()
+    assert len(chain.tasks) == 4
+    assert len(chain.multiple_inputs.input_tasks) == 1
+    assert chain.multiple_inputs.value == {'nsa1::input_a': False}
+
+    assert len(chain.multiple_inputs_ignoring_namespace.input_tasks) == 2
+    assert chain.multiple_inputs_ignoring_namespace.value == {'nsa1::input_a': False, 'nsa2::input_b': True}
