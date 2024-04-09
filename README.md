@@ -19,7 +19,26 @@ poetry install
 ## Changelog
 
 #### unpublished
-- allow to define multiple input task using regexp 
+- support for double ~ ignoring namespace
+
+#### 1.4.0
+- fix CI tests
+- introduce function to chunk iterable
+- use chunks for multithreading parallelism
+- make subcaches of in-memory cache more intelligent
+- be able get data from cache without computing it
+- be able to manipualte with cache values in @cached operator
+- use orjson instead of standard json module (except of cache keys)
+- allow to define multiple input task using regexp
+- use versions in @cached() decorator
+- introduce data class to manipulate with generators lazily
+- be able to use classes without repr method in definition configs
+- fixes
+
+#### 1.3.0
+
+- migrate to poetry
+
 
 #### 1.2.1
 - fixes
