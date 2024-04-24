@@ -338,9 +338,14 @@ class Task(object, metaclass=MetaTask):
             assert self._data is not None, f'{fullname(self.__class__)}: attribute "_data" cannot be None'
             self._data.set_value(run_result)
         else:
-            raise ValueError(
-                f'{fullname(self.__class__)}: Invalid result data type: {type(run_result)} instead of {self.data_type}'
-            )
+            if not self.meta.get('ignore_return_type_mismatch', False):
+                raise ValueError(
+                    f'{fullname(self.__class__)}: Invalid result data type: {type(run_result)} instead of {self.data_type}'
+                )
+            if not issubclass(self.data_class, InMemoryData):
+                raise ValueError(
+                    f'{fullname(self.__class__)}: When ignoring return type mismatch, InMemoryData data class is required.'
+                )
 
         if self._data.is_persisting:
             self._data.save()
