@@ -346,6 +346,8 @@ class Task(object, metaclass=MetaTask):
                 raise ValueError(
                     f'{fullname(self.__class__)}: When ignoring return type mismatch, InMemoryData data class is required.'
                 )
+            assert self._data is not None, f'{fullname(self.__class__)}: attribute "_data" cannot be None'
+            self._data.set_value(run_result)
 
         if self._data.is_persisting:
             self._data.save()
