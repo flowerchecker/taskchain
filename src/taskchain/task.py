@@ -162,7 +162,7 @@ class Task(object, metaclass=MetaTask):
             self._init_persistence(self._data)
 
         if self._data and self._data.is_persisting and self._data.exists() and not self._forced:
-            self._data.load()
+            self._data.load(self.data_type)
         else:
             try:
                 self._init_run_info()

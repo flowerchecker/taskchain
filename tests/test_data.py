@@ -181,7 +181,7 @@ def test_numpy_data(tmp_path):
 
     data2 = NumpyData()
     data2.init_persistence(tmp_path, 'test')
-    data2.load()
+    data2.load(np.ndarray)
 
     assert data2.value.shape == (10, 10)
     data.delete()
@@ -200,7 +200,7 @@ def test_pandas_data(tmp_path):
 
     data2 = PandasData()
     data2.init_persistence(tmp_path, 'test')
-    data2.load()
+    data2.load(pd.DataFrame)
 
     assert data2.value.shape == (2, 2)
     data.delete()
@@ -222,7 +222,7 @@ def test_generator_data(tmp_path):
 
     data2 = GeneratedData()
     data2.init_persistence(tmp_path, 'test')
-    data2.load()
+    data2.load(Generator)
 
     assert data2.value == list(range(10))
     data.delete()

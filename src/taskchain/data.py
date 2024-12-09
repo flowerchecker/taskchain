@@ -4,7 +4,7 @@ import pickle
 import shutil
 from collections.abc import Generator
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Dict, Type, Union
 
 import h5py
 import numpy as np
@@ -49,7 +49,7 @@ class Data:
         pass
 
     @abc.abstractmethod
-    def load(self) -> Any:
+    def load(self, data_type: Type) -> Any:
         pass
 
     @abc.abstractmethod
@@ -141,7 +141,7 @@ class InMemoryData(Data):
     def delete(self):
         pass
 
-    def load(self) -> Any:
+    def load(self, data_type: Type) -> Any:
         return self
 
     @property
@@ -177,7 +177,7 @@ class JSONData(FileData):
     def save(self):
         json.dump(self.value, self.path.open('w'), indent=2, sort_keys=True)
 
-    def load(self) -> Any:
+    def load(self, data_type: Type) -> Any:
         self._value = json.load(self.path.open())
         return self._value
 
@@ -192,7 +192,7 @@ class NumpyData(FileData):
     def save(self):
         np.save(str(self.path), self.value)
 
-    def load(self) -> Any:
+    def load(self, data_type: Type) -> Any:
         self._value = np.load(str(self.path))
         return self._value
 
@@ -210,7 +210,7 @@ class ListOfNumpyData(Data):
         for i, v in enumerate(self.value):
             np.save(str(self.path / f'{i}.npy'), v)
 
-    def load(self) -> Any:
+    def load(self, data_type: Type) -> Any:
         self._value = []
         for file in sorted(self.path.glob('*.npy'), key=lambda f: int(f.name.split('.')[0])):
             self._value.append(np.load(str(file)))
@@ -233,7 +233,7 @@ class PandasData(FileData):
     def save(self):
         self.value.to_pickle(self.path)
 
-    def load(self) -> Any:
+    def load(self, data_type: Type) -> Any:
         self._value = pd.read_pickle(self.path)
         return self._value
 
@@ -251,7 +251,7 @@ class FigureData(FileData):
         self.value.savefig(self._base_dir / f'{self._name}.svg')
         plt.close(self.value)
 
-    def load(self) -> Any:
+    def load(self, data_type: Type) -> Any:
         self._value = pickle.load(self.path.open('rb'))
         return self._value
 
@@ -266,7 +266,7 @@ class GeneratedData(FileData):
     def save(self):
         write_jsons(self.value, self.path)
 
-    def load(self) -> Any:
+    def load(self, data_type: Type) -> Any:
         self._value = list(iter_json_file(self.path))
         return self._value
 
@@ -290,7 +290,7 @@ class GeneratedDataLazy(FileData):
         shutil.move(str(self.tmp_path), str(self.path))
         self.load()
 
-    def load(self) -> Any:
+    def load(self, data_type: Type) -> Any:
         self._value = lambda: iter_json_file(self.path)
         return self._value
 
@@ -357,7 +357,7 @@ class DirData(Data):
         shutil.move(str(self.tmp_path), str(self.path))
         self._value = self._dir = self.path
 
-    def load(self) -> Path:
+    def load(self, data_type: Type) -> Path:
         self._dir = self._value = self.path
         return self._value
 
@@ -394,7 +394,7 @@ class ContinuesData(Data):
     def save(self):
         self._value = self._dir
 
-    def load(self) -> Any:
+    def load(self, data_type: Type) -> Any:
         self._dir = self._value = self.path
         return self._value
 
