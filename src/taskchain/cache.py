@@ -126,7 +126,7 @@ class FileCache(Cache):
             except CacheException as error:
                 raise error
             except Exception as error:
-                logger.warning('Cannot load cached value.')
+                logger.warning(f'Cannot load cached value, {key=}, {filepath=}.')
                 logger.exception(error)
         return NO_VALUE
 
@@ -142,7 +142,7 @@ class FileCache(Cache):
             except CacheException as error:
                 raise error
             except Exception as error:
-                logger.warning('Cannot load cached value.')
+                logger.warning(f'Cannot load cached value, {key=}, {filepath=}.')
                 logger.exception(error)
 
         with lock:
