@@ -179,11 +179,11 @@ class JsonCache(FileCache):
     def save_value(self, filepath: Path, key: str, value: Any):
         if value is None and not self.allow_nones:
             raise CacheException(f'The cache value for key {key} is None')
-        with filepath.open('w') as f:
+        with filepath.open('w', encoding='utf-8') as f:
             json.dump({'key': key, 'value': value}, f)
 
     def load_value(self, filepath: Path, key: str) -> Any:
-        with filepath.open('r') as file:
+        with filepath.open('r', encoding='utf-8') as file:
             loaded = json.load(file)
             if key != loaded['key']:
                 raise CacheException(
