@@ -3,9 +3,10 @@ import importlib
 import inspect
 import re
 from copy import deepcopy
+from pathlib import Path
 from time import sleep
 from types import ModuleType
-from typing import Union, List, Type
+from typing import List, Type, Union
 
 
 class Meta(dict):
@@ -250,7 +251,7 @@ def find_and_instantiate_clazz(obj, instancelize_clazz_fce=None):
 
 def object_to_definition(obj):
     """Get config definition from class instance. Kind of reverse of `find_and_instantiate_clazz`."""
-    if any(isinstance(obj, type_) for type_ in {int, float, bool, str}):
+    if obj is None or any(isinstance(obj, type_) for type_ in {int, float, bool, str}):
         return obj
     if isinstance(obj, list):
         return [object_to_definition(val) for val in obj]
