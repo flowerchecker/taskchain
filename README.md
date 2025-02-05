@@ -26,8 +26,8 @@ poetry install
 - introduce function to chunk iterable
 - use chunks for multithreading parallelism
 - make subcaches of in-memory cache more intelligent
-- be able get data from cache without computing it
-- be able to manipualte with cache values in @cached operator
+- be able to get data from cache without computing it
+- be able to manipulate with cache values in @cached operator
 - use orjson instead of standard json module (except of cache keys)
 - allow to define multiple input task using regexp
 - use versions in @cached() decorator
