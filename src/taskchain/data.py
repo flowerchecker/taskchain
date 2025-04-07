@@ -288,7 +288,7 @@ class GeneratedDataLazy(FileData):
             value = value()
         write_jsons(value, self.tmp_path)
         shutil.move(str(self.tmp_path), str(self.path))
-        self.load()
+        self.load(None)
 
     def load(self, data_type: Type) -> Any:
         self._value = lambda: iter_json_file(self.path)
