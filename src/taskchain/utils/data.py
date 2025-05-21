@@ -103,3 +103,7 @@ class ReprStr(str):
 
     def __deepcopy__(self, memo):
         return ReprStr(str(self), deepcopy(self.repr))
+
+    def __reduce__(self):
+        # Return a tuple of (callable, args) that pickle will use to recreate this object
+        return (ReprStr, (str(self), eval(self.repr)))

@@ -1,11 +1,12 @@
+import pickle
 from copy import deepcopy
 from types import ModuleType
 
 import pytest
 
 from taskchain import Task
-from taskchain.utils.clazz import persistent, import_by_string, find_and_instantiate_clazz, repeat_on_error
-from taskchain.utils.data import traverse, search_and_apply, ReprStr, search_and_replace_placeholders
+from taskchain.utils.clazz import find_and_instantiate_clazz, import_by_string, persistent, repeat_on_error
+from taskchain.utils.data import ReprStr, search_and_apply, search_and_replace_placeholders, traverse
 
 
 class Clazz:
@@ -166,6 +167,7 @@ def test_repr_str():
     assert repr(s) == "'b'"
     assert deepcopy(s) == s
     assert deepcopy(s) is not s
+    assert pickle.loads(pickle.dumps(s)) == s
 
 
 def test_search_and_replace_placeholders():
