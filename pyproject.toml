@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "taskchain"
-version = "1.4.0"
+version = "1.5.0"
 description = "Utility for running data and ML pipelines"
 authors = [" Jiří Thran Řihák <exthran@gmail.com>"]
 license = "MIT License"
